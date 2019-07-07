@@ -3,4 +3,5 @@
 /// @brief implementation file for LSystem class
 //----------------------------------------------------------------------------------------------------------------------
 
+#include <boost/algorithm/string.hpp>
 #include "Forest.h"

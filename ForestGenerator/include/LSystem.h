@@ -41,9 +41,29 @@ public:
   /// @brief the rules for the LSystem
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<std::string> m_rules;
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief the rules for the LSystem, broken down into vectors of size 2 (assuming the rule is written correctly)
+  /// 1st element of each is the string to be replaced (called a non-terminal), and the 2nd element is the replacement
+  //--------------------------------------------------------------------------------------------------------------------
+  std::vector<std::vector<std::string>> m_rulesBrokenDown;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief string representing all non-terminal elements in the rule system
+  //--------------------------------------------------------------------------------------------------------------------
+  std::string m_nonTerminals;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief the branches introduced by rules in the L-system
+  //--------------------------------------------------------------------------------------------------------------------
+  std::vector<std::string> m_branches;
 
   //PUBLIC MEMBER FUNCTIONS
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief fills m_rulesBrokenDown and m_nonTerminals
+  //--------------------------------------------------------------------------------------------------------------------
+  void breakDownRules();
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief detects branches introduced by rules and uses them to fill m_branches
+  //--------------------------------------------------------------------------------------------------------------------
+  void detectBranching();
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief returns a string representation of the tree produced by the L-System after a given number of generations
   /// @param [in] _generation the number of iterations of the rules to implement

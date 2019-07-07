@@ -29,7 +29,8 @@ FORMS += $$PWD/ui/*.ui
 OTHER_FILES+= README.md \
               shaders/*.glsl
 # and add the include dir into the search path for Qt and make
-INCLUDEPATH +=./include
+INCLUDEPATH +=./include \
+                $(HOME)/boost_1_70_0/boost
 
 NGLPATH=$$(NGLDIR)
 isEmpty(NGLPATH){ # note brace must be here
