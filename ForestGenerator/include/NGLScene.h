@@ -18,6 +18,7 @@
 #include <QOpenGLWindow>
 #include <memory>
 #include "Camera.h"
+#include "Forest.h"
 
 #include <QEvent>
 #include <QResizeEvent>

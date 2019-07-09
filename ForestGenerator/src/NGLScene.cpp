@@ -97,7 +97,13 @@ void NGLScene::initializeGL()
 
 void NGLScene::buildVAO()
 {
-  std::vector<ngl::Vec3> vertices;
+  std::string axiom = "FFFA";
+  std::vector<std::string> rules = {"A=![B]////[B]////B", "B=&&FFFA"};
+  LSystem L(axiom,rules);
+  L.createGeometry(2, ngl::Vec3(0,0,0));
+  //std::cout << L.generateTreeString(2);
+
+  /*std::vector<ngl::Vec3> vertices;
   int size = 10;
   for(int i=0; i<size*size; ++i)
   {
@@ -110,23 +116,23 @@ void NGLScene::buildVAO()
   for(int i = 0; i< size*size; ++i)
   {
     indices.push_back(GLshort(i));
-  }
+  }*/
 
-  // create a vao using GL_TRIANGLE_STRIP
-  m_vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_TRIANGLE_STRIP);
+  // create a vao using GL_LINES
+  m_vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
   m_vao->bind();
 
   // set our data for the VAO (when I've sorted this out later, I'll
   //create the VAO in a different class)
   m_vao->setData(ngl::SimpleIndexVAO::VertexData(
-                                                  sizeof(ngl::Vec3)*vertices.size(),
-                                                  vertices[0].m_x,
-                                                  uint(indices.size()),
-                                                  &indices[0],
+                                                  sizeof(ngl::Vec3)*L.m_vertices.size(),
+                                                  L.m_vertices[0].m_x,
+                                                  uint(L.m_indices.size()),
+                                                  &L.m_indices[0],
                                                   GL_UNSIGNED_SHORT));
   // data is 12 bytes apart (=sizeof(Vec3))
   m_vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  m_vao->setNumIndices(size_t(size*size));
+  m_vao->setNumIndices(size_t(L.m_indices.size()));
 
   // now unbind
   m_vao->unbind();
