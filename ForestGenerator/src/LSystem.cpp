@@ -7,6 +7,7 @@
 #include <regex>
 #include <boost/algorithm/string.hpp>
 #include <ngl/Mat3.h>
+#include <ngl/Mat4.h>
 #include <ngl/VAOFactory.h>
 #include <ngl/SimpleIndexVAO.h>
 #include "LSystem.h"
@@ -79,56 +80,95 @@ std::string LSystem::generateTreeString(int _generation)
 
 void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3 _orientation)
 {
-  const ngl::Vec3 up(0,1,0);
-  ngl::Vec3 right(1,0,0);
-  ngl::Vec3 direction(0,1,0);
-  ngl::Mat3 rotate;
+  ngl::Vec3 dir(0,1,0); // direction = _orientation;
+  ngl::Vec3 right(0,1,0);
+  if(dir != ngl::Vec3(0,0,1))
+  {
+    right = dir.cross(ngl::Vec3(0,0,1));
+  }
+  right.normalize();
+  //I am using an ngl::Mat4 matrix for now because there is a problem with the euler
+  //method for ngl::Mat3, so I am setting the rotation for r4 with r4.euler, then
+  //using the copy constructor to transfer that rotation to r3
+
+  ngl::Mat4 r4;
+  ngl::Mat3 r3;
   std::string treeString = generateTreeString(_generation);
-  m_vertices = {_startPos};
-  m_indices = {};
+  std::cout<<'\n'<<treeString<<'\n';
+
   ngl::Vec3 lastVertex = _startPos;
   GLshort lastIndex = 0;
+  m_vertices = {_startPos};
+  m_indices = {};
+
+  std::vector<ngl::Vec3> savedVert = {};
+  std::vector<GLshort> savedInd = {};
+  std::vector<ngl::Vec3> savedDir = {};
+  std::vector<ngl::Vec3> savedRight = {};
+
   for(auto c : treeString)
   {
     switch(c)
     {
-      //Move forward
+      //move forward
       case 'F':
         m_indices.push_back(lastIndex);
-        lastVertex += m_stepSize*direction;
-        lastIndex += 1;
+        lastVertex += m_stepSize*dir;
         m_vertices.push_back(lastVertex);
+        lastIndex = GLshort(m_vertices.size()-1);
         m_indices.push_back(lastIndex);
       break;
 
-      //Roll clockwise
+      //start branch
+      case '[':
+        savedInd.push_back(lastIndex);
+        savedVert.push_back(lastVertex);
+        savedDir.push_back(dir);
+        savedRight.push_back(right);
+      break;
+
+      //end branch
+      case ']':
+        lastIndex = savedInd.back();
+        savedInd.pop_back();
+        lastVertex = savedVert.back();
+        savedVert.pop_back();
+        dir = savedDir.back();
+        savedDir.pop_back();
+        right = savedRight.back();
+        savedRight.pop_back();
+      break;
+
+      //roll clockwise
       case '/':
-        rotate.euler(m_angle, up.m_x, up.m_y, up.m_z);
-        direction = rotate*direction;
-        right = rotate*right;
+        r4.euler(m_angle, dir.m_x, dir.m_y, dir.m_z);
+        r3 = r4;
+        right = r3*right;
       break;
 
-      //Roll anticlockwise
+      //roll anticlockwise
       case '\\':
-        rotate.euler(-m_angle, up.m_x, up.m_y, up.m_z);
-        direction = rotate*direction;
-        right = rotate*right;
+        r4.euler(-m_angle, dir.m_x, dir.m_y, dir.m_z);
+        r3 = r4;
+        right = r3*right;
       break;
 
-      //Pitch up
+      //pitch up
       case '&':
-        rotate.euler(-m_angle, right.m_x, right.m_y, right.m_z);
-        std::cout<<'\n'<<rotate.m_00<<' '<<rotate.m_01<<' '<<rotate.m_02;
-        std::cout<<'\n'<<rotate.m_10<<' '<<rotate.m_11<<' '<<rotate.m_12;
-        std::cout<<'\n'<<rotate.m_20<<' '<<rotate.m_21<<' '<<rotate.m_22<<'\n';
-        direction = rotate*direction;
-        std::cout<<'\n'<<direction.m_x<<' '<<direction.m_y<<' '<<direction.m_z<<'\n';
+        r4.euler(m_angle, right.m_x, right.m_y, right.m_z);
+        r3 = r4;
+        dir = r3*dir;
+      break;
+
+      //pitch down
+      case '^':
+        r4.euler(-m_angle, right.m_x, right.m_y, right.m_z);
+        r3 = r4;
+        dir = r3*dir;
       break;
 
       default:
       break;
     }
   }
-  std::cout<<"DONE \n\n";
-
 }

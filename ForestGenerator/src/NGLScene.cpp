@@ -98,9 +98,9 @@ void NGLScene::initializeGL()
 void NGLScene::buildVAO()
 {
   std::string axiom = "FFFA";
-  std::vector<std::string> rules = {"A=![B]////[B]////B", "B=&&FFFA"};
+  std::vector<std::string> rules = {"A=![B]////[B]////B", "B=&FFFA"};
   LSystem L(axiom,rules);
-  L.createGeometry(2, ngl::Vec3(0,0,0));
+  L.createGeometry(4, ngl::Vec3(0,0,0));
   //std::cout << L.generateTreeString(2);
 
   /*std::vector<ngl::Vec3> vertices;
