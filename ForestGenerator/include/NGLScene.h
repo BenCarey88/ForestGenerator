@@ -50,6 +50,17 @@ public:
 
 public slots:
 
+  //SLOTS
+  void generate();
+  void setGeneration(int _generation);
+  void setAxiom(QString _axiom);
+  void setRule1(QString _rule);
+  void setRule2(QString _rule);
+  void setRule3(QString _rule);
+  void setRule4(QString _rule);
+  void setRule5(QString _rule);
+  void setRule6(QString _rule);
+  void setRule7(QString _rule);
 
 protected:
 
@@ -76,6 +87,12 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   std::unique_ptr<ngl::AbstractVAO> m_vao;
 
+  std::string m_axiom = "FFFA";
+  std::string m_ruleArray [7] = {"A=\"[B]////[B]////B","B=&FFFA"};
+  std::vector<std::string> m_rules = {"A=\"[B]////[B]////B","B=&FFFA"};
+  int m_generation = 4;
+
+  LSystem m_LSystem = LSystem(m_axiom, m_rules);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief our camera

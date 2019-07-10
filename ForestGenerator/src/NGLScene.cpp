@@ -3,6 +3,8 @@
 /// @brief implementation file for NGLScene class
 //----------------------------------------------------------------------------------------------------------------------
 
+#include <vector>
+
 #include <QMouseEvent>
 #include <QGuiApplication>
 
@@ -97,26 +99,8 @@ void NGLScene::initializeGL()
 
 void NGLScene::buildVAO()
 {
-  std::string axiom = "FFFA";
-  std::vector<std::string> rules = {"A=![B]////[B]////B", "B=&FFFA"};
-  LSystem L(axiom,rules);
-  L.createGeometry(4, ngl::Vec3(0,0,0));
-  //std::cout << L.generateTreeString(2);
 
-  /*std::vector<ngl::Vec3> vertices;
-  int size = 10;
-  for(int i=0; i<size*size; ++i)
-  {
-    ngl::Vec3 pos(i%size,i/size,0);
-    vertices.push_back(pos);
-  }
-
-  // create list of indices
-  std::vector<GLshort> indices;
-  for(int i = 0; i< size*size; ++i)
-  {
-    indices.push_back(GLshort(i));
-  }*/
+  m_LSystem.createGeometry(m_generation, ngl::Vec3(0,0,0));
 
   // create a vao using GL_LINES
   m_vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
@@ -125,14 +109,14 @@ void NGLScene::buildVAO()
   // set our data for the VAO (when I've sorted this out later, I'll
   //create the VAO in a different class)
   m_vao->setData(ngl::SimpleIndexVAO::VertexData(
-                                                  sizeof(ngl::Vec3)*L.m_vertices.size(),
-                                                  L.m_vertices[0].m_x,
-                                                  uint(L.m_indices.size()),
-                                                  &L.m_indices[0],
-                                                  GL_UNSIGNED_SHORT));
+                                        sizeof(ngl::Vec3)*m_LSystem.m_vertices.size(),
+                                        m_LSystem.m_vertices[0].m_x,
+                                        uint(m_LSystem.m_indices.size()),
+                                        &m_LSystem.m_indices[0],
+                                        GL_UNSIGNED_SHORT));
   // data is 12 bytes apart (=sizeof(Vec3))
   m_vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  m_vao->setNumIndices(size_t(L.m_indices.size()));
+  m_vao->setNumIndices(size_t(m_LSystem.m_indices.size()));
 
   // now unbind
   m_vao->unbind();
@@ -285,3 +269,57 @@ void NGLScene::wheelEvent( QWheelEvent* _event )
 //------------------------------------------------------------------------------------------------------------------------
 ///PUBLIC SLOTS
 //------------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::generate()
+{
+  m_rules = {};
+  for(auto rule : m_ruleArray)
+  {
+    if(rule!="")
+    {
+      m_rules.push_back(rule);
+    }
+  }
+  m_LSystem = LSystem(m_axiom,m_rules);
+  m_camera.initialise();
+  update();
+}
+
+void NGLScene::setGeneration(int _generation)
+{
+  m_generation = _generation;
+}
+
+void NGLScene::setAxiom(QString _axiom)
+{
+  m_axiom = _axiom.toStdString();
+}
+
+void NGLScene::setRule1(QString _rule)
+{
+  m_ruleArray[0]=_rule.toStdString();
+}
+void NGLScene::setRule2(QString _rule)
+{
+  m_ruleArray[1]=_rule.toStdString();
+}
+void NGLScene::setRule3(QString _rule)
+{
+  m_ruleArray[2]=_rule.toStdString();
+}
+void NGLScene::setRule4(QString _rule)
+{
+  m_ruleArray[3]=_rule.toStdString();
+}
+void NGLScene::setRule5(QString _rule)
+{
+  m_ruleArray[4]=_rule.toStdString();
+}
+void NGLScene::setRule6(QString _rule)
+{
+  m_ruleArray[5]=_rule.toStdString();
+}
+void NGLScene::setRule7(QString _rule)
+{
+  m_ruleArray[6]=_rule.toStdString();
+}

@@ -68,12 +68,15 @@ std::string LSystem::generateTreeString(int _generation)
   std::string treeString = m_axiom;
   int numberOfRules = int(m_rules.size());
 
-  for(int i=0; i<_generation; i++)
+  if(numberOfRules>0)
   {
-    size_t ruleNumber = size_t(i % numberOfRules);
-    std::string lhs = m_rulesBrokenDown[ruleNumber][0];
-    std::string rhs = m_rulesBrokenDown[ruleNumber][1];
-    boost::replace_all(treeString, lhs, rhs);
+      for(int i=0; i<_generation; i++)
+    {
+      size_t ruleNumber = size_t(i % numberOfRules);
+      std::string lhs = m_rulesBrokenDown[ruleNumber][0];
+      std::string rhs = m_rulesBrokenDown[ruleNumber][1];
+      boost::replace_all(treeString, lhs, rhs);
+    }
   }
   return treeString;
 }
@@ -94,17 +97,21 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
   ngl::Mat4 r4;
   ngl::Mat3 r3;
   std::string treeString = generateTreeString(_generation);
-  std::cout<<'\n'<<treeString<<'\n';
 
   ngl::Vec3 lastVertex = _startPos;
   GLshort lastIndex = 0;
-  m_vertices = {_startPos};
-  m_indices = {};
+  float stepSize = m_stepSize;
+  float angle = m_angle;
 
   std::vector<ngl::Vec3> savedVert = {};
   std::vector<GLshort> savedInd = {};
   std::vector<ngl::Vec3> savedDir = {};
   std::vector<ngl::Vec3> savedRight = {};
+  std::vector<float> savedStep = {};
+  std::vector<float> savedAngle = {};
+
+  m_vertices = {_startPos};
+  m_indices = {};
 
   for(auto c : treeString)
   {
@@ -113,7 +120,7 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
       //move forward
       case 'F':
         m_indices.push_back(lastIndex);
-        lastVertex += m_stepSize*dir;
+        lastVertex += stepSize*dir;
         m_vertices.push_back(lastVertex);
         lastIndex = GLshort(m_vertices.size()-1);
         m_indices.push_back(lastIndex);
@@ -125,46 +132,61 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
         savedVert.push_back(lastVertex);
         savedDir.push_back(dir);
         savedRight.push_back(right);
+        savedStep.push_back(stepSize);
+        savedAngle.push_back(angle);
       break;
 
       //end branch
       case ']':
         lastIndex = savedInd.back();
-        savedInd.pop_back();
         lastVertex = savedVert.back();
-        savedVert.pop_back();
         dir = savedDir.back();
-        savedDir.pop_back();
         right = savedRight.back();
+        stepSize = savedStep.back();
+        angle = savedAngle.back();
+
+        savedInd.pop_back();
+        savedVert.pop_back();
+        savedDir.pop_back();
         savedRight.pop_back();
+        savedStep.pop_back();
+        savedAngle.pop_back();
       break;
 
       //roll clockwise
       case '/':
-        r4.euler(m_angle, dir.m_x, dir.m_y, dir.m_z);
+        r4.euler(angle, dir.m_x, dir.m_y, dir.m_z);
         r3 = r4;
         right = r3*right;
       break;
 
       //roll anticlockwise
       case '\\':
-        r4.euler(-m_angle, dir.m_x, dir.m_y, dir.m_z);
+        r4.euler(-angle, dir.m_x, dir.m_y, dir.m_z);
         r3 = r4;
         right = r3*right;
       break;
 
       //pitch up
       case '&':
-        r4.euler(m_angle, right.m_x, right.m_y, right.m_z);
+        r4.euler(angle, right.m_x, right.m_y, right.m_z);
         r3 = r4;
         dir = r3*dir;
       break;
 
       //pitch down
       case '^':
-        r4.euler(-m_angle, right.m_x, right.m_y, right.m_z);
+        r4.euler(-angle, right.m_x, right.m_y, right.m_z);
         r3 = r4;
         dir = r3*dir;
+      break;
+
+      case '\"':
+        stepSize *= m_stepScale;
+      break;
+
+      case ';':
+        angle *= m_angleScale;
       break;
 
       default:
