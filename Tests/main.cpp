@@ -66,12 +66,13 @@ TEST(LSystem, createGeometry)
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
   LSystem L(axiom,rules);
   L.createGeometry(0, ngl::Vec3(0,0,0));
+  L.m_stepSize = 2;
 
   EXPECT_EQ(L.m_vertices.size(),4);
   EXPECT_EQ(L.m_vertices[0],ngl::Vec3(0,0,0));
-  EXPECT_EQ(L.m_vertices[1],ngl::Vec3(0,1,0));
-  EXPECT_EQ(L.m_vertices[2],ngl::Vec3(0,2,0));
-  EXPECT_EQ(L.m_vertices[3],ngl::Vec3(0,3,0));
+  EXPECT_EQ(L.m_vertices[1],ngl::Vec3(0,2,0));
+  EXPECT_EQ(L.m_vertices[2],ngl::Vec3(0,4,0));
+  EXPECT_EQ(L.m_vertices[3],ngl::Vec3(0,6,0));
 
   EXPECT_EQ(L.m_indices.size(),6);
   EXPECT_EQ(L.m_indices[0],0);

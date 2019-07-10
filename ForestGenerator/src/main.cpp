@@ -6,35 +6,9 @@
 
 #include <QApplication>
 #include "MainWindow.h"
-#include <ngl/Mat3.h>
-#include <ngl/Mat4.h>
 
 int main(int argc, char **argv)
 {
-  ngl::Mat4 m4(0,1,2,3,
-               4,5,6,7,
-               8,9,10,11,
-               12,13,14,15);
-  ngl::Mat3 m3 = m4;
-  ngl::Vec3 v(1,2,3);
-  ngl::Vec3 u;
-  u = m3*v;
-
-  std::cout << m4.m_00 << ',' << m4.m_01 << ',' << m4.m_02 << ',' << m4.m_03 << '\n';
-  std::cout << m4.m_10 << ',' << m4.m_11 << ',' << m4.m_12 << ',' << m4.m_13 << '\n';
-  std::cout << m4.m_20 << ',' << m4.m_21 << ',' << m4.m_22 << ',' << m4.m_23 << '\n';
-  std::cout << m4.m_30 << ',' << m4.m_31 << ',' << m4.m_32 << ',' << m4.m_33 << '\n';
-
-  std::cout<<'\n';
-
-  std::cout << m3.m_00 << ',' << m3.m_01 << ',' << m3.m_02 << '\n';
-  std::cout << m3.m_10 << ',' << m3.m_11 << ',' << m3.m_12 << '\n';
-  std::cout << m3.m_20 << ',' << m3.m_21 << ',' << m3.m_22 << '\n';
-
-  std::cout<<'\n';
-
-  std::cout<< u[0] << ',' << u[1] << ',' << u[2] << '\n';
-
   // create an OpenGL format specifier
   QSurfaceFormat format;
   // set the number of samples for multisampling
