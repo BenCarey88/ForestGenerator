@@ -8,12 +8,16 @@
 #include <boost/algorithm/string.hpp>
 #include <ngl/Mat3.h>
 #include <ngl/Mat4.h>
-#include <ngl/VAOFactory.h>
-#include <ngl/SimpleIndexVAO.h>
 #include "LSystem.h"
 
 LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules) :
   m_axiom(_axiom), m_rules(_rules)
+{
+  breakDownRules();
+  detectBranching();
+}
+
+void LSystem::update()
 {
   breakDownRules();
   detectBranching();
@@ -93,7 +97,6 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
   //I am using an ngl::Mat4 matrix for now because there is a problem with the euler
   //method for ngl::Mat3, so I am setting the rotation for r4 with r4.euler, then
   //using the copy constructor to transfer that rotation to r3
-
   ngl::Mat4 r4;
   ngl::Mat3 r3;
   std::string treeString = generateTreeString(_generation);
@@ -181,10 +184,12 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
         dir = r3*dir;
       break;
 
+      //scale step size
       case '\"':
         stepSize *= m_stepScale;
       break;
 
+      //scale angle
       case ';':
         angle *= m_angleScale;
       break;

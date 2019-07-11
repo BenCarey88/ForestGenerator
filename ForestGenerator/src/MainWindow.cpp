@@ -16,7 +16,13 @@ MainWindow::MainWindow(QWidget *parent) :
   m_ui->s_mainWindowGridLayout->addWidget(m_gl,0,0,2,1);
 
   connect(m_ui->m_generate,SIGNAL(clicked()),m_gl,SLOT(generate()));
+
+  connect(m_ui->m_stepSize,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepSize(double)));
+  connect(m_ui->m_stepScale,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepScale(double)));
+  connect(m_ui->m_angle,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngle(double)));
+  connect(m_ui->m_angleScale,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngleScale(double)));
   connect(m_ui->m_generation,SIGNAL(valueChanged(int)),m_gl,SLOT(setGeneration(int)));
+
   connect(m_ui->m_axiom,SIGNAL(textChanged(QString)),m_gl,SLOT(setAxiom(QString)));
   connect(m_ui->m_rule1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule1(QString)));
   connect(m_ui->m_rule2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule2(QString)));

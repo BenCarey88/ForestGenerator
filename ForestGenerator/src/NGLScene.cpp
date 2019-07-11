@@ -8,15 +8,11 @@
 #include <QMouseEvent>
 #include <QGuiApplication>
 
-#include <ngl/Transformation.h>
 #include <ngl/NGLInit.h>
-#include <ngl/VAOPrimitives.h>
 #include <ngl/ShaderLib.h>
 #include <ngl/VAOFactory.h>
 #include <ngl/SimpleIndexVAO.h>
-#include <array>
 #include <ngl/Random.h>
-#include <ngl/Quaternion.h>
 
 #include "NGLScene.h"
 #include "Camera.h"
@@ -31,6 +27,8 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   setFocus();
   // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
   this->resize(_parent->size());
+
+  m_LSystem.createGeometry(m_generation, ngl::Vec3(0,0,0));
 }
 
 NGLScene::~NGLScene()
@@ -64,8 +62,8 @@ void NGLScene::initializeGL()
   // enable depth testing for drawing
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_MULTISAMPLE);
-  // Now we will create a basic Camera from the graphics library using our camera class
-  m_view=ngl::lookAt(m_camera.m_from, m_camera.m_to, m_camera.m_up);
+  // Now we will create a basic camera from the graphics library
+  m_view=ngl::lookAt(m_from, m_to, m_up);
   // set the shape using FOV 45 Aspect Ratio based on Width and Height
   // The final two are near and far clipping planes
   m_project=ngl::perspective(fieldOfView ,720.0f/576.0f,nearFrame,farFrame);
@@ -99,9 +97,6 @@ void NGLScene::initializeGL()
 
 void NGLScene::buildVAO()
 {
-
-  m_LSystem.createGeometry(m_generation, ngl::Vec3(0,0,0));
-
   // create a vao using GL_LINES
   m_vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
   m_vao->bind();
@@ -137,32 +132,13 @@ void NGLScene::paintGL()
       glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   }
 
-  m_view = ngl::lookAt(m_camera.m_from, m_camera.m_to, m_camera.m_up);
-
   buildVAO();
-
-  ngl::Mat4 translate1;
-  ngl::Mat4 translate2;
-
-  ngl::Quaternion quatRotX;
-  ngl::Quaternion quatRotY;
-  quatRotX.fromAxisAngle(m_camera.m_right,-m_win.spinXFace);
-  quatRotY.fromAxisAngle({0,0,1},-m_win.spinYFace);
-  ngl::Mat4 rotX = quatRotX.toMat4();
-  ngl::Mat4 rotY = quatRotY.toMat4();
-  m_camera.update();
-  m_camera.m_up = m_camera.m_trueUp;
-  m_camera.m_from -= m_camera.m_to;
-  m_camera.m_from = rotX*rotY*m_camera.m_from;
-  m_camera.m_up = rotX*rotY*m_camera.m_up;
-  m_camera.m_from += m_camera.m_to;
-  m_camera.update();
 
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)["ColourShader"]->use();
 
-
-  ngl::Mat4 MVP= m_project*m_view*translate2*m_mouseGlobalTX*translate1;
+  m_view=ngl::lookAt(m_from, m_to, m_up);
+  ngl::Mat4 MVP= m_project*m_view*m_mouseGlobalTX;
   shader->setUniform("MVP",MVP);
 
   m_vao->bind();
@@ -184,14 +160,20 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
   {
     int diffx = _event->x() - m_win.origX;
     int diffy = _event->y() - m_win.origY;
-    m_win.spinXFace = static_cast<int>( 0.2f * diffy );
-    m_win.spinYFace = static_cast<int>( 0.2f * diffx );
+    m_win.spinXFace = static_cast<int>( 0.4f * diffy );
+    m_win.spinYFace = static_cast<int>( 0.4f * diffx );
     m_win.origX = _event->x();
     m_win.origY = _event->y();
 
+    ngl::Mat4 rotX;
+    ngl::Mat4 rotY;
+    rotX.rotateX(m_win.spinXFace);
+    m_yRotAxis = rotX*m_yRotAxis;
+    rotY.euler(m_win.spinYFace, m_yRotAxis.m_x, m_yRotAxis.m_y, m_yRotAxis.m_z);
+    m_mouseGlobalTX = rotY*rotX*m_mouseGlobalTX;
     update();
-
   }
+
   // right mouse translate code
   else if ( m_win.translate && _event->buttons() == Qt::MidButton )
   {
@@ -200,12 +182,9 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
     m_win.origXPos = _event->x();
     m_win.origYPos = _event->y();
 
-    m_camera.update();
-
-    m_camera.m_from -= INCREMENT * diffX * m_camera.m_right;
-    m_camera.m_to -= INCREMENT * diffX * m_camera.m_right;
-    m_camera.m_from += INCREMENT * diffY * m_camera.m_trueUp;
-    m_camera.m_to += INCREMENT * diffY * m_camera.m_trueUp;
+    ngl::Mat4 trans;
+    trans.translate(INCREMENT*diffX,-INCREMENT*diffY,0);
+    m_mouseGlobalTX = trans*m_mouseGlobalTX;
 
     update();
   }
@@ -257,11 +236,11 @@ void NGLScene::wheelEvent( QWheelEvent* _event )
   // check the diff of the wheel position (0 means no change)
   if ( _event->delta() > 0 )
   {
-    m_camera.m_from += ZOOM*(m_camera.m_to-m_camera.m_from);
+    m_from += ZOOM*(m_to-m_from);
   }
   else if ( _event->delta() < 0 )
   {
-    m_camera.m_from -= ZOOM*(m_camera.m_to-m_camera.m_from);
+    m_from -= ZOOM*(m_to-m_from);
   }
   update();
 }
@@ -280,14 +259,33 @@ void NGLScene::generate()
       m_rules.push_back(rule);
     }
   }
-  m_LSystem = LSystem(m_axiom,m_rules);
-  m_camera.initialise();
+  m_LSystem.m_axiom = m_axiom;
+  m_LSystem.m_rules = m_rules;
+  m_LSystem.update();
+  m_LSystem.createGeometry(m_generation, ngl::Vec3(0,0,0));
+  //buildVAO();
   update();
 }
 
 void NGLScene::setGeneration(int _generation)
 {
   m_generation = _generation;
+}
+void NGLScene::setStepSize(double _stepSize)
+{
+  m_LSystem.m_stepSize = float(_stepSize);
+}
+void NGLScene::setStepScale(double _stepScale)
+{
+  m_LSystem.m_stepScale = float(_stepScale);
+}
+void NGLScene::setAngle(double _angle)
+{
+  m_LSystem.m_angle = float(_angle);
+}
+void NGLScene::setAngleScale(double _angleScale)
+{
+  m_LSystem.m_angleScale = float(_angleScale);
 }
 
 void NGLScene::setAxiom(QString _axiom)

@@ -8,11 +8,8 @@
 #ifndef LSYSTEM_H_
 #define LSYSTEM_H_
 
-#include <iostream>
 #include <vector>
 #include <ngl/Vec3.h>
-#include <ngl/AbstractVAO.h>
-#include <ngl/Quaternion.h>
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class LSystem
@@ -82,10 +79,6 @@ public:
   /// @brief index list to tell ngl how to draw the order to draw the L-system vertices in
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<GLshort> m_indices;
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief the VAO to store the L-system geometry
-  //--------------------------------------------------------------------------------------------------------------------
-  std::unique_ptr<ngl::AbstractVAO> m_vao;
 
 
   //PUBLIC MEMBER FUNCTIONS
@@ -97,6 +90,10 @@ public:
   /// @brief detects branches introduced by rules and uses them to fill m_branches
   //--------------------------------------------------------------------------------------------------------------------
   void detectBranching();
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief redoes the above 2 functions to update the system if the rules and axioms change
+  //--------------------------------------------------------------------------------------------------------------------
+  void update();
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief returns a string representation of the tree produced by the L-System after a given number of generations
   /// @param [in] _generation the number of iterations of the rules to implement

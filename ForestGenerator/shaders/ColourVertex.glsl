@@ -2,8 +2,6 @@
 
 /// @brief the vertex passed in
 layout(location =0)in vec3 inVert;
-/// @brief the colour passed in
-layout(location =1)in vec3 inColour;
 
 uniform mat4 MVP;
 out vec3 vertColour;
