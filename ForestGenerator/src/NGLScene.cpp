@@ -99,21 +99,27 @@ void NGLScene::buildVAO()
 {
   // create a vao using GL_LINES
   m_vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
-  m_vao->bind();
+  switch(m_tabNum)
+  {
+    case 0:
+      m_vao->bind();
+      // set our data for the VAO
+      m_vao->setData(ngl::SimpleIndexVAO::VertexData(
+                                            sizeof(ngl::Vec3)*m_LSystem.m_vertices.size(),
+                                            m_LSystem.m_vertices[0].m_x,
+                                            uint(m_LSystem.m_indices.size()),
+                                            &m_LSystem.m_indices[0],
+                                            GL_UNSIGNED_SHORT));
+      // data is 12 bytes apart (=sizeof(Vec3))
+      m_vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
+      m_vao->setNumIndices(m_LSystem.m_indices.size());
+      // now unbind
+      m_vao->unbind();
+    break;
 
-  // set our data for the VAO
-  m_vao->setData(ngl::SimpleIndexVAO::VertexData(
-                                        sizeof(ngl::Vec3)*m_LSystem.m_vertices.size(),
-                                        m_LSystem.m_vertices[0].m_x,
-                                        uint(m_LSystem.m_indices.size()),
-                                        &m_LSystem.m_indices[0],
-                                        GL_UNSIGNED_SHORT));
-  // data is 12 bytes apart (=sizeof(Vec3))
-  m_vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  m_vao->setNumIndices(m_LSystem.m_indices.size());
-
-  // now unbind
-  m_vao->unbind();
+    default:
+    break;
+  }
 }
 
 
@@ -319,4 +325,10 @@ void NGLScene::setRule6(QString _rule)
 void NGLScene::setRule7(QString _rule)
 {
   m_ruleArray[6]=_rule.toStdString();
+}
+
+void NGLScene::changeTab(int _tabNum)
+{
+  m_tabNum = _tabNum;
+  update();
 }

@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_rule5,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule5(QString)));
   connect(m_ui->m_rule6,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule6(QString)));
   connect(m_ui->m_rule7,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule7(QString)));
+
+  connect(m_ui->m_tab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeTab(int)));
 }
 
 MainWindow::~MainWindow()
