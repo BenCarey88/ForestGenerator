@@ -15,22 +15,37 @@ MainWindow::MainWindow(QWidget *parent) :
   m_gl=new  NGLScene(this);
   m_ui->s_mainWindowGridLayout->addWidget(m_gl,0,0,2,1);
 
-  connect(m_ui->m_generate,SIGNAL(clicked()),m_gl,SLOT(generate()));
+  connect(m_ui->m_generate_1,SIGNAL(clicked()),m_gl,SLOT(generate()));
+  connect(m_ui->m_resetCamera_1,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
+  connect(m_ui->m_stepSize_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepSize(double)));
+  connect(m_ui->m_stepScale_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepScale(double)));
+  connect(m_ui->m_angle_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngle(double)));
+  connect(m_ui->m_angleScale_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngleScale(double)));
+  connect(m_ui->m_generation_1,SIGNAL(valueChanged(int)),m_gl,SLOT(setGeneration(int)));
+  connect(m_ui->m_axiom_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setAxiom(QString)));
+  connect(m_ui->m_rule1_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule1(QString)));
+  connect(m_ui->m_rule2_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule2(QString)));
+  connect(m_ui->m_rule3_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule3(QString)));
+  connect(m_ui->m_rule4_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule4(QString)));
+  connect(m_ui->m_rule5_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule5(QString)));
+  connect(m_ui->m_rule6_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule6(QString)));
+  connect(m_ui->m_rule7_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule7(QString)));
 
-  connect(m_ui->m_stepSize,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepSize(double)));
-  connect(m_ui->m_stepScale,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepScale(double)));
-  connect(m_ui->m_angle,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngle(double)));
-  connect(m_ui->m_angleScale,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngleScale(double)));
-  connect(m_ui->m_generation,SIGNAL(valueChanged(int)),m_gl,SLOT(setGeneration(int)));
-
-  connect(m_ui->m_axiom,SIGNAL(textChanged(QString)),m_gl,SLOT(setAxiom(QString)));
-  connect(m_ui->m_rule1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule1(QString)));
-  connect(m_ui->m_rule2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule2(QString)));
-  connect(m_ui->m_rule3,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule3(QString)));
-  connect(m_ui->m_rule4,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule4(QString)));
-  connect(m_ui->m_rule5,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule5(QString)));
-  connect(m_ui->m_rule6,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule6(QString)));
-  connect(m_ui->m_rule7,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule7(QString)));
+  connect(m_ui->m_generate_2,SIGNAL(clicked()),m_gl,SLOT(generate()));
+  connect(m_ui->m_resetCamera_2,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
+  connect(m_ui->m_stepSize_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepSize(double)));
+  connect(m_ui->m_stepScale_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepScale(double)));
+  connect(m_ui->m_angle_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngle(double)));
+  connect(m_ui->m_angleScale_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngleScale(double)));
+  connect(m_ui->m_generation_2,SIGNAL(valueChanged(int)),m_gl,SLOT(setGeneration(int)));
+  connect(m_ui->m_axiom_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setAxiom(QString)));
+  connect(m_ui->m_rule1_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule1(QString)));
+  connect(m_ui->m_rule2_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule2(QString)));
+  connect(m_ui->m_rule3_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule3(QString)));
+  connect(m_ui->m_rule4_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule4(QString)));
+  connect(m_ui->m_rule5_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule5(QString)));
+  connect(m_ui->m_rule6_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule6(QString)));
+  connect(m_ui->m_rule7_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule7(QString)));
 
   connect(m_ui->m_tab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeTab(int)));
 }

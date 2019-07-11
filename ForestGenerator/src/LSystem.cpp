@@ -13,6 +13,10 @@
 LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules) :
   m_axiom(_axiom), m_rules(_rules)
 {
+  for(size_t i=0; i<_rules.size() ; i++)
+  {
+    m_ruleArray.at(i)=_rules[i];
+  }
   breakDownRules();
   detectBranching();
 }
