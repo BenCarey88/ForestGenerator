@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <regex>
 #include <random>
+#include <stdexcept>
+#include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <ngl/Mat3.h>
 #include <ngl/Mat4.h>
@@ -91,7 +93,7 @@ std::string LSystem::generateTreeString(int _generation)
 }
 
 //I think it's gonna make sense to remove _startPos and _orientation from this
-//generate all L-systems from (0,0,0), pointing towards (0,1,0) then perform transfromations by adding
+//generate all L-systems from (0,0,0), pointing towards (0,1,0) then perform transformations by adding
 //them to the MVP matrix after
 void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _orientation)
 {
@@ -113,6 +115,9 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _or
   GLshort lastIndex = 0;
   float stepSize = m_stepSize;
   float angle = m_angle;
+  //paramVar will store the default value of each command, to be replaced by one
+  //parsed from brackets by parseBrackets() if necessary
+  float paramVar;
 
   std::vector<ngl::Vec3> savedVert = {};
   std::vector<GLshort> savedInd = {};
@@ -132,7 +137,9 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _or
       //move forward
       case 'F':
         m_indices.push_back(lastIndex);
-        lastVertex += stepSize*dir;
+        paramVar = stepSize;
+        parseBrackets(treeString, i, paramVar);
+        lastVertex += paramVar*dir;
         m_vertices.push_back(lastVertex);
         lastIndex = GLshort(m_vertices.size()-1);
         m_indices.push_back(lastIndex);
@@ -167,44 +174,96 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _or
 
       //roll clockwise
       case '/':
-        r4.euler(angle, dir.m_x, dir.m_y, dir.m_z);
+        paramVar = angle;
+        parseBrackets(treeString, i, paramVar);
+        r4.euler(paramVar, dir.m_x, dir.m_y, dir.m_z);
         r3 = r4;
         right = r3*right;
         break;
 
       //roll anticlockwise
       case '\\':
-        r4.euler(-angle, dir.m_x, dir.m_y, dir.m_z);
+        paramVar = angle;
+        parseBrackets(treeString, i, paramVar);
+        r4.euler(-paramVar, dir.m_x, dir.m_y, dir.m_z);
         r3 = r4;
         right = r3*right;
         break;
 
       //pitch up
       case '&':
-        r4.euler(angle, right.m_x, right.m_y, right.m_z);
+        paramVar = angle;
+        parseBrackets(treeString, i, paramVar);
+        r4.euler(paramVar, right.m_x, right.m_y, right.m_z);
         r3 = r4;
         dir = r3*dir;
         break;
 
       //pitch down
       case '^':
-        r4.euler(-angle, right.m_x, right.m_y, right.m_z);
+        paramVar = angle;
+        parseBrackets(treeString, i, paramVar);
+        r4.euler(-paramVar, right.m_x, right.m_y, right.m_z);
         r3 = r4;
         dir = r3*dir;
         break;
 
       //scale step size
       case '\"':
-        stepSize *= m_stepScale;
+        paramVar = m_stepScale;
+        parseBrackets(treeString, i, paramVar);
+        stepSize *= paramVar;
         break;
 
       //scale angle
       case ';':
-        angle *= m_angleScale;
+        paramVar = m_angleScale;
+        parseBrackets(treeString, i, paramVar);
+        angle *= paramVar;
         break;
 
       default:
         break;
+    }
+  }
+  std::cout<<treeString<<'\n';
+
+
+  if(m_parameterError)
+  {
+    std::cerr<<"NOTE: unable to parse one or more parameters"<<'\n';
+    m_parameterError = false;
+  }
+}
+
+void LSystem::parseBrackets(std::string _treeString, size_t &_i, float &_output)
+{
+  if(_treeString[_i+1]=='(')
+  {
+    size_t j=_i+2;
+    for( ; j<_treeString.size(); j++)
+    {
+      if(_treeString[j]==')')
+      {
+        break;
+      }
+    }
+    if(j!=_treeString.size() && j>_i+2)
+    {
+      try
+      {
+        std::string parameter = _treeString.substr(_i+2, j-_i-2);
+        _output = std::stof(parameter);
+      }
+      catch(std::invalid_argument)
+      {
+        m_parameterError = true;
+      }
+      catch(std::out_of_range)
+      {
+        m_parameterError = true;
+      }
+      _i=j;
     }
   }
 }

@@ -10,14 +10,14 @@
 
 int main(int argc, char **argv)
 {
-  std::default_random_engine generator;
+  /*std::default_random_engine generator;
   float seed = std::chrono::system_clock::now().time_since_epoch().count();
   generator.seed(7);
   std::uniform_real_distribution<double> distribution(0.0,1.0);
   for(int i=0; i<10; i++)
   {
     std::cout<<distribution(generator)<<'\n';
-  }
+  }*/
 
   // create an OpenGL format specifier
   QSurfaceFormat format;

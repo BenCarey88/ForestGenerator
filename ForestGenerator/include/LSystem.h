@@ -88,6 +88,11 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<GLshort> m_indices;
 
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief bool to tell if an error was thrown while parsing brackets when creating geometry
+  //--------------------------------------------------------------------------------------------------------------------
+  bool m_parameterError = false;
+
 
   //PUBLIC MEMBER FUNCTIONS
   //--------------------------------------------------------------------------------------------------------------------
@@ -112,7 +117,13 @@ public:
   /// @param [in] _generation the number of iterations of the rules to implement
   //--------------------------------------------------------------------------------------------------------------------
   void createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _orientation);
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief used by createGeometry to deal with parameters enclosed by brackets in the tree string
+  /// @param [in] _treeString the string
+  /// @param [in] _i the index of _treeString that createGeometry() has reached
+  /// @param [in] _output the variable that will be replaced by the parameter in the brackets if needed
+  //--------------------------------------------------------------------------------------------------------------------
+  void parseBrackets(std::string _treeString, size_t &_i, float &_output);
 };
 
 
