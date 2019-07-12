@@ -131,7 +131,7 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
         m_vertices.push_back(lastVertex);
         lastIndex = GLshort(m_vertices.size()-1);
         m_indices.push_back(lastIndex);
-      break;
+        break;
 
       //start branch
       case '[':
@@ -141,7 +141,7 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
         savedRight.push_back(right);
         savedStep.push_back(stepSize);
         savedAngle.push_back(angle);
-      break;
+        break;
 
       //end branch
       case ']':
@@ -158,48 +158,48 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
         savedRight.pop_back();
         savedStep.pop_back();
         savedAngle.pop_back();
-      break;
+        break;
 
       //roll clockwise
       case '/':
         r4.euler(angle, dir.m_x, dir.m_y, dir.m_z);
         r3 = r4;
         right = r3*right;
-      break;
+        break;
 
       //roll anticlockwise
       case '\\':
         r4.euler(-angle, dir.m_x, dir.m_y, dir.m_z);
         r3 = r4;
         right = r3*right;
-      break;
+        break;
 
       //pitch up
       case '&':
         r4.euler(angle, right.m_x, right.m_y, right.m_z);
         r3 = r4;
         dir = r3*dir;
-      break;
+        break;
 
       //pitch down
       case '^':
         r4.euler(-angle, right.m_x, right.m_y, right.m_z);
         r3 = r4;
         dir = r3*dir;
-      break;
+        break;
 
       //scale step size
       case '\"':
         stepSize *= m_stepScale;
-      break;
+        break;
 
       //scale angle
       case ';':
         angle *= m_angleScale;
-      break;
+        break;
 
       default:
-      break;
+        break;
     }
   }
 }

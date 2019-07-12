@@ -29,9 +29,9 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
     ngl::Mat4 rotX;
     ngl::Mat4 rotY;
     rotX.rotateX(m_win.spinXFace);
-    m_currentCamera.m_axis = rotX*m_currentCamera.m_axis;
-    rotY.euler(m_win.spinYFace, m_currentCamera.m_axis.m_x, m_currentCamera.m_axis.m_y, m_currentCamera.m_axis.m_z);
-    m_currentMouseTransform = rotY*rotX*m_currentMouseTransform;
+    m_currentCamera->m_axis = rotX*m_currentCamera->m_axis;
+    rotY.euler(m_win.spinYFace, m_currentCamera->m_axis.m_x, m_currentCamera->m_axis.m_y, m_currentCamera->m_axis.m_z);
+    *m_currentMouseTransform = rotY*rotX*(*m_currentMouseTransform);
     update();
   }
 
@@ -45,7 +45,7 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
 
     ngl::Mat4 trans;
     trans.translate(INCREMENT*diffX,-INCREMENT*diffY,0);
-    m_currentMouseTransform = trans*m_currentMouseTransform;
+    *m_currentMouseTransform = trans*(*m_currentMouseTransform);
 
     update();
   }
@@ -97,11 +97,11 @@ void NGLScene::wheelEvent( QWheelEvent* _event )
   // check the diff of the wheel position (0 means no change)
   if ( _event->delta() > 0 )
   {
-    m_currentCamera.m_from += ZOOM*(m_currentCamera.m_to-m_currentCamera.m_from);
+    m_currentCamera->m_from += ZOOM*(m_currentCamera->m_to-m_currentCamera->m_from);
   }
   else if ( _event->delta() < 0 )
   {
-    m_currentCamera.m_from -= ZOOM*(m_currentCamera.m_to-m_currentCamera.m_from);
+    m_currentCamera->m_from -= ZOOM*(m_currentCamera->m_to-m_currentCamera->m_from);
   }
   update();
 }

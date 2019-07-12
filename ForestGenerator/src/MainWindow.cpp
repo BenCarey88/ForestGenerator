@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
   m_gl=new  NGLScene(this);
   m_ui->s_mainWindowGridLayout->addWidget(m_gl,0,0,2,1);
 
+  connect(m_ui->m_superTab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeSuperTab(int)));
+  connect(m_ui->m_tab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeTab(int)));
+
   connect(m_ui->m_generate_1,SIGNAL(clicked()),m_gl,SLOT(generate()));
   connect(m_ui->m_resetCamera_1,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
   connect(m_ui->m_stepSize_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepSize(double)));
@@ -47,7 +50,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_rule6_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule6(QString)));
   connect(m_ui->m_rule7_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule7(QString)));
 
-  connect(m_ui->m_tab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeTab(int)));
 }
 
 MainWindow::~MainWindow()

@@ -7,7 +7,7 @@
 
 void NGLScene::initializeLSystems()
 {
-  m_LSystems.resize(m_numTabs);
+  m_LSystems.resize(m_numTreeTabs);
 
   //LSystem 0:
   std::string axiom0 = "FFFA";

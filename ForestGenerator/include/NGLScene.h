@@ -54,6 +54,17 @@ public slots:
 
   //SLOTS
   //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the current supertab number for the qtGUI
+  /// @param[in] superTabNum, the int passed from m_SuperTab in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void changeSuperTab(int _superTabNum);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the current L-System tab number for the qtGUI
+  /// @param[in] treeTabNum, the int passed from m_tab in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void changeTab(int _treeTabNum);
+
+  //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to tell QT to create a new tree from the L-System based on the user inputs
   //----------------------------------------------------------------------------------------------------------------------
   void generate();
@@ -105,12 +116,6 @@ public slots:
   void setRule6(QString _rule);
   void setRule7(QString _rule);
 
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to set the current tab number for the qtGUI
-  /// @param[in] tabNum, the int passed from m_tab in ui
-  //----------------------------------------------------------------------------------------------------------------------
-  void changeTab(int _tabNum);
-
 protected:
 
   //PROTECTED MEMBER VARIABLES
@@ -121,7 +126,11 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the current tab number
   //----------------------------------------------------------------------------------------------------------------------
-  int m_tabNum = 0;
+  size_t m_superTabNum = 0;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief the current tab number
+  //----------------------------------------------------------------------------------------------------------------------
+  size_t m_treeTabNum = 0;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
   //----------------------------------------------------------------------------------------------------------------------
@@ -140,14 +149,15 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   std::unique_ptr<ngl::AbstractVAO> m_vao;
 
-  int m_numTabs = 5;
+  size_t m_numSuperTabs = 3;
+  size_t m_numTreeTabs = 2;
   std::vector<LSystem> m_LSystems;
-  std::vector<Camera> m_cameras;
-  std::vector<ngl::Mat4> m_mouseTransforms;
+  std::vector<std::vector<Camera>> m_cameras;
+  std::vector<std::vector<ngl::Mat4>> m_mouseTransforms;
 
-  LSystem m_currentLSystem;
-  Camera m_currentCamera;
-  ngl::Mat4 m_currentMouseTransform;
+  LSystem * m_currentLSystem;
+  Camera * m_currentCamera;
+  ngl::Mat4 * m_currentMouseTransform;
 
   //PROTECTED MEMBER FUNCTIONS
   //----------------------------------------------------------------------------------------------------------------------
@@ -164,9 +174,9 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   void resizeGL(int _w, int _h) override;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief build our VAO (depending on which tab we're in)
+  /// @brief build an openGL line VAO from lists of vertices and indices (used by paintGL)
   //----------------------------------------------------------------------------------------------------------------------
-  void buildVAO();
+  void buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices);
 
   void initializeLSystems();
 

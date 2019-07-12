@@ -25,15 +25,23 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
   this->resize(_parent->size());
 
-  m_cameras.resize(m_numTabs);
-  m_mouseTransforms.resize(m_numTabs);
+  m_cameras.resize(m_numSuperTabs);
+  m_cameras[0].resize(m_numTreeTabs);
+  m_cameras[1].resize(1);
+  m_cameras[2].resize(1);
+
+  m_mouseTransforms.resize(m_numSuperTabs);
+  m_mouseTransforms[0].resize(m_numTreeTabs);
+  m_mouseTransforms[1].resize(1);
+  m_mouseTransforms[2].resize(1);
+
   initializeLSystems();
 
-  m_currentCamera = m_cameras[0];
-  m_currentMouseTransform = m_mouseTransforms[0];
-  m_currentLSystem = m_LSystems[0];
+  m_currentCamera = &m_cameras[0][0];
+  m_currentMouseTransform = &m_mouseTransforms[0][0];
+  m_currentLSystem = &m_LSystems[0];
 
-  m_currentLSystem.createGeometry(m_currentLSystem.m_generation, ngl::Vec3(0,0,0));
+  m_currentLSystem->createGeometry(m_currentLSystem->m_generation, ngl::Vec3(0,0,0));
 }
 
 NGLScene::~NGLScene()
@@ -68,7 +76,7 @@ void NGLScene::initializeGL()
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_MULTISAMPLE);
   // Now we will create a basic camera from the graphics library using the currently selected camera
-  m_view=ngl::lookAt(m_currentCamera.m_from, m_currentCamera.m_to, m_currentCamera.m_up);
+  m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
   // set the shape using FOV 45 Aspect Ratio based on Width and Height
   // The final two are near and far clipping planes
   m_project=ngl::perspective(fieldOfView ,720.0f/576.0f,nearFrame,farFrame);
@@ -95,27 +103,26 @@ void NGLScene::initializeGL()
   shader->linkProgramObject(ColourShader);
   (*shader)[ColourShader]->use();
 
-  buildVAO();
   ngl::VAOFactory::listCreators();
 }
 
 
-void NGLScene::buildVAO()
+void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices)
 {
   // create a vao using GL_LINES
   m_vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
   m_vao->bind();
+
   // set our data for the VAO
   m_vao->setData(ngl::SimpleIndexVAO::VertexData(
-                                        sizeof(ngl::Vec3)*m_currentLSystem.m_vertices.size(),
-                                        m_currentLSystem.m_vertices[0].m_x,
-                                        uint(m_currentLSystem.m_indices.size()),
-                                        &m_currentLSystem.m_indices[0],
-                                        GL_UNSIGNED_SHORT));
+                                                  sizeof(ngl::Vec3)*_vertices.size(),
+                                                  _vertices[0].m_x,
+                                                  uint(_indices.size()),
+                                                  &_indices[0],
+                                                  GL_UNSIGNED_SHORT));
   // data is 12 bytes apart (=sizeof(Vec3))
   m_vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  m_vao->setNumIndices(m_currentLSystem.m_indices.size());
-  // now unbind
+  m_vao->setNumIndices(_indices.size());
   m_vao->unbind();
 }
 
@@ -127,16 +134,37 @@ void NGLScene::paintGL()
   glViewport(0,0,m_win.width,m_win.height);
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-  buildVAO();
-
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)["ColourShader"]->use();
 
-  m_view=ngl::lookAt(m_currentCamera.m_from, m_currentCamera.m_to, m_currentCamera.m_up);
-  ngl::Mat4 MVP= m_project*m_view*m_currentMouseTransform;
+  m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
+  ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform);
   shader->setUniform("MVP",MVP);
 
-  m_vao->bind();
-  m_vao->draw();
-  m_vao->unbind();
+  switch(m_superTabNum)
+  {
+    case 0:
+      buildLineVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices);
+      m_vao->bind();
+      m_vao->draw();
+      m_vao->unbind();
+      break;
+
+    case 1:
+      break;
+
+    case 2:
+      for(size_t i=0; i<m_numTreeTabs; i++)
+      {
+        m_LSystems[i].createGeometry(m_LSystems[i].m_generation,ngl::Vec3(16*int(i)-8,0,0));
+        buildLineVAO(m_LSystems[i].m_vertices, m_LSystems[i].m_indices);
+        m_vao->bind();
+        m_vao->draw();
+        m_vao->unbind();
+      }
+      break;
+
+    default:
+      break;
+  }
 }
