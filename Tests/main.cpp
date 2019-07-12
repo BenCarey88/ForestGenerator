@@ -65,7 +65,7 @@ TEST(LSystem, createGeometry)
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
   LSystem L(axiom,rules);
-  L.createGeometry(0, ngl::Vec3(0,0,0));
+  L.createGeometry(0, ngl::Vec3(0,0,0), ngl::Vec3(0,1,0));
   L.m_stepSize = 2;
 
   EXPECT_EQ(L.m_vertices.size(),4);

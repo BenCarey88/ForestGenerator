@@ -50,7 +50,7 @@ void NGLScene::generate()
   }
   m_currentLSystem->m_rules = currentRules;
   m_currentLSystem->update();
-  m_currentLSystem->createGeometry(m_currentLSystem->m_generation, ngl::Vec3(0,0,0));
+  m_currentLSystem->createGeometry(m_currentLSystem->m_generation, ngl::Vec3(0,0,0), ngl::Vec3(0,1,0));
   update();
 }
 

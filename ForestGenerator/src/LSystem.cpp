@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <regex>
+#include <random>
 #include <boost/algorithm/string.hpp>
 #include <ngl/Mat3.h>
 #include <ngl/Mat4.h>
@@ -89,9 +90,12 @@ std::string LSystem::generateTreeString(int _generation)
   return treeString;
 }
 
-void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3 _orientation)
+//I think it's gonna make sense to remove _startPos and _orientation from this
+//generate all L-systems from (0,0,0), pointing towards (0,1,0) then perform transfromations by adding
+//them to the MVP matrix after
+void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _orientation)
 {
-  ngl::Vec3 dir(0,1,0); // direction = _orientation;
+  ngl::Vec3 dir = _orientation;
   ngl::Vec3 right(0,1,0);
   if(dir != ngl::Vec3(0,0,1))
   {
@@ -120,8 +124,9 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos) //, ngl::Vec3
   m_vertices = {_startPos};
   m_indices = {};
 
-  for(auto c : treeString)
+  for(size_t i=0; i<treeString.size(); i++)
   {
+    char c = treeString[i];
     switch(c)
     {
       //move forward

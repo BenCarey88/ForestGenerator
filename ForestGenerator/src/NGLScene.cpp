@@ -41,7 +41,7 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_currentMouseTransform = &m_mouseTransforms[0][0];
   m_currentLSystem = &m_LSystems[0];
 
-  m_currentLSystem->createGeometry(m_currentLSystem->m_generation, ngl::Vec3(0,0,0));
+  m_currentLSystem->createGeometry(m_currentLSystem->m_generation, ngl::Vec3(0,0,0), ngl::Vec3(0,1,0));
 }
 
 NGLScene::~NGLScene()
@@ -156,7 +156,7 @@ void NGLScene::paintGL()
     case 2:
       for(size_t i=0; i<m_numTreeTabs; i++)
       {
-        m_LSystems[i].createGeometry(m_LSystems[i].m_generation,ngl::Vec3(16*int(i)-8,0,0));
+        m_LSystems[i].createGeometry(m_LSystems[i].m_generation,ngl::Vec3(16*int(i)-8,0,0),ngl::Vec3(0,1,0));
         buildLineVAO(m_LSystems[i].m_vertices, m_LSystems[i].m_indices);
         m_vao->bind();
         m_vao->draw();

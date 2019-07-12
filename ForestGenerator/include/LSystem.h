@@ -111,7 +111,7 @@ public:
   /// @brief fills m_VAO to represent the geometry of the L-System created after a given generation
   /// @param [in] _generation the number of iterations of the rules to implement
   //--------------------------------------------------------------------------------------------------------------------
-  void createGeometry(int _generation, ngl::Vec3 _startPos); //, ngl::Vec3 _orientation);
+  void createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _orientation);
 
 };
 
