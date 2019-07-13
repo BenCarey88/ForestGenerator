@@ -18,7 +18,6 @@ TEST(LSystem, UserCtor)
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
   LSystem L(axiom,rules);
   EXPECT_EQ(L.m_axiom,axiom);
-  EXPECT_EQ(L.m_rules,rules);
 }
 
 TEST(LSystem, breakDownRules)
@@ -27,11 +26,11 @@ TEST(LSystem, breakDownRules)
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
   LSystem L(axiom,rules);
 
-  EXPECT_EQ(L.m_rulesBrokenDown.size(),2);
-  EXPECT_EQ(L.m_rulesBrokenDown[0][0],"A");
-  EXPECT_EQ(L.m_rulesBrokenDown[0][1],"![B]////[B]////B");
-  EXPECT_EQ(L.m_rulesBrokenDown[1][0],"B");
-  EXPECT_EQ(L.m_rulesBrokenDown[1][1],"FFFA");
+  EXPECT_EQ(L.m_rules.size(),2);
+  EXPECT_EQ(L.m_rules[0].m_LHS,"A");
+  EXPECT_EQ(L.m_rules[0].m_RHS[0],"![B]////[B]////B");
+  EXPECT_EQ(L.m_rules[1].m_LHS,"B");
+  EXPECT_EQ(L.m_rules[1].m_RHS[0],"FFFA");
 
   EXPECT_EQ(L.m_nonTerminals,"[AB]+");
 }
@@ -54,10 +53,14 @@ TEST(LSystem, generateTreeString)
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
   LSystem L(axiom,rules);
-  EXPECT_EQ(L.generateTreeString(0),"FFFA");
-  EXPECT_EQ(L.generateTreeString(1),"FFF![B]////[B]////B");
-  EXPECT_EQ(L.generateTreeString(2),"FFF![FFFA]////[FFFA]////FFFA");
-  EXPECT_EQ(L.generateTreeString(3),"FFF![FFF![B]////[B]////B]////[FFF![B]////[B]////B]////FFF![B]////[B]////B");
+  L.m_generation=0;
+  EXPECT_EQ(L.generateTreeString(),"FFFA");
+  L.m_generation=1;
+  EXPECT_EQ(L.generateTreeString(),"FFF![B]////[B]////B");
+  L.m_generation=2;
+  EXPECT_EQ(L.generateTreeString(),"FFF![FFFA]////[FFFA]////FFFA");
+  L.m_generation=3;
+  EXPECT_EQ(L.generateTreeString(),"FFF![FFF![B]////[B]////B]////[FFF![B]////[B]////B]////FFF![B]////[B]////B");
 }
 
 TEST(LSystem, createGeometry)
@@ -65,7 +68,8 @@ TEST(LSystem, createGeometry)
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
   LSystem L(axiom,rules);
-  L.createGeometry(0, ngl::Vec3(0,0,0), ngl::Vec3(0,1,0));
+  L.m_generation=0;
+  L.createGeometry();
   L.m_stepSize = 2;
 
   EXPECT_EQ(L.m_vertices.size(),4);

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <regex>
 #include <random>
+#include <chrono>
 #include <stdexcept>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
@@ -13,105 +14,193 @@
 #include <ngl/Mat4.h>
 #include "LSystem.h"
 
+//----------------------------------------------------------------------------------------------------------------------
+
 LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules) :
-  m_axiom(_axiom), m_rules(_rules)
+  m_axiom(_axiom)
 {
   for(size_t i=0; i<_rules.size() ; i++)
   {
     m_ruleArray.at(i)=_rules[i];
   }
-  breakDownRules();
+  breakDownRules(_rules);
   detectBranching();
+  createGeometry();
 }
 
-void LSystem::update()
-{
-  breakDownRules();
-  detectBranching();
-}
+//----------------------------------------------------------------------------------------------------------------------
 
-void LSystem::breakDownRules()
+LSystem::Rule::Rule(std::string _LHS, std::vector<std::string> _RHS, std::vector<float> _prob) :
+  m_LHS(_LHS), m_RHS(_RHS), m_prob(_prob){}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::breakDownRules(std::vector<std::string> _rules)
 {
-  m_rulesBrokenDown = {};
+  m_rules = {};
   m_nonTerminals = "[";
-  for(auto rule : m_rules)
+  for(auto ruleString : _rules)
   {
-    std::vector<std::string> ruleArray;
-    boost::split(ruleArray, rule, [](char c){return c == '=';});
-    m_rulesBrokenDown.push_back(ruleArray);
-    m_nonTerminals += ruleArray[0];
+    //LRP aims to store rules in the form {LHS, RHS, Probability}
+    std::vector<std::string> LRP;
+    //use boost::split to get LRP={"A","B","C"} when rule is "A=B:C"
+    //note that if =,: symbols are used incorrectly this will give an incorrect result
+    boost::split(LRP, ruleString, boost::is_any_of("=,:"));
+
+    //only carry on if '=' appeared in the rule - otherwise, the rule is invalid
+    //this stops the program crashing if a rule doesn't have an =, and just skips this rule instead
+    //but technically this setup means "A=B:P" parses the same as "A:B=P" which is maybe a problem?
+    if(std::regex_search(ruleString, std::regex("=+")))
+    {
+      //define probability as 1 unless given otherwise
+      float probability = 1;
+      if(LRP.size()>2)
+      {
+        try
+        {
+          probability = std::stof(LRP[2]);
+        }
+        catch(std::invalid_argument)
+        {
+          std::cerr<<"WARNING: unable to convert probability to string \n";
+        }
+        catch(std::out_of_range)
+        {
+          std::cerr<<"WARNING: unable to convert probability to string \n";
+        }
+      }
+
+      //now if the LHS is already a LHS of some rule in m_rules, add the RHS and probabilities to that rule
+      size_t i=0;
+      for(; i<m_rules.size(); i++)
+      {
+        Rule &r = m_rules[i];
+        if(LRP[0]==r.m_LHS)
+        {
+          r.m_RHS.push_back(LRP[1]);
+          r.m_prob.push_back(probability);
+          break;
+        }
+      }
+      //otherwise if the LHS hasn't been seen before, create a new rule and add it to m_rules
+      //and also add this new LHS to m_nonTerminals
+      if(i==m_rules.size())
+      {
+        Rule r(LRP[0],{LRP[1]},{probability});
+        m_rules.push_back(r);
+        m_nonTerminals += LRP[0];
+      }
+    }
+    else
+    {
+      std::cerr<<"WARNING: excluding rule because no replacement command was given \n";
+    }
   }
+
   m_nonTerminals += "]+";
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void LSystem::detectBranching()
 {
   m_branches = {};
-  for(auto ruleArray : m_rulesBrokenDown)
+  for(auto rule : m_rules)
   {
-    std::string rhs = ruleArray[1];
-    for(size_t i=0; i<rhs.length(); i++)
+    for(auto rhs : rule.m_RHS)
     {
-      if(rhs[i]=='[')
+      for(size_t i=0; i<rhs.length(); i++)
       {
-        size_t j=i+1;
-        for(; j<rhs.length(); j++)
+        if(rhs[i]=='[')
         {
-          if(rhs[j]==']')
-            break;
+          size_t j=i+1;
+          for(; j<rhs.length(); j++)
+          {
+            if(rhs[j]==']')
+              break;
+          }
+          std::string branch(rhs.begin()+int(i+1),rhs.begin()+int(j));
+          //the first part of this if clause checks that the branch hasn't been added to m_branches already
+          //and the second checks that it contains at least one non-terminal
+          if(std::find(m_branches.begin(), m_branches.end(), branch) == m_branches.end() &&
+             std::regex_search(branch, std::regex(m_nonTerminals)))
+          {
+            m_branches.push_back(branch);
+          }
+          i=j;
         }
-        std::string branch(rhs.begin()+int(i+1),rhs.begin()+int(j));
-        //the first part of this if clause checks that the branch hasn't been added to m_branches already
-        //and the second checks that it contains at least one non-terminal
-        if(std::find(m_branches.begin(), m_branches.end(), branch) == m_branches.end() &&
-           std::regex_search(branch, std::regex(m_nonTerminals)))
-        {
-          m_branches.push_back(branch);
-        }
-        i=j;
       }
     }
   }
 }
 
-std::string LSystem::generateTreeString(int _generation)
+//----------------------------------------------------------------------------------------------------------------------
+
+std::string LSystem::generateTreeString()
 {
   std::string treeString = m_axiom;
-  int numberOfRules = int(m_rules.size());
+  int numRules = int(m_rules.size());
 
-  if(numberOfRules>0)
+  std::default_random_engine gen;
+  int seed = std::chrono::system_clock::now().time_since_epoch().count();
+  gen.seed(seed);
+  std::uniform_real_distribution<double> dist(0.0,1.0);
+
+  if(numRules>0)
   {
-      for(int i=0; i<_generation; i++)
+    for(int i=0; i<m_generation; i++)
     {
-      size_t ruleNumber = size_t(i % numberOfRules);
-      std::string lhs = m_rulesBrokenDown[ruleNumber][0];
-      std::string rhs = m_rulesBrokenDown[ruleNumber][1];
-      boost::replace_all(treeString, lhs, rhs);
+      size_t ruleNum = size_t(i % numRules);
+      std::string lhs = m_rules[ruleNum].m_LHS;
+      std::vector<std::string> rhs = m_rules[ruleNum].m_RHS;
+      std::vector<float> probabilities = m_rules[ruleNum].m_prob;
+
+      //work out sum of all probabilities to normalise them
+      float sumProb = 0;
+      for(auto prob: probabilities)
+      {
+        sumProb += prob;
+      }
+      float sumProbInverse = 1/sumProb;
+
+      size_t pos = treeString.find(lhs);
+      size_t len = lhs.size();
+      while(pos != std::string::npos)
+      {
+        float randNum = dist(gen);
+        float count = 0;
+        size_t j = 0;
+        for( ; j<probabilities.size(); j++)
+        {
+          count += probabilities[j]*sumProbInverse;
+          std::cout<<count<<"\n";
+          if(count>=randNum)
+          {
+            break;
+          }
+        }
+        treeString.replace(pos, len, rhs[j]);
+        pos = treeString.find(lhs, pos+rhs[j].size());
+      }
     }
   }
   return treeString;
 }
 
-//I think it's gonna make sense to remove _startPos and _orientation from this
-//generate all L-systems from (0,0,0), pointing towards (0,1,0) then perform transformations by adding
-//them to the MVP matrix after
-void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _orientation)
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::createGeometry()
 {
-  ngl::Vec3 dir = _orientation;
-  ngl::Vec3 right(0,1,0);
-  if(dir != ngl::Vec3(0,0,1))
-  {
-    right = dir.cross(ngl::Vec3(0,0,1));
-  }
-  right.normalize();
+  ngl::Vec3 dir(0,1,0);
+  ngl::Vec3 right(1,0,0);
   //I am using an ngl::Mat4 matrix for now because there is a problem with the euler
   //method for ngl::Mat3, so I am setting the rotation for r4 with r4.euler, then
   //using the copy constructor to transfer that rotation to r3
   ngl::Mat4 r4;
   ngl::Mat3 r3;
-  std::string treeString = generateTreeString(_generation);
+  std::string treeString = generateTreeString();
 
-  ngl::Vec3 lastVertex = _startPos;
+  ngl::Vec3 lastVertex(0,0,0);
   GLshort lastIndex = 0;
   float stepSize = m_stepSize;
   float angle = m_angle;
@@ -126,7 +215,7 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _or
   std::vector<float> savedStep = {};
   std::vector<float> savedAngle = {};
 
-  m_vertices = {_startPos};
+  m_vertices = {lastVertex};
   m_indices = {};
 
   for(size_t i=0; i<treeString.size(); i++)
@@ -226,15 +315,14 @@ void LSystem::createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _or
         break;
     }
   }
-  std::cout<<treeString<<'\n';
-
-
   if(m_parameterError)
   {
-    std::cerr<<"NOTE: unable to parse one or more parameters"<<'\n';
+    std::cerr<<"WARNING: unable to parse one or more parameters \n";
     m_parameterError = false;
   }
 }
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void LSystem::parseBrackets(std::string _treeString, size_t &_i, float &_output)
 {

@@ -33,7 +33,7 @@ void NGLScene::changeTab(int _treeTabNum)
   m_currentMouseTransform = &m_mouseTransforms[0][m_treeTabNum];
   m_currentLSystem = &m_LSystems[m_treeTabNum];
 
-  generate();
+  update();
 }
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -48,9 +48,8 @@ void NGLScene::generate()
       currentRules.push_back(rule);
     }
   }
-  m_currentLSystem->m_rules = currentRules;
-  m_currentLSystem->update();
-  m_currentLSystem->createGeometry(m_currentLSystem->m_generation, ngl::Vec3(0,0,0), ngl::Vec3(0,1,0));
+  m_currentLSystem->breakDownRules(currentRules);
+  m_currentLSystem->createGeometry();
   update();
 }
 

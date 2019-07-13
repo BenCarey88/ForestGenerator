@@ -41,7 +41,7 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_currentMouseTransform = &m_mouseTransforms[0][0];
   m_currentLSystem = &m_LSystems[0];
 
-  m_currentLSystem->createGeometry(m_currentLSystem->m_generation, ngl::Vec3(0,0,0), ngl::Vec3(0,1,0));
+  m_currentLSystem->createGeometry();
 }
 
 NGLScene::~NGLScene()
@@ -139,11 +139,11 @@ void NGLScene::paintGL()
 
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
   ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform);
-  shader->setUniform("MVP",MVP);
 
   switch(m_superTabNum)
   {
     case 0:
+      shader->setUniform("MVP",MVP);
       buildLineVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices);
       m_vao->bind();
       m_vao->draw();
@@ -156,7 +156,11 @@ void NGLScene::paintGL()
     case 2:
       for(size_t i=0; i<m_numTreeTabs; i++)
       {
-        m_LSystems[i].createGeometry(m_LSystems[i].m_generation,ngl::Vec3(16*int(i)-8,0,0),ngl::Vec3(0,1,0));
+        ngl::Mat4 trans(1,0,0,0,
+                        0,1,0,0,
+                        0,0,1,0,
+                        16*int(i)-8,0,0,1);
+        shader->setUniform("MVP",MVP*trans);
         buildLineVAO(m_LSystems[i].m_vertices, m_LSystems[i].m_indices);
         m_vao->bind();
         m_vao->draw();

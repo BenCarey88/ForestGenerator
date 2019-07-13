@@ -31,6 +31,31 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   LSystem(std::string _axiom, std::vector<std::string> _rules);
 
+  //PUBLIC STRUCT
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @struct Rule
+  /// @brief this structure stores rules for the LSystem in a format easily accessible by generateTreeString()
+  //--------------------------------------------------------------------------------------------------------------------
+  struct Rule
+  {
+    //------------------------------------------------------------------------------------------------------------------
+    /// @brief ctor for Rule Structure
+    //------------------------------------------------------------------------------------------------------------------
+    Rule(std::string _LHS, std::vector<std::string> _RHS, std::vector<float> _prob);
+    //------------------------------------------------------------------------------------------------------------------
+    /// @brief the LHS of the rule, ie. a non-terminal symbol, to be replaced
+    //------------------------------------------------------------------------------------------------------------------
+    std::string m_LHS;
+    //------------------------------------------------------------------------------------------------------------------
+    /// @brief list of possible RHSs of the rule, strings to replace the LHS
+    //------------------------------------------------------------------------------------------------------------------
+    std::vector<std::string> m_RHS;
+    //------------------------------------------------------------------------------------------------------------------
+    /// @brief corresponding list of probabilities for each RHS
+    //------------------------------------------------------------------------------------------------------------------
+    std::vector<float> m_prob;
+  };
+
   //PUBLIC MEMBER VARIABLES
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief initial axiom for the LSystem
@@ -39,16 +64,11 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief the rules for the LSystem
   //--------------------------------------------------------------------------------------------------------------------
-  std::vector<std::string> m_rules;
+  std::vector<Rule> m_rules;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief statically sized rule array, used by NGLScene class to fill rules from user inputs
   //--------------------------------------------------------------------------------------------------------------------
   std::array<std::string,10> m_ruleArray;
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief the rules for the LSystem, broken down into vectors of size 2 (assuming the rule is written correctly)
-  /// 1st element of each is the string to be replaced (called a non-terminal), and the 2nd element is the replacement
-  //--------------------------------------------------------------------------------------------------------------------
-  std::vector<std::vector<std::string>> m_rulesBrokenDown;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief string representing all non-terminal elements in the rule system
   //--------------------------------------------------------------------------------------------------------------------
@@ -93,30 +113,23 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   bool m_parameterError = false;
 
-
   //PUBLIC MEMBER FUNCTIONS
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief fills m_rulesBrokenDown and m_nonTerminals
+  /// @brief fills m_rules and m_nonTerminals
   //--------------------------------------------------------------------------------------------------------------------
-  void breakDownRules();
+  void breakDownRules(std::vector<std::string> _rules);
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief detects branches introduced by rules and uses them to fill m_branches
   //--------------------------------------------------------------------------------------------------------------------
   void detectBranching();
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief redoes the above 2 functions to update the system if the rules and axioms change
+  /// @brief returns a string representation of the tree produced by the L-System
   //--------------------------------------------------------------------------------------------------------------------
-  void update();
+  std::string generateTreeString();
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief returns a string representation of the tree produced by the L-System after a given number of generations
-  /// @param [in] _generation the number of iterations of the rules to implement
+  /// @brief fills m_vertices and m_indices to represent the geometry of the L-System
   //--------------------------------------------------------------------------------------------------------------------
-  std::string generateTreeString(int _generation);
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief fills m_VAO to represent the geometry of the L-System created after a given generation
-  /// @param [in] _generation the number of iterations of the rules to implement
-  //--------------------------------------------------------------------------------------------------------------------
-  void createGeometry(int _generation, ngl::Vec3 _startPos, ngl::Vec3 _orientation);
+  void createGeometry();
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief used by createGeometry to deal with parameters enclosed by brackets in the tree string
   /// @param [in] _treeString the string

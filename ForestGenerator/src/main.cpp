@@ -51,5 +51,3 @@ int main(int argc, char **argv)
   // hand control over to Qt framework
   return a.exec();
 }
-
-
