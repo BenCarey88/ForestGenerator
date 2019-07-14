@@ -180,23 +180,34 @@ std::string LSystem::generateTreeString()
       std::vector<std::string> rhs = m_rules[ruleNum].m_RHS;
       std::vector<float> probabilities = m_rules[ruleNum].m_prob;
 
-      size_t pos = treeString.find(lhs);
-      size_t len = lhs.size();
-      while(pos != std::string::npos)
+      //use boost method if there is only one rhs - much faster
+      if(rhs.size()==1)
       {
-        float randNum = float(dist(gen));
-        float count = 0;
-        size_t j = 0;
-        for( ; j<probabilities.size(); j++)
+        boost::replace_all(treeString, lhs, rhs[0]);
+      }
+
+      //otherwise we want to apply each replacement individually based on probabilities
+      else
+      {
+        size_t pos = treeString.find(lhs);
+        size_t len = lhs.size();
+        while(pos != std::string::npos)
         {
-          count += probabilities[j];
-          if(count>=randNum)
+          float randNum = float(dist(gen));
+          float count = 0;
+          size_t j = 0;
+          for( ; j<probabilities.size(); j++)
           {
-            break;
+            count += probabilities[j];
+            if(count>=randNum)
+            {
+              break;
+            }
           }
+          treeString.replace(pos, len, rhs[j]);
+          pos = treeString.find(lhs, pos+rhs[j].size());
+
         }
-        treeString.replace(pos, len, rhs[j]);
-        pos = treeString.find(lhs, pos+rhs[j].size());
       }
     }
   }
