@@ -10,6 +10,14 @@
 ///PUBLIC SLOTS
 //------------------------------------------------------------------------------------------------------------------------
 
+void NGLScene::toggleGrid(int _clicked)
+{
+  m_showGrid = bool(_clicked);
+  update();
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::changeSuperTab(int _superTabNum)
 {
   m_superTabNum = size_t(_superTabNum);

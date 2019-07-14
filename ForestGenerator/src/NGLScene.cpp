@@ -125,12 +125,15 @@ void NGLScene::paintGL()
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
   ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform)*m_initialRotation;
 
-  (*shader)["GridShader"]->use();
-  shader->setUniform("MVP",MVP);
-  buildLineVAO(m_grid.m_vertices, m_grid.m_indices);
-  m_vao->bind();
-  m_vao->draw();
-  m_vao->unbind();
+  if(m_showGrid)
+  {
+    (*shader)["GridShader"]->use();
+    shader->setUniform("MVP",MVP);
+    buildLineVAO(m_grid.m_vertices, m_grid.m_indices);
+    m_vao->bind();
+    m_vao->draw();
+    m_vao->unbind();
+  }
 
   (*shader)["ColourShader"]->use();
 

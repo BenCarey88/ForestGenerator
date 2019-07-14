@@ -366,7 +366,7 @@ void LSystem::createGeometry()
 
 void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_output)
 {
-  if(_treeString.at(_i+1)=='(')
+  if(_i+1<_treeString.length() && _treeString.at(_i+1)=='(')
   {
     size_t j=_i+2;
     for( ; j<_treeString.size(); j++)

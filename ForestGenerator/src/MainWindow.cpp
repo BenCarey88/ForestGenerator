@@ -15,6 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
   m_gl=new  NGLScene(this);
   m_ui->s_mainWindowGridLayout->addWidget(m_gl,0,0,2,1);
 
+  connect(m_ui->m_grid,SIGNAL(stateChanged(int)),m_gl,SLOT(toggleGrid(int)));
+  connect(m_ui->m_resetCamera_layout,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
+  connect(m_ui->m_resetCamera_render,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
+
   connect(m_ui->m_superTab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeSuperTab(int)));
   connect(m_ui->m_tab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeTab(int)));
 
