@@ -167,7 +167,15 @@ std::string LSystem::generateTreeString()
   int numRules = int(m_rules.size());
 
   std::default_random_engine gen;
-  uint seed = uint(std::chrono::system_clock::now().time_since_epoch().count());
+  long seed;
+  if(m_useSeed)
+  {
+    seed = m_seed;
+  }
+  else
+  {
+    seed = long(std::chrono::system_clock::now().time_since_epoch().count());
+  }
   gen.seed(seed);
   std::uniform_real_distribution<double> dist(0.0,1.0);
 

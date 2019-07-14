@@ -70,11 +70,6 @@ void NGLScene::resetCamera()
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::setGeneration(int _generation)
-{
-  m_currentLSystem->m_generation = _generation;
-}
-
 void NGLScene::setStepSize(double _stepSize)
 {
   m_currentLSystem->m_stepSize = float(_stepSize);
@@ -93,6 +88,21 @@ void NGLScene::setAngle(double _angle)
 void NGLScene::setAngleScale(double _angleScale)
 {
   m_currentLSystem->m_angleScale = float(_angleScale);
+}
+
+void NGLScene::setGeneration(int _generation)
+{
+  m_currentLSystem->m_generation = _generation;
+}
+
+void NGLScene::seedToggle(int _clicked)
+{
+  m_currentLSystem->m_useSeed = bool(_clicked);
+}
+
+void NGLScene::setSeed(int _seed)
+{
+  m_currentLSystem->m_seed = _seed;
 }
 
 //------------------------------------------------------------------------------------------------------------------------

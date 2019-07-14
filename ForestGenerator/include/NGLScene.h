@@ -82,11 +82,6 @@ public slots:
   void resetCamera();
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to set the number of generations to generate for this L-System
-  /// @param[in] generation, the int passed from m_generation in ui
-  //----------------------------------------------------------------------------------------------------------------------
-  void setGeneration(int _generation);
-  //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the size of steps in the L-system
   /// @param[in] stepSize, the double passed from m_stepSize in ui
   //----------------------------------------------------------------------------------------------------------------------
@@ -106,6 +101,21 @@ public slots:
   /// @param[in] angleScale, the double passed from m_angleScale in ui
   //----------------------------------------------------------------------------------------------------------------------
   void setAngleScale(double _angleScale);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the number of generations to generate for this L-System
+  /// @param[in] generation, the int passed from m_generation in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setGeneration(int _generation);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to determine whether or not we'll use a seed for this L-System
+  /// @param[in] clicked, the int passed from m_seedToggle in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void seedToggle(int _clicked);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the number of generations to generate for this L-System
+  /// @param[in] seed, the int passed from m_seed in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setSeed(int _seed);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the axiom for the L-System

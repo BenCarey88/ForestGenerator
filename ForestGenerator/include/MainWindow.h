@@ -30,6 +30,11 @@ public:
   explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
+private slots:
+  void on_m_interfaceSwitch_1_currentIndexChanged(int _index);
+
+  void on_m_seedToggle_1_stateChanged(int _clicked);
+
 private:
   /// @brief our user interface
   Ui::MainWindow *m_ui;
