@@ -18,7 +18,7 @@
 
 LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules,
                  float _stepSize, float _stepScale,
-                 float _angle, float _angleScale, float _generation) :
+                 float _angle, float _angleScale, int _generation) :
   m_axiom(_axiom), m_stepSize(_stepSize), m_stepScale(_stepScale),
   m_angle(_angle), m_angleScale(_angleScale), m_generation(_generation)
 {
@@ -35,6 +35,20 @@ LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules,
 
 LSystem::Rule::Rule(std::string _LHS, std::vector<std::string> _RHS, std::vector<float> _prob) :
   m_LHS(_LHS), m_RHS(_RHS), m_prob(_prob){}
+
+void LSystem::Rule::normalizeProbabilities()
+{
+  float sumProb = 0;
+  for(auto prob: m_prob)
+  {
+    sumProb += prob;
+  }
+  float sumProbInverse = 1/sumProb;
+  for(auto &prob : m_prob)
+  {
+    prob *= sumProbInverse;
+  }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -94,10 +108,16 @@ void LSystem::breakDownRules(std::vector<std::string> _rules)
         m_nonTerminals += LRP[0];
       }
     }
+    //if '=' doesn't appear in the rules, display error message
     else
     {
       std::cerr<<"WARNING: excluding rule because no replacement command was given \n";
     }
+  }
+  //normalize all probabilities in the rules
+  for(auto &rule : m_rules)
+  {
+    rule.normalizeProbabilities();
   }
 
   m_nonTerminals += "]+";
@@ -141,11 +161,13 @@ void LSystem::detectBranching()
 
 std::string LSystem::generateTreeString()
 {
+  auto start = std::chrono::high_resolution_clock::now();
+
   std::string treeString = m_axiom;
   int numRules = int(m_rules.size());
 
   std::default_random_engine gen;
-  int seed = std::chrono::system_clock::now().time_since_epoch().count();
+  uint seed = uint(std::chrono::system_clock::now().time_since_epoch().count());
   gen.seed(seed);
   std::uniform_real_distribution<double> dist(0.0,1.0);
 
@@ -158,24 +180,16 @@ std::string LSystem::generateTreeString()
       std::vector<std::string> rhs = m_rules[ruleNum].m_RHS;
       std::vector<float> probabilities = m_rules[ruleNum].m_prob;
 
-      //work out sum of all probabilities to normalize them
-      float sumProb = 0;
-      for(auto prob: probabilities)
-      {
-        sumProb += prob;
-      }
-      float sumProbInverse = 1/sumProb;
-
       size_t pos = treeString.find(lhs);
       size_t len = lhs.size();
       while(pos != std::string::npos)
       {
-        float randNum = dist(gen);
+        float randNum = float(dist(gen));
         float count = 0;
         size_t j = 0;
         for( ; j<probabilities.size(); j++)
         {
-          count += probabilities[j]*sumProbInverse;
+          count += probabilities[j];
           if(count>=randNum)
           {
             break;
@@ -186,6 +200,12 @@ std::string LSystem::generateTreeString()
       }
     }
   }
+
+  auto finish = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = finish - start;
+
+  std::cout << "\ngenerateTreeString() Elapsed time: " << elapsed.count() << " s\n";
+
   return treeString;
 }
 
@@ -201,6 +221,8 @@ void LSystem::createGeometry()
   ngl::Mat4 r4;
   ngl::Mat3 r3;
   std::string treeString = generateTreeString();
+
+  auto start = std::chrono::high_resolution_clock::now();
 
   ngl::Vec3 lastVertex(0,0,0);
   GLshort lastIndex = 0;
@@ -293,6 +315,7 @@ void LSystem::createGeometry()
       //pitch down
       case '^':
         paramVar = angle;
+
         parseBrackets(treeString, i, paramVar);
         r4.euler(-paramVar, right.m_x, right.m_y, right.m_z);
         r3 = r4;
@@ -322,13 +345,18 @@ void LSystem::createGeometry()
     std::cerr<<"WARNING: unable to parse one or more parameters \n";
     m_parameterError = false;
   }
+
+  auto finish = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = finish - start;
+
+  std::cout << "\ncreateGeometry() Elapsed time: " << elapsed.count() << " s\n";
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 
-void LSystem::parseBrackets(std::string _treeString, size_t &_i, float &_output)
+void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_output)
 {
-  if(_treeString[_i+1]=='(')
+  if(_treeString.at(_i+1)=='(')
   {
     size_t j=_i+2;
     for( ; j<_treeString.size(); j++)

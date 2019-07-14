@@ -30,7 +30,7 @@ public:
   /// @brief user ctor for LSystem class
   //--------------------------------------------------------------------------------------------------------------------
   LSystem(std::string _axiom, std::vector<std::string> _rules,
-          float _stepSize, float _stepScale, float _angle, float _angleScale, float _generation);
+          float _stepSize, float _stepScale, float _angle, float _angleScale, int _generation);
 
   //PUBLIC STRUCT
   //--------------------------------------------------------------------------------------------------------------------
@@ -55,6 +55,11 @@ public:
     /// @brief corresponding list of probabilities for each RHS
     //------------------------------------------------------------------------------------------------------------------
     std::vector<float> m_prob;
+
+    //------------------------------------------------------------------------------------------------------------------
+    /// @brief method to normalize all probabilities in m_prob
+    //------------------------------------------------------------------------------------------------------------------
+    void normalizeProbabilities();
   };
 
   //PUBLIC MEMBER VARIABLES
@@ -77,7 +82,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief the branches introduced by rules in the L-system
   //--------------------------------------------------------------------------------------------------------------------
-  std::vector<std::string> m_branches;
+  std::vector<std::string> m_branches;  
 
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief the step-size
@@ -137,7 +142,7 @@ public:
   /// @param [in] _i the index of _treeString that createGeometry() has reached
   /// @param [in] _output the variable that will be replaced by the parameter in the brackets if needed
   //--------------------------------------------------------------------------------------------------------------------
-  void parseBrackets(std::string _treeString, size_t &_i, float &_output);
+  void parseBrackets(const std::string &_treeString, size_t &_i, float &_output);
 };
 
 
