@@ -15,15 +15,15 @@ void NGLScene::initializeLSystems()
   float stepScale;
   float angle;
   float angleScale;
-  float generation;
+  int generation;
 
   //LSystem 0:
   axiom = "FFFA";
   rules = {"A=\"[B]////[B]////B","B=&FFFA"};
   stepSize = 2;
-  stepScale = 0.9;
+  stepScale = 0.9f;
   angle = 30;
-  angleScale = 0.9;
+  angleScale = 0.9f;
   generation = 4;
   m_LSystems[0] = LSystem(axiom,rules,stepSize,stepScale,angle,angleScale,generation);
 
@@ -31,9 +31,9 @@ void NGLScene::initializeLSystems()
   axiom = "///A";
   rules = {"A=F&[[A]^A]^F^[^FA]&A","F=FF"};
   stepSize = 1;
-  stepScale = 0.9;
+  stepScale = 0.9f;
   angle = 25;
-  angleScale = 0.9;
+  angleScale = 0.9f;
   generation = 6;
   m_LSystems[1] = LSystem(axiom,rules,stepSize,stepScale,angle,angleScale,generation);
 }

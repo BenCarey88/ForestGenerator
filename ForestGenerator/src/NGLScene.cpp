@@ -62,7 +62,6 @@ void NGLScene::resizeGL( int _w, int _h )
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
 
-
 void NGLScene::initializeGL()
 {
   // we need to initialise the NGL lib which will load all of the OpenGL functions, this must
@@ -74,6 +73,7 @@ void NGLScene::initializeGL()
 
   // enable depth testing for drawing
   glEnable(GL_DEPTH_TEST);
+  // enable multisampling for smoother drawing
   glEnable(GL_MULTISAMPLE);
   // Now we will create a basic camera from the graphics library using the currently selected camera
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
@@ -81,27 +81,13 @@ void NGLScene::initializeGL()
   // The final two are near and far clipping planes
   m_project=ngl::perspective(fieldOfView ,720.0f/576.0f,nearFrame,farFrame);
 
-  // now to load the shader and set the values
+  // now to load the shaders
   // grab an instance of shader manager
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-  // load frag and vert shaders
-  constexpr auto ColourShader="ColourShader";
-  constexpr auto ColourVertex="ColourVertex";
-  constexpr auto ColourFragment="ColourFragment";
-  shader->createShaderProgram(ColourShader);
-
-  shader->attachShader(ColourVertex,ngl::ShaderType::VERTEX);
-  shader->attachShader(ColourFragment,ngl::ShaderType::FRAGMENT);
-  shader->loadShaderSource(ColourVertex,"shaders/ColourVertex.glsl");
-  shader->loadShaderSource(ColourFragment,"shaders/ColourFragment.glsl");
-
-  shader->compileShader(ColourVertex);
-  shader->compileShader(ColourFragment);
-  shader->attachShaderToProgram(ColourShader,ColourVertex);
-  shader->attachShaderToProgram(ColourShader,ColourFragment);
-
-  shader->linkProgramObject(ColourShader);
-  (*shader)[ColourShader]->use();
+  shader->loadShader("ColourShader", "shaders/ColourVertex.glsl",
+                     "shaders/ColourFragment.glsl");
+  shader->loadShader("GridShader", "shaders/GridVertex.glsl",
+                     "shaders/GridFragment.glsl");
 
   ngl::VAOFactory::listCreators();
 }
@@ -135,10 +121,18 @@ void NGLScene::paintGL()
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-  (*shader)["ColourShader"]->use();
 
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
-  ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform);
+  ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform)*m_initialRotation;
+
+  (*shader)["GridShader"]->use();
+  shader->setUniform("MVP",MVP);
+  buildLineVAO(m_grid.m_vertices, m_grid.m_indices);
+  m_vao->bind();
+  m_vao->draw();
+  m_vao->unbind();
+
+  (*shader)["ColourShader"]->use();
 
   switch(m_superTabNum)
   {

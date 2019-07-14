@@ -5,9 +5,14 @@
 
 #include "Camera.h"
 
+Camera::Camera()
+{
+  reset();
+}
+
 void Camera::reset()
 {
-  m_from = {0,50,50};
+  m_from = {0,40,50};
   m_to = {0,10,0};
   m_up = {0,1,0};
   m_axis = {0,1,0};

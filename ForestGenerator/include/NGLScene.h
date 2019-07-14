@@ -19,8 +19,10 @@
 #include "WindowParams.h"
 #include <QOpenGLWindow>
 #include <memory>
+#include <math.h>
 #include "Camera.h"
 #include "Forest.h"
+#include "Grid.h"
 
 #include <QEvent>
 #include <QResizeEvent>
@@ -143,13 +145,20 @@ protected:
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief used to store the global mouse transforms
+  /// @brief initial rotation matrix to make grid alignment look nicer
   //----------------------------------------------------------------------------------------------------------------------
-  ngl::Mat4 m_mouseGlobalTX;
+  ngl::Mat4 m_initialRotation = ngl::Mat4(std::sqrt(2.0f)*0.5f, 0,  -std::sqrt(2.0f)*0.5f,0,
+                                          0,                    1,  0,                    0,
+                                          std::sqrt(2.0f)*0.5f, 0,  std::sqrt(2.0f)*0.5f, 0,
+                                          0,                    0,  0,                    1);
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the VAO
   //----------------------------------------------------------------------------------------------------------------------
   std::unique_ptr<ngl::AbstractVAO> m_vao;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief the grid representing the ground plane
+  //----------------------------------------------------------------------------------------------------------------------
+  Grid m_grid = Grid(7,5);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief list of all L-Systems stored by the scene

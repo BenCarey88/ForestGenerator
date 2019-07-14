@@ -206,7 +206,6 @@ std::string LSystem::generateTreeString()
           }
           treeString.replace(pos, len, rhs[j]);
           pos = treeString.find(lhs, pos+rhs[j].size());
-
         }
       }
     }
