@@ -30,7 +30,10 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
     ngl::Mat4 rotY;
     rotX.rotateX(m_win.spinXFace);
     m_currentCamera->m_axis = rotX*m_currentCamera->m_axis;
-    rotY.euler(m_win.spinYFace, m_currentCamera->m_axis.m_x, m_currentCamera->m_axis.m_y, m_currentCamera->m_axis.m_z);
+    rotY.euler(m_win.spinYFace,
+               m_currentCamera->m_axis.m_x,
+               m_currentCamera->m_axis.m_y,
+               m_currentCamera->m_axis.m_z);
     *m_currentMouseTransform = rotY*rotX*(*m_currentMouseTransform);
     update();
   }

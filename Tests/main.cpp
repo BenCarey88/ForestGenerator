@@ -16,7 +16,7 @@ TEST(LSystem, UserCtor)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules);
+  LSystem L(axiom,rules,2,0.9,30,0.9,4);
   EXPECT_EQ(L.m_axiom,axiom);
 }
 
@@ -24,7 +24,7 @@ TEST(LSystem, breakDownRules)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules);
+  LSystem L(axiom,rules,2,0.9,30,0.9,4);
 
   EXPECT_EQ(L.m_rules.size(),2);
   EXPECT_EQ(L.m_rules[0].m_LHS,"A");
@@ -39,7 +39,7 @@ TEST(LSystem, detectBranching)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=[B]///[B]///[B]", "B=FF[C/C][C]", "C=FF[FFF]//[A]"};
-  LSystem L(axiom,rules);
+  LSystem L(axiom,rules,2,0.9,30,0.9,4);
 
   EXPECT_EQ(L.m_branches.size(),4);
   EXPECT_EQ(L.m_branches[0],"B");
@@ -52,7 +52,7 @@ TEST(LSystem, generateTreeString)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules);
+  LSystem L(axiom,rules,2,0.9,30,0.9,4);
   L.m_generation=0;
   EXPECT_EQ(L.generateTreeString(),"FFFA");
   L.m_generation=1;
@@ -67,7 +67,7 @@ TEST(LSystem, createGeometry)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules);
+  LSystem L(axiom,rules,2,0.9,30,0.9,4);
   L.m_generation=0;
   L.createGeometry();
   L.m_stepSize = 2;

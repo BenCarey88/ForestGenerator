@@ -9,16 +9,31 @@ void NGLScene::initializeLSystems()
 {
   m_LSystems.resize(m_numTreeTabs);
 
+  std::string axiom;
+  std::vector<std::string> rules;
+  float stepSize;
+  float stepScale;
+  float angle;
+  float angleScale;
+  float generation;
+
   //LSystem 0:
-  std::string axiom0 = "FFFA";
-  std::vector<std::string> rules0 = {"A=\"[B]////[B]////B","B=&FFFA"};
-  m_LSystems[0] = LSystem(axiom0,rules0);
+  axiom = "FFFA";
+  rules = {"A=\"[B]////[B]////B","B=&FFFA"};
+  stepSize = 2;
+  stepScale = 0.9;
+  angle = 30;
+  angleScale = 0.9;
+  generation = 4;
+  m_LSystems[0] = LSystem(axiom,rules,stepSize,stepScale,angle,angleScale,generation);
 
   //LSystem 1:
-  std::string axiom1 = "///A";
-  std::vector<std::string> rules1 = {"A=F&[[A]^A]^F^[^FA]&A","F=FF"};
-  m_LSystems[1] = LSystem(axiom1,rules1);
-  m_LSystems[1].m_generation = 6;
-  m_LSystems[1].m_stepSize = 1;
-  m_LSystems[1].m_angle = 25;
+  axiom = "///A";
+  rules = {"A=F&[[A]^A]^F^[^FA]&A","F=FF"};
+  stepSize = 1;
+  stepScale = 0.9;
+  angle = 25;
+  angleScale = 0.9;
+  generation = 6;
+  m_LSystems[1] = LSystem(axiom,rules,stepSize,stepScale,angle,angleScale,generation);
 }

@@ -16,8 +16,11 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 
-LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules) :
-  m_axiom(_axiom)
+LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules,
+                 float _stepSize, float _stepScale,
+                 float _angle, float _angleScale, float _generation) :
+  m_axiom(_axiom), m_stepSize(_stepSize), m_stepScale(_stepScale),
+  m_angle(_angle), m_angleScale(_angleScale), m_generation(_generation)
 {
   for(size_t i=0; i<_rules.size() ; i++)
   {
@@ -155,7 +158,7 @@ std::string LSystem::generateTreeString()
       std::vector<std::string> rhs = m_rules[ruleNum].m_RHS;
       std::vector<float> probabilities = m_rules[ruleNum].m_prob;
 
-      //work out sum of all probabilities to normalise them
+      //work out sum of all probabilities to normalize them
       float sumProb = 0;
       for(auto prob: probabilities)
       {
@@ -173,7 +176,6 @@ std::string LSystem::generateTreeString()
         for( ; j<probabilities.size(); j++)
         {
           count += probabilities[j]*sumProbInverse;
-          std::cout<<count<<"\n";
           if(count>=randNum)
           {
             break;
