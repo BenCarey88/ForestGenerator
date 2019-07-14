@@ -31,9 +31,9 @@ public:
   ~MainWindow();
 
 private slots:
-  void on_m_interfaceSwitch_1_currentIndexChanged(int _index);
-
+  /// @brief slots to enable the seed spin box when the seedToggle is selected
   void on_m_seedToggle_1_stateChanged(int _clicked);
+  void on_m_seedToggle_2_stateChanged(int _clicked);
 
 private:
   /// @brief our user interface

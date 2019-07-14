@@ -57,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_angle_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngle(double)));
   connect(m_ui->m_angleScale_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngleScale(double)));
   connect(m_ui->m_generation_2,SIGNAL(valueChanged(int)),m_gl,SLOT(setGeneration(int)));
+  connect(m_ui->m_seed_2,SIGNAL(valueChanged(int)),m_gl,SLOT(setSeed(int)));
+  connect(m_ui->m_seedToggle_2,SIGNAL(stateChanged(int)),m_gl,SLOT(seedToggle(int)));
 
   connect(m_ui->m_axiom_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setAxiom(QString)));
   connect(m_ui->m_rule1_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule1(QString)));
@@ -74,12 +76,11 @@ MainWindow::~MainWindow()
   delete m_ui;
 }
 
-void MainWindow::on_m_interfaceSwitch_1_currentIndexChanged(int _index)
-{
-    m_ui->m_interfaceStack_1->setCurrentIndex(_index);
-}
-
 void MainWindow::on_m_seedToggle_1_stateChanged(int _clicked)
 {
     m_ui->m_seed_1->setEnabled(_clicked);
+}
+void MainWindow::on_m_seedToggle_2_stateChanged(int _clicked)
+{
+    m_ui->m_seed_2->setEnabled(_clicked);
 }
