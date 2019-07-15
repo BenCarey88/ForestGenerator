@@ -32,7 +32,7 @@ public:
   LSystem(std::string _axiom, std::vector<std::string> _rules,
           float _stepSize, float _stepScale, float _angle, float _angleScale, int _generation);
 
-  //PUBLIC STRUCT
+  //RULE STRUCT
   //--------------------------------------------------------------------------------------------------------------------
   /// @struct Rule
   /// @brief this structure stores rules for the LSystem in a format easily accessible by generateTreeString()
@@ -43,6 +43,7 @@ public:
     /// @brief ctor for Rule Structure
     //------------------------------------------------------------------------------------------------------------------
     Rule(std::string _LHS, std::vector<std::string> _RHS, std::vector<float> _prob);
+
     //------------------------------------------------------------------------------------------------------------------
     /// @brief the LHS of the rule, ie. a non-terminal symbol, to be replaced
     //------------------------------------------------------------------------------------------------------------------
@@ -107,7 +108,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief the seed to use to generate the stochastic behaviour of the tree
   //--------------------------------------------------------------------------------------------------------------------
-  int m_seed = 0;
+  size_t m_seed = 0;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief toggle to determine if we should use a seed - if not, we seed by time
   //--------------------------------------------------------------------------------------------------------------------

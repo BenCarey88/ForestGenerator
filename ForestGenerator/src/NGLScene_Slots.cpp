@@ -30,6 +30,10 @@ void NGLScene::changeSuperTab(int _superTabNum)
   m_currentCamera = &m_cameras[m_superTabNum][i];
   m_currentMouseTransform = &m_mouseTransforms[m_superTabNum][i];
 
+  if(_superTabNum==2)
+  {
+    updateForest();
+  }
   update();
 }
 
@@ -58,6 +62,7 @@ void NGLScene::generate()
   }
   m_currentLSystem->breakDownRules(currentRules);
   m_currentLSystem->createGeometry();
+  m_buildTreeVAO = true;
   update();
 }
 
@@ -102,7 +107,7 @@ void NGLScene::seedToggle(int _clicked)
 
 void NGLScene::setSeed(int _seed)
 {
-  m_currentLSystem->m_seed = _seed;
+  m_currentLSystem->m_seed = size_t(_seed);
 }
 
 //------------------------------------------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 void NGLScene::initializeLSystems()
 {
   m_LSystems.resize(m_numTreeTabs);
+  m_LSystemVAOs.resize(m_numTreeTabs);
 
   std::string axiom;
   std::vector<std::string> rules;
@@ -36,4 +37,12 @@ void NGLScene::initializeLSystems()
   angleScale = 0.9f;
   generation = 6;
   m_LSystems[1] = LSystem(axiom,rules,stepSize,stepScale,angle,angleScale,generation);
+
+  //Forest:
+  m_forest = Forest(m_LSystems, m_width, m_length, m_numTrees);
+}
+
+void NGLScene::updateForest()
+{
+  m_forest = Forest(m_LSystems, m_width, m_length, m_numTrees);
 }

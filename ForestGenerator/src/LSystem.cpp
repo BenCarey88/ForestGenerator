@@ -167,17 +167,17 @@ std::string LSystem::generateTreeString()
   int numRules = int(m_rules.size());
 
   std::default_random_engine gen;
-  long seed;
+  size_t seed;
   if(m_useSeed)
   {
     seed = m_seed;
   }
   else
   {
-    seed = long(std::chrono::system_clock::now().time_since_epoch().count());
+    seed = size_t(std::chrono::system_clock::now().time_since_epoch().count());
   }
   gen.seed(seed);
-  std::uniform_real_distribution<double> dist(0.0,1.0);
+  std::uniform_real_distribution<float> dist(0.0,1.0);
 
   if(numRules>0)
   {
@@ -201,7 +201,7 @@ std::string LSystem::generateTreeString()
         size_t len = lhs.size();
         while(pos != std::string::npos)
         {
-          float randNum = float(dist(gen));
+          float randNum = dist(gen);
           float count = 0;
           size_t j = 0;
           for( ; j<probabilities.size(); j++)

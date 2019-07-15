@@ -78,7 +78,7 @@ void NGLScene::initializeGL()
   // Now we will create a basic camera from the graphics library using the currently selected camera
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
   // set the shape using FOV 45 Aspect Ratio based on Width and Height
-  // The final two are near and far clipping planes
+  // The final two are near and far clipping planesm_vao->bind();
   m_project=ngl::perspective(fieldOfView ,720.0f/576.0f,nearFrame,farFrame);
 
   // now to load the shaders
@@ -90,26 +90,34 @@ void NGLScene::initializeGL()
                      "shaders/GridFragment.glsl");
 
   ngl::VAOFactory::listCreators();
+
+
+  //set up LSystem VAOs:
+  for(size_t i=0; i<m_numTreeTabs; i++)
+  {
+    buildLineVAO(m_LSystems[i].m_vertices, m_LSystems[i].m_indices, m_LSystemVAOs[i]);
+  }
 }
 
 
-void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices)
+void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices,
+                            std::unique_ptr<ngl::AbstractVAO> &_vao)
 {
   // create a vao using GL_LINES
-  m_vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
-  m_vao->bind();
+  _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
+  _vao->bind();
 
   // set our data for the VAO
-  m_vao->setData(ngl::SimpleIndexVAO::VertexData(
+  _vao->setData(ngl::SimpleIndexVAO::VertexData(
                                                   sizeof(ngl::Vec3)*_vertices.size(),
                                                   _vertices[0].m_x,
                                                   uint(_indices.size()),
                                                   &_indices[0],
                                                   GL_UNSIGNED_SHORT));
   // data is 12 bytes apart (=sizeof(Vec3))
-  m_vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  m_vao->setNumIndices(_indices.size());
-  m_vao->unbind();
+  _vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
+  _vao->setNumIndices(_indices.size());
+  _vao->unbind();
 }
 
 
@@ -129,10 +137,16 @@ void NGLScene::paintGL()
   {
     (*shader)["GridShader"]->use();
     shader->setUniform("MVP",MVP);
-    buildLineVAO(m_grid.m_vertices, m_grid.m_indices);
+    buildLineVAO(m_grid.m_vertices, m_grid.m_indices, m_vao);
     m_vao->bind();
     m_vao->draw();
     m_vao->unbind();
+  }
+
+  if(m_buildTreeVAO == true)
+  {
+      buildLineVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices, m_LSystemVAOs[m_treeTabNum]);
+      m_buildTreeVAO = false;
   }
 
   (*shader)["ColourShader"]->use();
@@ -141,27 +155,24 @@ void NGLScene::paintGL()
   {
     case 0:
       shader->setUniform("MVP",MVP);
-      buildLineVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices);
-      m_vao->bind();
-      m_vao->draw();
-      m_vao->unbind();
+      m_LSystemVAOs[m_treeTabNum]->bind();
+      m_LSystemVAOs[m_treeTabNum]->draw();
+      m_LSystemVAOs[m_treeTabNum]->unbind();
       break;
 
     case 1:
       break;
 
     case 2:
-      for(size_t i=0; i<m_numTreeTabs; i++)
+      for(size_t i=0; i<m_forest.m_numTrees; i++)
       {
-        ngl::Mat4 trans(1,0,0,0,
-                        0,1,0,0,
-                        0,0,1,0,
-                        16*int(i)-8,0,0,1);
+        size_t type = m_forest.m_treeData[i].m_type;
+        ngl::Mat4 trans = m_forest.m_treeData[i].m_transform;
         shader->setUniform("MVP",MVP*trans);
-        buildLineVAO(m_LSystems[i].m_vertices, m_LSystems[i].m_indices);
-        m_vao->bind();
-        m_vao->draw();
-        m_vao->unbind();
+
+        m_LSystemVAOs[type]->bind();
+        m_LSystemVAOs[type]->draw();
+        m_LSystemVAOs[type]->unbind();
       }
       break;
 

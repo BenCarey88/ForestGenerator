@@ -66,7 +66,7 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
     m_win.origY  = _event->y();
     m_win.rotate = true;
   }
-  // right mouse translate mode
+  // middle mouse translate mode
   else if ( _event->button() == Qt::MidButton )
   {
     m_win.origXPos  = _event->x();
@@ -79,7 +79,7 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
 void NGLScene::mouseReleaseEvent( QMouseEvent* _event )
 {
   // this event is called when the mouse button is released
-  // we then set Rotate to false
+  // we then set rotate to false
   if ( _event->button() == Qt::LeftButton )
   {
     m_win.rotate = false;
