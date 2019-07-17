@@ -9,6 +9,8 @@
 #include <chrono>
 #include <stdexcept>
 #include <iostream>
+#include <math.h>
+#include <string>
 #include <boost/algorithm/string.hpp>
 #include <ngl/Mat3.h>
 #include <ngl/Mat4.h>
@@ -27,7 +29,6 @@ LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules,
     m_ruleArray.at(i)=_rules[i];
   }
   breakDownRules(_rules);
-  detectBranching();
   createGeometry();
 }
 
@@ -47,6 +48,42 @@ void LSystem::Rule::normalizeProbabilities()
   for(auto &prob : m_prob)
   {
     prob *= sumProbInverse;
+  }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::countBranches()
+{
+  for(auto &rule : m_rules)
+  {
+    rule.m_numBranches = {};
+    for(auto rhs : rule.m_RHS)
+    {
+      int numBranches = 0;
+      for(size_t i=0; i<rhs.length(); i++)
+      {
+        if(rhs[i]=='[')
+        {
+          size_t j=i+1;
+          for(; j<rhs.length(); j++)
+          {
+            if(rhs[j]==']')
+              break;
+          }
+          std::string branch(rhs.begin()+int(i+1),rhs.begin()+int(j));
+          //the first part of this if clause checks that the branch hasn't been added to m_branches already
+          //and the second checks that it contains at least one non-terminal
+          if(std::find(m_branches.begin(), m_branches.end(), branch) == m_branches.end() &&
+             std::regex_search(branch, std::regex(m_nonTerminals)))
+          {
+            numBranches++;
+          }
+          i=j;
+        }
+      }
+      rule.m_numBranches.push_back(numBranches);
+    }
   }
 }
 
@@ -79,11 +116,11 @@ void LSystem::breakDownRules(std::vector<std::string> _rules)
         }
         catch(std::invalid_argument)
         {
-          std::cerr<<"WARNING: unable to convert probability to string \n";
+          std::cerr<<"WARNING: unable to convert probability to float \n";
         }
         catch(std::out_of_range)
         {
-          std::cerr<<"WARNING: unable to convert probability to string \n";
+          std::cerr<<"WARNING: unable to convert probability to float \n";
         }
       }
 
@@ -119,42 +156,98 @@ void LSystem::breakDownRules(std::vector<std::string> _rules)
   {
     rule.normalizeProbabilities();
   }
-
   m_nonTerminals += "]+";
+  //note we need to conclude m_nonTerminals before calling countBranches
+  countBranches();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 
-void LSystem::detectBranching()
+void LSystem::addInstancingCommands()
 {
   m_branches = {};
-  for(auto rule : m_rules)
+  for(auto &rule : m_rules)
   {
-    for(auto rhs : rule.m_RHS)
+    std::vector<std::string> tmpRHS = {};
+    std::vector<float> tmpProb = {};
+    for(size_t i=0; i<rule.m_RHS.size(); i++)
     {
-      for(size_t i=0; i<rhs.length(); i++)
+      int numRHSs = int(pow(2,rule.m_numBranches[i]));
+      for(int j=0; j<numRHSs; j++)
       {
-        if(rhs[i]=='[')
+        std::string rhs = rule.m_RHS[i];
+        float prob = rule.m_prob[i];
+        addInstancingToRule(rhs, prob, j);
+        tmpRHS.push_back(rhs);
+        tmpProb.push_back(prob);
+      }
+    }
+    rule.m_RHS = tmpRHS;
+    rule.m_prob = tmpProb;
+  }
+}
+
+void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
+{
+  int count = 1;
+  int instanceCount = 0;
+  int nonInstanceCount = 0;
+  for(size_t i=0; i<_rhs.length(); i++)
+  {
+    if(_rhs[i]=='[')
+    {
+      size_t id;
+      size_t j=i+1;
+      for(; j<_rhs.length(); j++)
+      {
+        if(_rhs[j]==']')
+          break;
+      }
+      if(j==_rhs.length())
+      {
+        break;
+      }
+      std::string branch(_rhs.begin()+int(i+1),_rhs.begin()+int(j));
+      //check that the branch contains at least one non-terminal
+      if(std::regex_search(branch, std::regex(m_nonTerminals)))
+      {
+        //if the branch hasn't been added to m_branches already, then add it
+        auto it = std::find(m_branches.begin(), m_branches.end(), branch);
+        if(it == m_branches.end())
         {
-          size_t j=i+1;
-          for(; j<rhs.length(); j++)
-          {
-            if(rhs[j]==']')
-              break;
-          }
-          std::string branch(rhs.begin()+int(i+1),rhs.begin()+int(j));
-          //the first part of this if clause checks that the branch hasn't been added to m_branches already
-          //and the second checks that it contains at least one non-terminal
-          if(std::find(m_branches.begin(), m_branches.end(), branch) == m_branches.end() &&
-             std::regex_search(branch, std::regex(m_nonTerminals)))
-          {
-            m_branches.push_back(branch);
-          }
-          i=j;
+          id = m_branches.size();
+          m_branches.push_back(branch);
         }
+        //otherwise, the id is the index of the branch in m_branches
+        else
+        {
+          id = size_t(std::distance(m_branches.begin(),it));
+        }
+
+        std::string replacement;
+        //float prob;
+        if(_index % int(pow(2,count)) < int(pow(2,count-1)))
+        {
+          replacement = "@("+std::to_string(id)+",#)";
+          instanceCount++;
+        }
+        else
+        {
+          replacement = "{["+branch+"]}";
+          nonInstanceCount++;
+        }
+
+        _rhs.replace(i, j-i+1, replacement);
+        i += replacement.size();
+        count++;
+      }
+      else
+      {
+        i=j;
       }
     }
   }
+  _prob *= pow(m_instancingProb, instanceCount) * pow(1-m_instancingProb, nonInstanceCount);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -222,7 +315,7 @@ std::string LSystem::generateTreeString()
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish - start;
 
-  std::cout << "\ngenerateTreeString() Elapsed time: " << elapsed.count() << " s\n";
+  //std::cout << "\ngenerateTreeString() Elapsed time: " << elapsed.count() << " s\n";
 
   return treeString;
 }
@@ -367,7 +460,7 @@ void LSystem::createGeometry()
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish - start;
 
-  std::cout << "\ncreateGeometry() Elapsed time: " << elapsed.count() << " s\n";
+  //std::cout << "\ncreateGeometry() Elapsed time: " << elapsed.count() << " s\n";
 }
 
 //----------------------------------------------------------------------------------------------------------------------

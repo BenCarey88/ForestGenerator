@@ -3,7 +3,6 @@
 /// @brief implementation file for LSystem class
 //----------------------------------------------------------------------------------------------------------------------
 
-#include "noise.h"
 #include <math.h>
 #include <random>
 #include <chrono>

@@ -35,17 +35,16 @@ TEST(LSystem, breakDownRules)
   EXPECT_EQ(L.m_nonTerminals,"[AB]+");
 }
 
-TEST(LSystem, detectBranching)
+TEST(LSystem, countBranches)
 {
   std::string axiom = "FFFA";
-  std::vector<std::string> rules = {"A=[B]///[B]///[B]", "B=FF[C/C][C]", "C=FF[FFF]//[A]"};
+  std::vector<std::string> rules = {"A=[B]///[B]///[B]", "A=B", "B=FF[C/C][C]", "C=FF[FFF]//[A]"};
   LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
 
-  EXPECT_EQ(L.m_branches.size(),4);
-  EXPECT_EQ(L.m_branches[0],"B");
-  EXPECT_EQ(L.m_branches[1],"C/C");
-  EXPECT_EQ(L.m_branches[2],"C");
-  EXPECT_EQ(L.m_branches[3],"A");
+  L.countBranches();
+  EXPECT_EQ(L.m_rules[0].m_numBranches,std::vector<int>({3,0}));
+  EXPECT_EQ(L.m_rules[1].m_numBranches,std::vector<int>({2}));
+  EXPECT_EQ(L.m_rules[2].m_numBranches,std::vector<int>({1}));
 }
 
 TEST(LSystem, generateTreeString)
@@ -67,10 +66,8 @@ TEST(LSystem, createGeometry)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
-  L.m_generation=0;
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,0);
   L.createGeometry();
-  L.m_stepSize = 2;
 
   EXPECT_EQ(L.m_vertices.size(),4);
   EXPECT_EQ(L.m_vertices[0],ngl::Vec3(0,0,0));
@@ -86,3 +83,33 @@ TEST(LSystem, createGeometry)
   EXPECT_EQ(L.m_indices[4],2);
   EXPECT_EQ(L.m_indices[5],3);
 }
+
+TEST(LSystem, addInstancingCommands)
+{
+  std::string axiom = "FFFA";
+  std::vector<std::string> rules = {"A=![B]//[f]//[C/C]////B:2", "B=FFFA", "A=F//[B]//F:3", "C=F[A]"};
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
+  L.m_instancingProb = 0.6f;
+
+  L.addInstancingCommands();
+
+  EXPECT_EQ(L.m_rules[0].m_RHS[0],"!@(0,#)//[f]//@(1,#)////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{[B]}//[f]//@(1,#)////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!@(0,#)//[f]//{[C/C]}////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{[B]}//[f]//{[C/C]}////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//@(0,#)//F");
+  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{[B]}//F");
+
+  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[0],0.144);
+  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[1],0.096);
+  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[2],0.096);
+  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[3],0.064);
+  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[4],0.36);
+  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[5],0.24);
+
+  EXPECT_EQ(L.m_branches.size(),3);
+  EXPECT_EQ(L.m_branches[0],"B");
+  EXPECT_EQ(L.m_branches[1],"C/C");
+  EXPECT_EQ(L.m_branches[2],"A");
+}
+

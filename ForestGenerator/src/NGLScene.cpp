@@ -143,7 +143,7 @@ void NGLScene::paintGL()
     m_vao->unbind();
   }
 
-  if(m_buildTreeVAO == true)
+  if(m_buildTreeVAO)
   {
       buildLineVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices, m_LSystemVAOs[m_treeTabNum]);
       m_buildTreeVAO = false;
