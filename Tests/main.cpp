@@ -88,7 +88,7 @@ TEST(LSystem, addInstancingCommands)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]//[f]//[C/C]////B:2", "B=FFFA", "A=F//[B]//F:3", "C=F[A]"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,6);
   L.m_instancingProb = 0.6f;
 
   L.addInstancingCommands();

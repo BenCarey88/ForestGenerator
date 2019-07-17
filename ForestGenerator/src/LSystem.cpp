@@ -278,13 +278,15 @@ std::string LSystem::generateTreeString()
     {
       size_t ruleNum = size_t(i % numRules);
       std::string lhs = m_rules[ruleNum].m_LHS;
-      std::vector<std::string> rhs = m_rules[ruleNum].m_RHS;
+      std::vector<std::string> RHS = m_rules[ruleNum].m_RHS;
       std::vector<float> probabilities = m_rules[ruleNum].m_prob;
 
       //use boost method if there is only one rhs - much faster
-      if(rhs.size()==1)
+      if(RHS.size()==1)
       {
-        boost::replace_all(treeString, lhs, rhs[0]);
+        std::string rhs = RHS[0];
+        boost::replace_all(rhs, "#", std::to_string(i));
+        boost::replace_all(treeString, lhs, rhs);
       }
 
       //otherwise we want to apply each replacement individually based on probabilities
@@ -305,8 +307,10 @@ std::string LSystem::generateTreeString()
               break;
             }
           }
-          treeString.replace(pos, len, rhs[j]);
-          pos = treeString.find(lhs, pos+rhs[j].size());
+          std::string rhs = RHS[j];
+          boost::replace_all(rhs, "#", std::to_string(i));
+          treeString.replace(pos, len, rhs);
+          pos = treeString.find(lhs, pos+rhs.size());
         }
       }
     }
@@ -465,7 +469,7 @@ void LSystem::createGeometry()
 
 //----------------------------------------------------------------------------------------------------------------------
 
-void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_output)
+void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_paramVar)
 {
   if(_i+1<_treeString.length() && _treeString.at(_i+1)=='(')
   {
@@ -482,7 +486,7 @@ void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_
       try
       {
         std::string parameter = _treeString.substr(_i+2, j-_i-2);
-        _output = std::stof(parameter);
+        _paramVar = std::stof(parameter);
       }
       catch(std::invalid_argument)
       {

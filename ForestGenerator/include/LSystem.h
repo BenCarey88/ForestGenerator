@@ -171,9 +171,9 @@ public:
   /// @brief used by createGeometry to deal with parameters enclosed by brackets in the tree string
   /// @param [in] _treeString the string
   /// @param [in] _i the index of _treeString that createGeometry() has reached
-  /// @param [in] _output the variable that will be replaced by the parameter in the brackets if needed
+  /// @param [in] _paramVar the variable that will be replaced by the parameter in the brackets if needed
   //--------------------------------------------------------------------------------------------------------------------
-  void parseBrackets(const std::string &_treeString, size_t &_i, float &_output);
+  void parseBrackets(const std::string &_treeString, size_t &_i, float &_paramVar);
 };
 
 
