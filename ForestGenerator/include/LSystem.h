@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <ngl/Vec3.h>
+#include <ngl/Mat4.h>
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class LSystem
@@ -19,7 +20,7 @@
 
 class LSystem
 {
-public:
+public://--------------------------------------------------------------------------------------------------------------------
 
   //CONSTRUCTOR
   //--------------------------------------------------------------------------------------------------------------------
@@ -67,20 +68,35 @@ public:
     void normalizeProbabilities();
   };
 
-  //INSTANCE-CACHE STRUCT
+  //INSTANCE STRUCT
   //--------------------------------------------------------------------------------------------------------------------
-  /// @struct Instance Cache
-  /// @brief this structure stores the instance cache
+  /// @struct Instance
+  /// @brief struct detailing the data of an instance
   //--------------------------------------------------------------------------------------------------------------------
-  struct InstanceCache
+  struct Instance
   {
-    //------------------------------------------------------------------------------------------------------------------
-    /// @brief default ctor for Instance Cache
-    //------------------------------------------------------------------------------------------------------------------
-    InstanceCache() = default;
+    //--------------------------------------------------------------------------------------------------------------------
+    /// @brief default ctor for Instance struct
+    //--------------------------------------------------------------------------------------------------------------------
+    Instance();
 
-    getInstance();
+    size_t m_id;
+    int m_age;
+    ngl::Mat4 m_transform;
+
+    struct ExitPoint
+    {
+      ExitPoint() = default;
+      size_t m_exitId;
+      int m_exitAge;
+      ngl::Mat4 m_exitTransform;
+    };
+    std::vector<ExitPoint> m_exitPoints;
+
+    std::vector<ngl::Vec3> m_vertexBuffer;
+    std::vector<GLshort> m_indexBuffer;
   };
+
 
   //PUBLIC MEMBER VARIABLES
   //--------------------------------------------------------------------------------------------------------------------
@@ -152,6 +168,15 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   bool m_parameterError = false;
 
+  //instance cache is vectors of instances nested 3 deep
+  //outer layer separates instances by id
+  //middle layer separates instances of the same id by age
+  //inner layer separates multiple possible instances of the same id and age
+  //so accessing an istance is done by instanceCache[id][age][randomizer]
+  std::vector<std::vector<std::vector<Instance>>> m_instanceCache;
+
+  void resizeInstanceCache();
+
   //PUBLIC MEMBER FUNCTIONS
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief counts new branches introduced by each rule and uses to fill m_rules[i].m_numBranches for each rule
@@ -189,6 +214,8 @@ public:
   /// @param [in] _paramVar the variable that will be replaced by the parameter in the brackets if needed
   //--------------------------------------------------------------------------------------------------------------------
   void parseBrackets(const std::string &_treeString, size_t &_i, float &_paramVar);
+
+  void parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age);
 };
 
 

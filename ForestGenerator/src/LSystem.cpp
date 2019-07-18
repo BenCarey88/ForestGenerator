@@ -285,7 +285,7 @@ std::string LSystem::generateTreeString()
       if(RHS.size()==1)
       {
         std::string rhs = RHS[0];
-        boost::replace_all(rhs, "#", std::to_string(i));
+        boost::replace_all(rhs, "#", std::to_string(i+1));
         boost::replace_all(treeString, lhs, rhs);
       }
 
@@ -308,7 +308,7 @@ std::string LSystem::generateTreeString()
             }
           }
           std::string rhs = RHS[j];
-          boost::replace_all(rhs, "#", std::to_string(i));
+          boost::replace_all(rhs, "#", std::to_string(i+1));
           treeString.replace(pos, len, rhs);
           pos = treeString.find(lhs, pos+rhs.size());
         }
@@ -322,6 +322,17 @@ std::string LSystem::generateTreeString()
   //std::cout << "\ngenerateTreeString() Elapsed time: " << elapsed.count() << " s\n";
 
   return treeString;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::resizeInstanceCache()
+{
+  m_instanceCache.resize(m_branches.size());
+  for(auto &vector : m_instanceCache)
+  {
+    vector.resize(size_t(m_generation));
+  }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -343,9 +354,13 @@ void LSystem::createGeometry()
   GLshort lastIndex = 0;
   float stepSize = m_stepSize;
   float angle = m_angle;
+
+  Instance currentInstance;
+
   //paramVar will store the default value of each command, to be replaced by one
   //parsed from brackets by parseBrackets() if necessary
   float paramVar;
+  size_t id, age;
 
   std::vector<ngl::Vec3> savedVert = {};
   std::vector<GLshort> savedInd = {};
@@ -353,6 +368,8 @@ void LSystem::createGeometry()
   std::vector<ngl::Vec3> savedRight = {};
   std::vector<float> savedStep = {};
   std::vector<float> savedAngle = {};
+
+  std::vector<Instance> savedInstance = {};
 
   m_vertices = {lastVertex};
   m_indices = {};
@@ -451,6 +468,21 @@ void LSystem::createGeometry()
         angle *= paramVar;
         break;
 
+      //startInstance
+      case '{':
+        parseInstanceBrackets(treeString, i, id, age);
+        break;
+
+      //stopInstance
+      case '}':
+        parseInstanceBrackets(treeString, i, id, age);
+        break;
+
+      //getInstance
+      case '@':
+        parseInstanceBrackets(treeString, i, id, age);
+        break;
+
       default:
         break;
     }
@@ -499,4 +531,31 @@ void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_
       _i=j;
     }
   }
+}
+
+void LSystem::parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age)
+{
+  //don't need the outer if clause that parseBrackets() has because @, { and } are guaranteed to be followed by (
+  size_t j=_i+2;
+  for( ; j<_treeString.size(); j++)
+  {
+    if(_treeString[j]==',')
+    {
+      break;
+    }
+  }
+  std::string id = _treeString.substr(_i+2, j-_i-2);
+  _id = size_t(std::stoi(id));
+  _i=j;
+
+  for( ; j<_treeString.size(); j++)
+  {
+    if(_treeString[j]==')')
+    {
+      break;
+    }
+  }
+  std::string age = _treeString.substr(_i+1, j-_i-1);
+  _age = size_t(std::stoi(age));
+  _i=j;
 }

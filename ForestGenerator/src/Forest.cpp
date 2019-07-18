@@ -108,3 +108,44 @@ void Forest::scatterForest()
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+
+void Forest::createTree(ngl::Mat4 _transform, size_t _id, size_t _age)
+{
+  Instance instance = getInstance(_id,_age);
+  ngl::Mat4 T = _transform * instance.m_transform.inverse();
+  m_output.push_back(OutputData(instance.m_vertexBuffer, instance.m_indexBuffer, T));
+  for(size_t i=0; i<instance.m_exitPoints.size(); i++)
+  {
+    size_t newAge = instance.m_exitPoints[i].m_exitAge;
+    size_t newId = instance.m_exitPoints[i].m_exitId;
+    ngl::Mat4 exitTransform = instance.m_exitPoints[i].m_exitTransform;
+    ngl::Mat4 newTransform = _transform * exitTransform;
+    createTree(newTransform, newId, newAge);
+  }
+}
+
+Forest::Instance Forest::getInstance(size_t _id, size_t _age)
+{
+  size_t size = m_instanceCache[_id][_age].size();
+  if(size > 0)
+  {
+    size_t seed;
+    if(m_useSeed)
+    {
+      seed = m_seed;
+    }
+    else
+    {
+      seed = size_t(std::chrono::system_clock::now().time_since_epoch().count());
+    }
+    std::default_random_engine gen;
+    gen.seed(seed);
+    std::uniform_int_distribution<size_t> dist(0,size);
+
+    return m_instanceCache[_id][_age][dist(gen)];
+  }
+  else
+  {
+    return Instance();
+  }
+}
