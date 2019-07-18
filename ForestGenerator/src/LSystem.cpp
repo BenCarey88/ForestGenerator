@@ -233,7 +233,7 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         }
         else
         {
-          replacement = "{["+branch+"]}";
+          replacement = "{(" + std::to_string(id) + ",#)[" + branch + "]}(" + std::to_string(id) + ",#)";
           nonInstanceCount++;
         }
 

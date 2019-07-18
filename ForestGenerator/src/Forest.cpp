@@ -14,8 +14,12 @@ Forest::Forest(std::vector<LSystem> _treeTypes, float _width, float _length, siz
   scatterForest();
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 Forest::Tree::Tree(size_t _type, ngl::Mat4 _transform) :
   m_type(_type), m_transform(_transform) {}
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void Forest::scatterForest()
 {
@@ -102,3 +106,5 @@ void Forest::scatterForest()
     m_treeData.push_back(Tree(distTreeType(gen), position*orientation*scale));
   }
 }
+
+//----------------------------------------------------------------------------------------------------------------------

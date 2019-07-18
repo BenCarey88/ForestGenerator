@@ -94,11 +94,11 @@ TEST(LSystem, addInstancingCommands)
   L.addInstancingCommands();
 
   EXPECT_EQ(L.m_rules[0].m_RHS[0],"!@(0,#)//[f]//@(1,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{[B]}//[f]//@(1,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!@(0,#)//[f]//{[C/C]}////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{[B]}//[f]//{[C/C]}////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{(0,#)[B]}(0,#)//[f]//@(1,#)////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!@(0,#)//[f]//{(1,#)[C/C]}(1,#)////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{(0,#)[B]}(0,#)//[f]//{(1,#)[C/C]}(1,#)////B");
   EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//@(0,#)//F");
-  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{[B]}//F");
+  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{(0,#)[B]}(0,#)//F");
 
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[0],0.144);
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[1],0.096);
