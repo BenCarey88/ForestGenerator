@@ -58,7 +58,7 @@ public://-----------------------------------------------------------------------
     //------------------------------------------------------------------------------------------------------------------
     std::vector<float> m_prob;
     //------------------------------------------------------------------------------------------------------------------
-    /// @brief corresponding list of branch occurences in each RHS
+    /// @brief corresponding list of number of branch occurences in each RHS
     //------------------------------------------------------------------------------------------------------------------
     std::vector<int> m_numBranches;
 
@@ -76,25 +76,22 @@ public://-----------------------------------------------------------------------
   struct Instance
   {
     //--------------------------------------------------------------------------------------------------------------------
-    /// @brief default ctor for Instance struct
+    /// @brief ctor for Instance struct
     //--------------------------------------------------------------------------------------------------------------------
-    Instance();
+    Instance(ngl::Mat4 _transform);
 
-    size_t m_id;
-    int m_age;
     ngl::Mat4 m_transform;
+    GLshort * m_instanceStart;
+    GLshort * m_instanceEnd;
 
     struct ExitPoint
     {
-      ExitPoint() = default;
+      ExitPoint(size_t _exitId, size_t _exitAge, ngl::Mat4 _transform);
       size_t m_exitId;
-      int m_exitAge;
+      size_t m_exitAge;
       ngl::Mat4 m_exitTransform;
     };
     std::vector<ExitPoint> m_exitPoints;
-
-    std::vector<ngl::Vec3> m_vertexBuffer;
-    std::vector<GLshort> m_indexBuffer;
   };
 
 
@@ -150,6 +147,11 @@ public://-----------------------------------------------------------------------
   bool m_useSeed = false;
 
   //--------------------------------------------------------------------------------------------------------------------
+  /// @brief bool to tell if an error was thrown while parsing brackets when creating geometry
+  //--------------------------------------------------------------------------------------------------------------------
+  bool m_parameterError = false;
+
+  //--------------------------------------------------------------------------------------------------------------------
   /// @brief probability of instancing a given branch
   //--------------------------------------------------------------------------------------------------------------------
   float m_instancingProb = 0.6f;
@@ -163,10 +165,9 @@ public://-----------------------------------------------------------------------
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<GLshort> m_indices;
 
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief bool to tell if an error was thrown while parsing brackets when creating geometry
-  //--------------------------------------------------------------------------------------------------------------------
-  bool m_parameterError = false;
+  std::vector<ngl::Vec3> m_heroVertices = {};
+  std::vector<GLshort> m_heroIndices= {};
+  bool m_forestMode = false;
 
   //instance cache is vectors of instances nested 3 deep
   //outer layer separates instances by id
@@ -189,7 +190,7 @@ public://-----------------------------------------------------------------------
 
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief recreates m_rules to add more RHSs to each rule corresponding to different instancing commands
-  /// also fills m_branches while its at it
+  /// also fills m_branches while it's at it
   //--------------------------------------------------------------------------------------------------------------------
   void addInstancingCommands();
   //--------------------------------------------------------------------------------------------------------------------

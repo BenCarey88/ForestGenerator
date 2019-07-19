@@ -19,6 +19,8 @@ Forest::Forest(std::vector<LSystem> _treeTypes, float _width, float _length, siz
 Forest::Tree::Tree(size_t _type, ngl::Mat4 _transform) :
   m_type(_type), m_transform(_transform) {}
 
+Forest::OutputData::OutputData(std::vector<ngl::Vec3> _vertexBuffer, std::vector<GLshort> _indexBuffer, ngl::Mat4 _transform) {}
+
 //----------------------------------------------------------------------------------------------------------------------
 
 void Forest::scatterForest()

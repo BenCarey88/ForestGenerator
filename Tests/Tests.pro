@@ -9,7 +9,10 @@ CONFIG -= qt
 
 INCLUDEPATH += ../ForestGenerator/include/
 SOURCES += main.cpp \
-            ../ForestGenerator/src/LSystem.cpp
+            ../ForestGenerator/src/LSystem.cpp \
+            ../ForestGenerator/src/LSystem_CreateGeometry.cpp \
+            ../ForestGenerator/src/LSystem_ForestMode.cpp
+
 
 NGLPATH=$$(NGLDIR)
 isEmpty(NGLPATH){ # note brace must be here

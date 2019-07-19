@@ -63,7 +63,7 @@ public:
     //--------------------------------------------------------------------------------------------------------------------
     /// @brief default ctor for Instance struct
     //--------------------------------------------------------------------------------------------------------------------
-    Instance();
+    Instance() = default;
 
     size_t m_id;
     size_t m_age;
@@ -71,7 +71,7 @@ public:
 
     struct ExitPoint
     {
-      ExitPoint() = default;
+      ExitPoint(size_t _exitId, size_t _exitAge, ngl::Mat4 _exitTransform);
       size_t m_exitId;
       size_t m_exitAge;
       ngl::Mat4 m_exitTransform;
@@ -93,7 +93,7 @@ public:
     //--------------------------------------------------------------------------------------------------------------------
     OutputData(std::vector<ngl::Vec3> _vertexBuffer, std::vector<GLshort> _indexBuffer, ngl::Mat4 _transform);
 
-    ngl::Mat4 m_transform;
+    //ngl::Mat4 m_transform;
   };
 
   //PUBLIC MEMBER VARIABLES
