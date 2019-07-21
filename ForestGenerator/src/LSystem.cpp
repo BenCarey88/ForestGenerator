@@ -65,11 +65,26 @@ void LSystem::countBranches()
       {
         if(rhs[i]=='[')
         {
+          int bracketCount=0;
           size_t j=i+1;
           for(; j<rhs.length(); j++)
           {
+            if(rhs[j]=='[')
+            {
+              bracketCount++;
+            }
             if(rhs[j]==']')
-              break;
+            {
+              if(bracketCount==0)
+              {
+                break;
+              }
+              bracketCount--;
+            }
+          }
+          if(j==rhs.length())
+          {
+            continue;
           }
           std::string branch(rhs.begin()+int(i+1),rhs.begin()+int(j));
           //the first part of this if clause checks that the branch hasn't been added to m_branches already
@@ -79,7 +94,6 @@ void LSystem::countBranches()
           {
             numBranches++;
           }
-          i=j;
         }
       }
       rule.m_numBranches.push_back(numBranches);

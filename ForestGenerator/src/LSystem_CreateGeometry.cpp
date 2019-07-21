@@ -21,6 +21,10 @@
 
 void LSystem::createGeometry()
 {
+
+  auto start = std::chrono::high_resolution_clock::now();
+
+  std::string treeString = generateTreeString();
   ngl::Vec3 dir(0,1,0);
   ngl::Vec3 right(1,0,0);
   //I am using an ngl::Mat4 matrix for now because there is a problem with the euler
@@ -29,31 +33,26 @@ void LSystem::createGeometry()
   ngl::Mat4 r4;
   ngl::Mat3 r3;
   ngl::Mat4 t4;
-  std::string treeString = generateTreeString();
-
-  auto start = std::chrono::high_resolution_clock::now();
 
   ngl::Vec3 lastVertex(0,0,0);
   GLshort lastIndex = 0;
   float stepSize = m_stepSize;
   float angle = m_angle;
 
-  //Instance currentInstance;
-
   //paramVar will store the default value of each command, to be replaced by one
   //parsed from brackets by parseBrackets() if necessary
   float paramVar;
   size_t id, age;
 
-  std::vector<ngl::Vec3> savedVert = {};
   std::vector<GLshort> savedInd = {};
+  std::vector<ngl::Vec3> savedVert = {};
   std::vector<ngl::Vec3> savedDir = {};
   std::vector<ngl::Vec3> savedRight = {};
   std::vector<float> savedStep = {};
   std::vector<float> savedAngle = {};
 
   Instance * currentInstance;
-  std::vector<Instance> savedInstance = {};
+  std::vector<Instance *> savedInstance = {};
 
   std::vector<ngl::Vec3> * vertices;
   std::vector<GLshort> * indices;
@@ -66,6 +65,8 @@ void LSystem::createGeometry()
   }
   else
   {
+    lastIndex = m_heroVertices.size();
+    m_heroVertices.push_back(lastVertex);
     vertices = &m_heroVertices;
     indices = &m_heroIndices;
   }
@@ -103,19 +104,22 @@ void LSystem::createGeometry()
       //end branch
       case ']':
       {
-        lastIndex = savedInd.back();
-        lastVertex = savedVert.back();
-        dir = savedDir.back();
-        right = savedRight.back();
-        stepSize = savedStep.back();
-        angle = savedAngle.back();
+        if(savedInd.size()>0)
+        {
+          lastIndex = savedInd.back();
+          lastVertex = savedVert.back();
+          dir = savedDir.back();
+          right = savedRight.back();
+          stepSize = savedStep.back();
+          angle = savedAngle.back();
 
-        savedInd.pop_back();
-        savedVert.pop_back();
-        savedDir.pop_back();
-        savedRight.pop_back();
-        savedStep.pop_back();
-        savedAngle.pop_back();
+          savedInd.pop_back();
+          savedVert.pop_back();
+          savedDir.pop_back();
+          savedRight.pop_back();
+          savedStep.pop_back();
+          savedAngle.pop_back();
+        }
         break;
       }
 
@@ -187,26 +191,35 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
-        //BETTER VERSION: KEEP TRACK OF THIS FROM THE TOP WITH CONTANTLY UPDATING TRANSFORM MATRIX
         ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
-        float angle = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
-        r4.euler(angle, axis.m_x, axis.m_y, axis.m_z);
+        if(axis.lengthSquared()!=0)
+        {
+          float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
+          r4.euler(theta, axis.m_x, axis.m_y, axis.m_z);
+        }
+        else
+        {
+          r4.identity();
+        }
         t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
 
         Instance instance(t4*r4);
         instance.m_instanceStart = &(indices->back());
-        savedInstance.push_back(instance);
-        currentInstance = &instance;
         m_instanceCache[id][age].push_back(instance);
+        currentInstance = &m_instanceCache[id][age].back();
+        savedInstance.push_back(currentInstance);
         break;
       }
 
       //stopInstance
       case '}':
       {
-        currentInstance->m_instanceEnd = &(*indices)[indices->size()-1];
+        currentInstance->m_instanceEnd = &(indices->back());
         savedInstance.pop_back();
-        currentInstance = &(savedInstance.back());
+        if(savedInstance.size()>0)
+        {
+          currentInstance = savedInstance.back();
+        }
         break;
       }
 
@@ -216,8 +229,15 @@ void LSystem::createGeometry()
         parseInstanceBrackets(treeString, i, id, age);
 
         ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
-        float angle = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
-        r4.euler(angle, axis.m_x, axis.m_y, axis.m_z);
+        if(axis.lengthSquared()!=0)
+        {
+          float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
+          r4.euler(theta, axis.m_x, axis.m_y, axis.m_z);
+        }
+        else
+        {
+          r4.identity();
+        }
         t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
 
         currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id,age,t4*r4));
@@ -239,7 +259,6 @@ void LSystem::createGeometry()
 
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish - start;
-
   //std::cout << "\ncreateGeometry() Elapsed time: " << elapsed.count() << " s\n";
 }
 

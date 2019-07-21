@@ -12,6 +12,11 @@ Forest::Forest(std::vector<LSystem> _treeTypes, float _width, float _length, siz
   m_treeTypes(_treeTypes), m_width(_width), m_length(_length), m_numTrees(_numTrees)
 {
   scatterForest();
+
+  for(auto treeType : m_treeTypes)
+  {
+    treeType.fillInstanceCache(m_numHeroTrees);
+  }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -19,7 +24,8 @@ Forest::Forest(std::vector<LSystem> _treeTypes, float _width, float _length, siz
 Forest::Tree::Tree(size_t _type, ngl::Mat4 _transform) :
   m_type(_type), m_transform(_transform) {}
 
-Forest::OutputData::OutputData(std::vector<ngl::Vec3> _vertexBuffer, std::vector<GLshort> _indexBuffer, ngl::Mat4 _transform) {}
+Forest::OutputData::OutputData(ngl::Mat4 _transform, GLshort * _instanceStart, GLshort * _instanceEnd) :
+  m_transform(_transform), m_instanceStart(_instanceStart), m_instanceEnd(_instanceEnd) {}
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -111,43 +117,55 @@ void Forest::scatterForest()
 
 //----------------------------------------------------------------------------------------------------------------------
 
-void Forest::createTree(ngl::Mat4 _transform, size_t _id, size_t _age)
+void Forest::createTree(const LSystem &_treeType, ngl::Mat4 _transform, size_t _id, size_t _age)
 {
-  Instance instance = getInstance(_id,_age);
-  ngl::Mat4 T = _transform * instance.m_transform.inverse();
-  m_output.push_back(OutputData(instance.m_vertexBuffer, instance.m_indexBuffer, T));
-  for(size_t i=0; i<instance.m_exitPoints.size(); i++)
+  size_t size = _treeType.m_instanceCache[_id][_age].size();
+  if(size>0)
   {
-    size_t newAge = instance.m_exitPoints[i].m_exitAge;
-    size_t newId = instance.m_exitPoints[i].m_exitId;
-    ngl::Mat4 exitTransform = instance.m_exitPoints[i].m_exitTransform;
-    ngl::Mat4 newTransform = _transform * exitTransform;
-    createTree(newTransform, newId, newAge);
-  }
-}
-
-Forest::Instance Forest::getInstance(size_t _id, size_t _age)
-{
-  size_t size = m_instanceCache[_id][_age].size();
-  if(size > 0)
-  {
-    size_t seed;
-    if(m_useSeed)
+    Instance instance = getInstance(_treeType, _id, _age);
+    ngl::Mat4 T = _transform * instance.m_transform.inverse();
+    m_output.push_back(OutputData(T, instance.m_instanceStart, instance.m_instanceEnd));
+    for(size_t i=0; i<instance.m_exitPoints.size(); i++)
     {
-      seed = m_seed;
+      size_t newAge = instance.m_exitPoints[i].m_exitAge;
+      size_t newId = instance.m_exitPoints[i].m_exitId;
+      ngl::Mat4 exitTransform = instance.m_exitPoints[i].m_exitTransform;
+      ngl::Mat4 newTransform = _transform * exitTransform;
+      createTree(_treeType, newTransform, newId, newAge);
     }
-    else
-    {
-      seed = size_t(std::chrono::system_clock::now().time_since_epoch().count());
-    }
-    std::default_random_engine gen;
-    gen.seed(seed);
-    std::uniform_int_distribution<size_t> dist(0,size);
-
-    return m_instanceCache[_id][_age][dist(gen)];
   }
   else
   {
-    return Instance();
+    std::cout<<"Couldn't find instance with id "<<_id<<" at age "<<_age<<'\n';
+  }
+}
+
+Instance Forest::getInstance(const LSystem &_treeType, size_t _id, size_t _age)
+{
+  size_t size = _treeType.m_instanceCache[_id][_age].size();
+  size_t seed;
+  if(m_useSeed)
+  {
+    seed = m_seed;
+  }
+  else
+  {
+    seed = size_t(std::chrono::system_clock::now().time_since_epoch().count());
+  }
+  std::default_random_engine gen;
+  gen.seed(seed);
+  std::uniform_int_distribution<size_t> dist(0,size);
+
+  return _treeType.m_instanceCache[_id][_age][dist(gen)];
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void Forest::createForest()
+{
+  m_output = {};
+  for(auto tree : m_treeData)
+  {
+    createTree(m_treeTypes[tree.m_type],tree.m_transform,0,0);
   }
 }

@@ -93,12 +93,12 @@ TEST(LSystem, addInstancingCommands)
 
   L.addInstancingCommands();
 
-  EXPECT_EQ(L.m_rules[0].m_RHS[0],"!@(0,#)//[f]//@(1,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{(0,#)[B]}(0,#)//[f]//@(1,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!@(0,#)//[f]//{(1,#)[C/C]}(1,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{(0,#)[B]}(0,#)//[f]//{(1,#)[C/C]}(1,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//@(0,#)//F");
-  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{(0,#)[B]}(0,#)//F");
+  EXPECT_EQ(L.m_rules[0].m_RHS[0],"!@(1,#)//[f]//@(2,#)////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{(1,#)[B]}//[f]//@(2,#)////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!@(1,#)//[f]//{(2,#)[C/C]}////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{(1,#)[B]}//[f]//{(2,#)[C/C]}////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//@(1,#)//F");
+  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{(1,#)[B]}//F");
 
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[0],0.144);
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[1],0.096);
@@ -107,9 +107,10 @@ TEST(LSystem, addInstancingCommands)
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[4],0.36);
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[5],0.24);
 
-  EXPECT_EQ(L.m_branches.size(),3);
-  EXPECT_EQ(L.m_branches[0],"B");
-  EXPECT_EQ(L.m_branches[1],"C/C");
-  EXPECT_EQ(L.m_branches[2],"A");
+  EXPECT_EQ(L.m_branches.size(),4);
+  EXPECT_EQ(L.m_branches[0],"FFFA");
+  EXPECT_EQ(L.m_branches[1],"B");
+  EXPECT_EQ(L.m_branches[2],"C/C");
+  EXPECT_EQ(L.m_branches[3],"A");
 }
 

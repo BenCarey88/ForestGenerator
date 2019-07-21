@@ -1,41 +1,46 @@
 //----------------------------------------------------------------------------------------------------------------------
-/// @file Grid.h
+/// @file Instance.h
 /// @author Ben Carey
 /// @version 1.0
-/// @date 14/07/19
+/// @date 21/07/
 //----------------------------------------------------------------------------------------------------------------------
 
-#ifndef GRID_H_
-#define GRID_H_
+#ifndef INSTANCE_H_
+#define INSTANCE_H_
 
-#include <iostream>
-#include <vector>
-#include <ngl/Vec3.h>
+#include <ngl/Mat4.h>
+
 
 //----------------------------------------------------------------------------------------------------------------------
-/// @class Grid
-/// @brief this struct stores the ground plane to be drawn in the NGLScene
+/// @class Instance
+/// @brief this struct stores the data that constitutes an instance, to fill the instance cache in the LSystem
 //----------------------------------------------------------------------------------------------------------------------
 
-
-struct Grid
+struct Instance
 {
-  //CONSTRUCTOR
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief ctor for Grid struct
+  /// @brief default ctor for Instance struct
   //--------------------------------------------------------------------------------------------------------------------
-  Grid(GLshort _numRows, float _spacing);
+  Instance() = default;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief ctor for Instance struct
+  //--------------------------------------------------------------------------------------------------------------------
+  Instance(ngl::Mat4 _transform);
 
-  //MEMBER VARIABLES
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief vertex list to store the vertices of the grid
-  //--------------------------------------------------------------------------------------------------------------------
-  std::vector<ngl::Vec3> m_vertices;
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief index list to tell ngl how to draw the order to draw the L-system vertices in
-  //--------------------------------------------------------------------------------------------------------------------
-  std::vector<GLshort> m_indices;
+  ngl::Mat4 m_transform;
+  GLshort * m_instanceStart;
+  GLshort * m_instanceEnd;
+
+  struct ExitPoint
+  {
+    ExitPoint(size_t _exitId, size_t _exitAge, ngl::Mat4 _transform);
+    size_t m_exitId;
+    size_t m_exitAge;
+    ngl::Mat4 m_exitTransform;
+  };
+
+  std::vector<ExitPoint> m_exitPoints;
 };
 
 
-#endif //GRID_H_
+#endif //INSTANCE_H_

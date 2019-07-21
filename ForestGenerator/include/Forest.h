@@ -54,34 +54,6 @@ public:
     ngl::Mat4 m_transform;
   };
 
-  //INSTANCE STRUCT
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief struct detailing the data of an instance
-  //--------------------------------------------------------------------------------------------------------------------
-  struct Instance
-  {
-    //--------------------------------------------------------------------------------------------------------------------
-    /// @brief default ctor for Instance struct
-    //--------------------------------------------------------------------------------------------------------------------
-    Instance() = default;
-
-    size_t m_id;
-    size_t m_age;
-    ngl::Mat4 m_transform;
-
-    struct ExitPoint
-    {
-      ExitPoint(size_t _exitId, size_t _exitAge, ngl::Mat4 _exitTransform);
-      size_t m_exitId;
-      size_t m_exitAge;
-      ngl::Mat4 m_exitTransform;
-    };
-    std::vector<ExitPoint> m_exitPoints;
-
-    std::vector<ngl::Vec3> m_vertexBuffer;
-    std::vector<GLshort> m_indexBuffer;
-  };
-
   //OUTPUT DATA STRUCT
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief
@@ -91,9 +63,11 @@ public:
     //--------------------------------------------------------------------------------------------------------------------
     /// @brief
     //--------------------------------------------------------------------------------------------------------------------
-    OutputData(std::vector<ngl::Vec3> _vertexBuffer, std::vector<GLshort> _indexBuffer, ngl::Mat4 _transform);
+    OutputData(ngl::Mat4 _transform, GLshort * _instanceStart, GLshort * _instanceEnd);
 
-    //ngl::Mat4 m_transform;
+    ngl::Mat4 m_transform;
+    GLshort * m_instanceStart;
+    GLshort * m_instanceEnd;
   };
 
   //PUBLIC MEMBER VARIABLES
@@ -124,12 +98,8 @@ public:
   bool m_useSeed = false;
 
 
-  //instance cache is vectors of instances nested 3 deep
-  //outer layer separates instances by id
-  //middle layer separates instances of the same id by age
-  //inner layer separates multiple possible instances of the same id and age
-  //so accessing an istance is done by instanceCache[id][age][randomizer]
-  std::vector<std::vector<std::vector<Instance>>> m_instanceCache;
+  ///@brief this is the number of hero trees PER tree type
+  int m_numHeroTrees = 20;
 
   std::vector<OutputData> m_output;
 
@@ -142,9 +112,11 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief create geometry of tree by taking instances from the instance cache
   //--------------------------------------------------------------------------------------------------------------------
-  void createTree(ngl::Mat4 _transform, size_t _id, size_t _age);
+  void createTree(const LSystem &_treeType, ngl::Mat4 _transform, size_t _id, size_t _age);
 
-  Instance getInstance(size_t _id, size_t _age);
+  Instance getInstance(const LSystem &_treeType, size_t _id, size_t _age);
+
+  void createForest();
 
 };
 

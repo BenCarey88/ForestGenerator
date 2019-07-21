@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 /// @file LSystem.cpp
-/// @brief implementation file for LSystem class methods that only occur during ForestMode
+/// @brief implementation file for LSystem class methods that are only used for forestMode
 //----------------------------------------------------------------------------------------------------------------------
 
 #include <algorithm>
@@ -18,28 +18,12 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 
-LSystem::Instance::Instance(ngl::Mat4 _transform) :
-  m_transform(_transform) {}
-
-LSystem::Instance::ExitPoint::ExitPoint(size_t _exitId, size_t _exitAge, ngl::Mat4 _exitTransform) :
-  m_exitId(_exitId), m_exitAge(_exitAge), m_exitTransform(_exitTransform) {}
-
-//----------------------------------------------------------------------------------------------------------------------
-
-void LSystem::resizeInstanceCache()
-{
-  m_instanceCache.resize(m_branches.size());
-  for(auto &vector : m_instanceCache)
-  {
-    vector.resize(size_t(m_generation));
-  }
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-
 void LSystem::addInstancingCommands()
 {
-  m_branches = {};
+  //put m_axiom as the first branch, since we'll instance the base of each tree
+  //in the same way we instance the branches
+  m_branches = {m_axiom};
+  m_axiom = "{(0,0)"+m_axiom+"}";
   for(auto &rule : m_rules)
   {
     std::vector<std::string> tmpRHS = {};
@@ -70,16 +54,27 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
   {
     if(_rhs[i]=='[')
     {
+      int bracketCount = 0;
       size_t id;
       size_t j=i+1;
       for(; j<_rhs.length(); j++)
       {
+        if(_rhs[j]=='[')
+        {
+          bracketCount++;
+        }
         if(_rhs[j]==']')
-          break;
+        {
+          if(bracketCount==0)
+          {
+            break;
+          }
+          bracketCount--;
+        }
       }
       if(j==_rhs.length())
       {
-        break;
+        continue;
       }
       std::string branch(_rhs.begin()+int(i+1),_rhs.begin()+int(j));
       //check that the branch contains at least one non-terminal
@@ -99,7 +94,6 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         }
 
         std::string replacement;
-        //float prob;
         if(_index % int(pow(2,count)) < int(pow(2,count-1)))
         {
           replacement = "@("+std::to_string(id)+",#)";
@@ -107,7 +101,7 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         }
         else
         {
-          replacement = "{(" + std::to_string(id) + ",#)[" + branch + "]}(" + std::to_string(id) + ",#)";
+          replacement = "{(" + std::to_string(id) + ",#)[" + branch + "]}";
           nonInstanceCount++;
         }
 
@@ -115,11 +109,36 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         i += replacement.size();
         count++;
       }
-      else
-      {
-        i=j;
-      }
     }
   }
   _prob *= pow(m_instancingProb, instanceCount) * pow(1-m_instancingProb, nonInstanceCount);
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::resizeInstanceCache()
+{
+  m_instanceCache.resize(m_branches.size());
+  for(auto &vector : m_instanceCache)
+  {
+    vector.resize(size_t(m_generation+1));
+  }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::fillInstanceCache(int _numHeroTrees)
+{
+  m_forestMode = true;
+  addInstancingCommands();
+  resizeInstanceCache();
+  m_heroIndices = {};
+  m_heroVertices = {};
+
+  for(int i=0; i<_numHeroTrees; i++)
+  {
+    createGeometry();
+  }
+
+  m_forestMode = false;
 }

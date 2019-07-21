@@ -11,6 +11,7 @@
 #include <vector>
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
+#include "Instance.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class LSystem
@@ -68,31 +69,6 @@ public://-----------------------------------------------------------------------
     void normalizeProbabilities();
   };
 
-  //INSTANCE STRUCT
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @struct Instance
-  /// @brief struct detailing the data of an instance
-  //--------------------------------------------------------------------------------------------------------------------
-  struct Instance
-  {
-    //--------------------------------------------------------------------------------------------------------------------
-    /// @brief ctor for Instance struct
-    //--------------------------------------------------------------------------------------------------------------------
-    Instance(ngl::Mat4 _transform);
-
-    ngl::Mat4 m_transform;
-    GLshort * m_instanceStart;
-    GLshort * m_instanceEnd;
-
-    struct ExitPoint
-    {
-      ExitPoint(size_t _exitId, size_t _exitAge, ngl::Mat4 _transform);
-      size_t m_exitId;
-      size_t m_exitAge;
-      ngl::Mat4 m_exitTransform;
-    };
-    std::vector<ExitPoint> m_exitPoints;
-  };
 
 
   //PUBLIC MEMBER VARIABLES
@@ -177,6 +153,8 @@ public://-----------------------------------------------------------------------
   std::vector<std::vector<std::vector<Instance>>> m_instanceCache;
 
   void resizeInstanceCache();
+  ///@brief makes hero trees to fill instance cache
+  void fillInstanceCache(int _numHeroTrees);
 
   //PUBLIC MEMBER FUNCTIONS
   //--------------------------------------------------------------------------------------------------------------------

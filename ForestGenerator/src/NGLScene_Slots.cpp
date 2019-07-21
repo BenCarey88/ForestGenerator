@@ -34,6 +34,7 @@ void NGLScene::changeSuperTab(int _superTabNum)
   {
     updateForest();
   }
+
   update();
 }
 
