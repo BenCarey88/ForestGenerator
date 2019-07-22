@@ -194,6 +194,7 @@ public://-----------------------------------------------------------------------
   void parseBrackets(const std::string &_treeString, size_t &_i, float &_paramVar);
 
   void parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age);
+  void skipToNextChevron(const std::string &_treeString, size_t &_i);
 };
 
 

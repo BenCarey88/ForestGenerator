@@ -18,8 +18,10 @@ Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width, float _leng
     treeType.m_name = std::to_string(i);
     i++;
     treeType.fillInstanceCache(m_numHeroTrees);
-    for(auto branch : treeType.m_branches)
+    /*for(auto branch : treeType.m_branches)
+    {
       std::cout<<branch<<'\n';
+    }*/
   }
 
   createForest();

@@ -93,11 +93,11 @@ TEST(LSystem, addInstancingCommands)
 
   L.addInstancingCommands();
 
-  EXPECT_EQ(L.m_rules[0].m_RHS[0],"!@(1,#)//[f]//@(2,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{(1,#)[B]}//[f]//@(2,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!@(1,#)//[f]//{(2,#)[C/C]}////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[0],"!<(1,#)[B]>//[f]//<(2,#)[C/C]>////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{(1,#)[B]}//[f]//<(2,#)[C/C]>////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!<(1,#)[B]>//[f]//{(2,#)[C/C]}////B");
   EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{(1,#)[B]}//[f]//{(2,#)[C/C]}////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//@(1,#)//F");
+  EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//<(1,#)[B]>//F");
   EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{(1,#)[B]}//F");
 
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[0],0.144);
@@ -116,31 +116,26 @@ TEST(LSystem, addInstancingCommands)
 
 TEST(LSystem, addInstancingCommands_nestedBranches)
 {
-  std::string axiom = "FFFA";
+  std::string axiom = "FFFAA";
   std::vector<std::string> rules = {"A=[B[B][C[FFF]]]","B=F//&F","C=F[B]"};
   LSystem L(axiom,rules,2,0.9f,30,0.9f,6);
   L.m_instancingProb = 0.6f;
 
   L.addInstancingCommands();
 
-  EXPECT_EQ(L.m_rules[0].m_RHS[0],"!@(1,#)//[f]//@(2,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{(1,#)[B]}//[f]//@(2,#)////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!@(1,#)//[f]//{(2,#)[C/C]}////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{(1,#)[B]}//[f]//{(2,#)[C/C]}////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//@(1,#)//F");
-  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{(1,#)[B]}//F");
-
-  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[0],0.144);
-  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[1],0.096);
-  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[2],0.096);
-  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[3],0.064);
-  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[4],0.36);
-  EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[5],0.24);
+  EXPECT_EQ(L.m_rules[0].m_RHS.size(),8);
+  EXPECT_EQ(L.m_rules[0].m_RHS[0],"<(1,#)[B<(2,#)[B]><(3,#)[C[FFF]]>]>");
+  EXPECT_EQ(L.m_rules[0].m_RHS[1],"{(1,#)[B<(2,#)[B]><(3,#)[C[FFF]]>]}");
+  EXPECT_EQ(L.m_rules[0].m_RHS[2],"<(1,#)[B{(2,#)[B]}<(3,#)[C[FFF]]>]>");
+  EXPECT_EQ(L.m_rules[0].m_RHS[3],"{(1,#)[B{(2,#)[B]}<(3,#)[C[FFF]]>]}");
+  EXPECT_EQ(L.m_rules[0].m_RHS[4],"<(1,#)[B<(2,#)[B]>{(3,#)[C[FFF]]}]>");
+  EXPECT_EQ(L.m_rules[0].m_RHS[5],"{(1,#)[B<(2,#)[B]>{(3,#)[C[FFF]]}]}");
+  EXPECT_EQ(L.m_rules[0].m_RHS[6],"<(1,#)[B{(2,#)[B]}{(3,#)[C[FFF]]}]>");
+  EXPECT_EQ(L.m_rules[0].m_RHS[7],"{(1,#)[B{(2,#)[B]}{(3,#)[C[FFF]]}]}");
 
   EXPECT_EQ(L.m_branches.size(),4);
-  EXPECT_EQ(L.m_branches[0],"FFFA");
-  EXPECT_EQ(L.m_branches[1],"B");
-  EXPECT_EQ(L.m_branches[2],"C/C");
-  EXPECT_EQ(L.m_branches[3],"A");
+  EXPECT_EQ(L.m_branches[0],"FFFAA");
+  EXPECT_EQ(L.m_branches[1],"B[B][C[FFF]]");
+  EXPECT_EQ(L.m_branches[2],"B");
+  EXPECT_EQ(L.m_branches[3],"C[FFF]");
 }
-

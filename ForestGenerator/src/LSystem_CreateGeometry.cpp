@@ -224,7 +224,7 @@ void LSystem::createGeometry()
       }
 
       //getInstance
-      case '@':
+      case '<':
       {
         parseInstanceBrackets(treeString, i, id, age);
 
@@ -242,6 +242,31 @@ void LSystem::createGeometry()
 
         currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id,age,t4*r4));
 
+        if(m_instanceCache[id][age].size()==0)
+        {
+          Instance instance(t4*r4);
+          instance.m_instanceStart = &(indices->back());
+          m_instanceCache[id][age].push_back(instance);
+          currentInstance = &m_instanceCache[id][age].back();
+          savedInstance.push_back(currentInstance);
+        }
+        else
+        {
+          skipToNextChevron(treeString,i);
+        }
+
+        break;
+      }
+
+      case '>':
+      {
+        //note that assuming > doesn't appear in any rules, we will only reach this case if we are using the corresponding < to make an instance
+        currentInstance->m_instanceEnd = &(indices->back());
+        savedInstance.pop_back();
+        if(savedInstance.size()>0)
+        {
+          currentInstance = savedInstance.back();
+        }
         break;
       }
 
@@ -322,5 +347,29 @@ void LSystem::parseInstanceBrackets(const std::string &_treeString, size_t &_i, 
   }
   std::string age = _treeString.substr(_i+1, j-_i-1);
   _age = size_t(std::stoi(age));
+  _i=j;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::skipToNextChevron(const std::string &_treeString, size_t &_i)
+{
+  int chevronCount = 0;
+  size_t j=_i+1;
+  for(; j<_treeString.length(); j++)
+  {
+    if(_treeString[j]=='<')
+    {
+      chevronCount++;
+    }
+    if(_treeString[j]=='>')
+    {
+      if(chevronCount==0)
+      {
+        break;
+      }
+      chevronCount--;
+    }
+  }
   _i=j;
 }

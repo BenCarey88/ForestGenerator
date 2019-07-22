@@ -97,8 +97,9 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         size_t skipAmount = 0;
         if(_index % int(pow(2,count)) < int(pow(2,count-1)))
         {
-          replacement = "@("+std::to_string(id)+",#)";
+          replacement = "<(" + std::to_string(id) + ",#)[" + branch + "]>";
           instanceCount++;
+          skipAmount = 5+std::to_string(id).size();
         }
         else
         {
