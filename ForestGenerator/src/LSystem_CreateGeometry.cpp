@@ -204,7 +204,7 @@ void LSystem::createGeometry()
         t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
 
         Instance instance(t4*r4);
-        instance.m_instanceStart = &(indices->back());
+        instance.m_instanceStart = indices->size();//&(indices->back()); //except maybe should be &(indices->back())+1?
         m_instanceCache[id][age].push_back(instance);
         currentInstance = &m_instanceCache[id][age].back();
         savedInstance.push_back(currentInstance);
@@ -214,7 +214,7 @@ void LSystem::createGeometry()
       //stopInstance
       case '}':
       {
-        currentInstance->m_instanceEnd = &(indices->back());
+        currentInstance->m_instanceEnd = indices->size();//&(indices->back());
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -245,7 +245,7 @@ void LSystem::createGeometry()
         if(m_instanceCache[id][age].size()==0)
         {
           Instance instance(t4*r4);
-          instance.m_instanceStart = &(indices->back());
+          instance.m_instanceStart = indices->size();//&(indices->back());
           m_instanceCache[id][age].push_back(instance);
           currentInstance = &m_instanceCache[id][age].back();
           savedInstance.push_back(currentInstance);
@@ -261,7 +261,7 @@ void LSystem::createGeometry()
       case '>':
       {
         //note that assuming > doesn't appear in any rules, we will only reach this case if we are using the corresponding < to make an instance
-        currentInstance->m_instanceEnd = &(indices->back());
+        currentInstance->m_instanceEnd = indices->size();//&(indices->back());
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {

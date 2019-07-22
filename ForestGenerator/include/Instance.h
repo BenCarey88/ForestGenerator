@@ -28,8 +28,10 @@ struct Instance
   Instance(ngl::Mat4 _transform);
 
   ngl::Mat4 m_transform;
-  GLshort * m_instanceStart;
-  GLshort * m_instanceEnd;
+  //GLshort * m_instanceStart;
+  //GLshort * m_instanceEnd;
+  size_t m_instanceStart;
+  size_t m_instanceEnd;
 
   struct ExitPoint
   {

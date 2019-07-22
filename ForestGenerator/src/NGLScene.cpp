@@ -120,6 +120,24 @@ void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLsho
   _vao->unbind();
 }
 
+void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao)
+{
+  // create a vao using GL_LINES
+  _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
+  _vao->bind();
+
+  // set our data for the VAO
+  _vao->setData(ngl::SimpleIndexVAO::VertexData(
+                                                  sizeof(ngl::Vec3)*_treeType.m_heroVertices.size(),
+                                                  _treeType.m_heroVertices[0].m_x,
+                                                  uint(_instance.m_instanceEnd-_instance.m_instanceStart),
+                                                  &_treeType.m_heroIndices[_instance.m_instanceStart],
+                                                  GL_UNSIGNED_SHORT));
+  // data is 12 bytes apart (=sizeof(Vec3))
+  _vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
+  _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
+  _vao->unbind();
+}
 
 void NGLScene::paintGL()
 {
@@ -164,7 +182,7 @@ void NGLScene::paintGL()
       break;
 
     case 2:
-      for(size_t i=0; i<m_forest.m_numTrees; i++)
+      /*for(size_t i=0; i<m_forest.m_numTrees; i++)
       {
         size_t type = m_forest.m_treeData[i].m_type;
         ngl::Mat4 trans = m_forest.m_treeData[i].m_transform;
@@ -173,7 +191,16 @@ void NGLScene::paintGL()
         m_LSystemVAOs[type]->bind();
         m_LSystemVAOs[type]->draw();
         m_LSystemVAOs[type]->unbind();
+      }*/
+
+      for(auto const &o : m_forest.m_output)
+      {
+        shader->setUniform("MVP",MVP*o.m_transform);
+        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->bind();
+        /*m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->draw();
+        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->unbind();*/
       }
+
       break;
 
     default:

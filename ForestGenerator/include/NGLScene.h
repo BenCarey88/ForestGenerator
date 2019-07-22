@@ -203,7 +203,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   float m_width = 500;
   float m_length = 500;
-  size_t m_numTrees = 10000;
+  size_t m_numTrees = 10;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief list of all L-Systems stored by the scene
   //----------------------------------------------------------------------------------------------------------------------
@@ -249,6 +249,8 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   void buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices,
                     std::unique_ptr<ngl::AbstractVAO> &_vao);
+
+  void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

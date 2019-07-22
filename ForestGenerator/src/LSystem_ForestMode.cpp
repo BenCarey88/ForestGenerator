@@ -123,10 +123,11 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
 
 void LSystem::resizeInstanceCache()
 {
-  m_instanceCache.resize(m_branches.size());
+
+  m_instanceCache.resize(m_branches.size(),{});
   for(auto &vector : m_instanceCache)
   {
-    vector.resize(size_t(m_generation+1));
+    vector.resize(size_t(m_generation+1),{});
   }
 }
 
@@ -146,4 +147,18 @@ void LSystem::fillInstanceCache(int _numHeroTrees)
   }
 
   m_forestMode = false;
+
+  /*for(size_t id=0; id<m_instanceCache.size(); id++)
+  {
+    std::cout<<"id = "<<id<<'\n';
+
+    for(size_t age=0; age<m_instanceCache[id].size(); age++)
+    {
+      std::cout<<"  age = "<<age<<'\n';
+
+      std::cout<<"    size of this level of nesting is "<<m_instanceCache[id][age].size()<<'\n';
+    }
+    std::cout<<'\n';
+  }
+  std::cout<<"\n--------------------------------------------------------\n";*/
 }

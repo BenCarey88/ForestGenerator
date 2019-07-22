@@ -150,7 +150,7 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
   }
   else
   {
-    std::cout<<"Couldn't find instance of tree type "<<_treeType.m_name<<" with id "<<_id<<" at age "<<_age<<'\n';
+    //std::cout<<"Couldn't find instance of tree type "<<_treeType.m_name<<" with id "<<_id<<" at age "<<_age<<'\n';
   }
 }
 
