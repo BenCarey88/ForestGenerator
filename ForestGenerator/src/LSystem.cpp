@@ -55,6 +55,7 @@ void LSystem::Rule::normalizeProbabilities()
 
 void LSystem::countBranches()
 {
+  m_branches = {m_axiom};
   for(auto &rule : m_rules)
   {
     rule.m_numBranches = {};
@@ -86,13 +87,17 @@ void LSystem::countBranches()
           {
             continue;
           }
+
           std::string branch(rhs.begin()+int(i+1),rhs.begin()+int(j));
-          //the first part of this if clause checks that the branch hasn't been added to m_branches already
-          //and the second checks that it contains at least one non-terminal
-          if(std::find(m_branches.begin(), m_branches.end(), branch) == m_branches.end() &&
-             std::regex_search(branch, std::regex(m_nonTerminals)))
+          //check that the branch contains at least one non-terminal
+          if(std::regex_search(branch, std::regex(m_nonTerminals)))
           {
             numBranches++;
+            //if the branch hasn't been added to m_branches already, then add it
+            if(std::find(m_branches.begin(), m_branches.end(), branch) == m_branches.end())
+            {
+              m_branches.push_back(branch);
+            }
           }
         }
       }

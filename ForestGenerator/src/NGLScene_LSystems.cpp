@@ -45,4 +45,5 @@ void NGLScene::initializeLSystems()
 void NGLScene::updateForest()
 {
   m_forest = Forest(m_LSystems, m_width, m_length, m_numTrees);
+
 }

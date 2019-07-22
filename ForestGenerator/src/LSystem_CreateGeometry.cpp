@@ -65,7 +65,7 @@ void LSystem::createGeometry()
   }
   else
   {
-    lastIndex = m_heroVertices.size();
+    lastIndex = GLshort(m_heroVertices.size());
     m_heroVertices.push_back(lastVertex);
     vertices = &m_heroVertices;
     indices = &m_heroIndices;
@@ -192,7 +192,7 @@ void LSystem::createGeometry()
         parseInstanceBrackets(treeString, i, id, age);
 
         ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
-        if(axis.lengthSquared()!=0)
+        if(lrint(axis.lengthSquared())!=0)
         {
           float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
           r4.euler(theta, axis.m_x, axis.m_y, axis.m_z);
@@ -229,7 +229,7 @@ void LSystem::createGeometry()
         parseInstanceBrackets(treeString, i, id, age);
 
         ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
-        if(axis.lengthSquared()!=0)
+        if(lrint(axis.lengthSquared())!=0)
         {
           float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
           r4.euler(theta, axis.m_x, axis.m_y, axis.m_z);

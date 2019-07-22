@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
 #include "LSystem.h"
@@ -32,7 +33,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief user ctor for Forest class
   //--------------------------------------------------------------------------------------------------------------------
-  Forest(std::vector<LSystem> _treeTypes, float _width, float _length, size_t _numTrees);
+  Forest(const std::vector<LSystem> &_treeTypes, float _width, float _length, size_t _numTrees);
 
   //TREE STRUCT
   //--------------------------------------------------------------------------------------------------------------------
@@ -63,11 +64,10 @@ public:
     //--------------------------------------------------------------------------------------------------------------------
     /// @brief
     //--------------------------------------------------------------------------------------------------------------------
-    OutputData(ngl::Mat4 _transform, GLshort * _instanceStart, GLshort * _instanceEnd);
+    OutputData(ngl::Mat4 _transform, size_t _id, size_t _age, size_t _innerIndex);
 
     ngl::Mat4 m_transform;
-    GLshort * m_instanceStart;
-    GLshort * m_instanceEnd;
+    size_t m_id, m_age, m_innerIndex;
   };
 
   //PUBLIC MEMBER VARIABLES
@@ -98,10 +98,14 @@ public:
   bool m_useSeed = false;
 
 
+
   ///@brief this is the number of hero trees PER tree type
   int m_numHeroTrees = 20;
 
   std::vector<OutputData> m_output;
+
+  //the random number generator
+  std::default_random_engine m_gen;
 
 
   //PUBLIC METHODS
@@ -112,11 +116,13 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief create geometry of tree by taking instances from the instance cache
   //--------------------------------------------------------------------------------------------------------------------
-  void createTree(const LSystem &_treeType, ngl::Mat4 _transform, size_t _id, size_t _age);
+  void createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, size_t _age);
 
-  Instance getInstance(const LSystem &_treeType, size_t _id, size_t _age);
+  Instance * getInstance(LSystem &_treeType, size_t _id, size_t _age, size_t &_innerIndex);
 
   void createForest();
+
+  void seedRandomEngine();
 
 };
 

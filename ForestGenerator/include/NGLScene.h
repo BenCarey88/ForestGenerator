@@ -189,6 +189,11 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   bool m_buildTreeVAO = false;
 
+
+  //nested std::vector of VAOs corresponding to the instance cache
+  std::vector<std::vector<std::vector<std::unique_ptr<ngl::AbstractVAO>>>> m_instanceCacheVAOs;
+
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the forest object to be sent to the renderer
   //----------------------------------------------------------------------------------------------------------------------

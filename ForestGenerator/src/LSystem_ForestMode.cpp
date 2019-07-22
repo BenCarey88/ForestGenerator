@@ -22,7 +22,6 @@ void LSystem::addInstancingCommands()
 {
   //put m_axiom as the first branch, since we'll instance the base of each tree
   //in the same way we instance the branches
-  m_branches = {m_axiom};
   m_axiom = "{(0,0)"+m_axiom+"}";
   for(auto &rule : m_rules)
   {
@@ -81,6 +80,7 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
       if(std::regex_search(branch, std::regex(m_nonTerminals)))
       {
         //if the branch hasn't been added to m_branches already, then add it
+        //^BUT THIS BIT SHOULD BE UNNECESSARY - THE BRANCHES HAVE ALREADY ALL BEEN ADDED TO M_BRANCHES BY COUNT BRANCHES
         auto it = std::find(m_branches.begin(), m_branches.end(), branch);
         if(it == m_branches.end())
         {
@@ -94,6 +94,7 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         }
 
         std::string replacement;
+        size_t skipAmount = 0;
         if(_index % int(pow(2,count)) < int(pow(2,count-1)))
         {
           replacement = "@("+std::to_string(id)+",#)";
@@ -103,10 +104,13 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         {
           replacement = "{(" + std::to_string(id) + ",#)[" + branch + "]}";
           nonInstanceCount++;
+          //add to skipAmount to make sure we don't get caught in an endless loop with the same [
+          skipAmount = 5+std::to_string(id).size();
         }
 
         _rhs.replace(i, j-i+1, replacement);
-        i += replacement.size();
+        i += skipAmount;
+        //i += replacement.size();
         count++;
       }
     }
