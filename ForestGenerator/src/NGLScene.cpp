@@ -196,9 +196,9 @@ void NGLScene::paintGL()
       for(auto const &o : m_forest.m_output)
       {
         shader->setUniform("MVP",MVP*o.m_transform);
-        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->bind();
-        /*m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->draw();
-        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->unbind();*/
+        m_instanceCacheVAOs.at(o.m_id).at(o.m_age).at(o.m_innerIndex)->bind();
+        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->draw();
+        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->unbind();
       }
 
       break;
