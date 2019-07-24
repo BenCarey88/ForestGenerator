@@ -43,27 +43,5 @@ void NGLScene::updateForest()
 {
   m_forest = Forest(m_LSystems, m_width, m_length, m_numTrees);
 
-  LSystem &treeType = m_forest.m_treeTypes[0];
-  std::vector<std::vector<std::vector<Instance>>> &instanceCache = treeType.m_instanceCache;
-  m_instanceCacheVAOs.resize(instanceCache.size());
-
-  for(size_t id=0; id<instanceCache.size(); id++)
-  {
-    //std::cout<<"id = "<<id<<'\n';
-
-    m_instanceCacheVAOs[id].resize(instanceCache[id].size());
-    for(size_t age=0; age<instanceCache[id].size(); age++)
-    {
-      //std::cout<<"  age = "<<age<<'\n';
-      //std::cout<<"    size of this level of nesting is "<<instanceCache[id][age].size()<<'\n';
-      m_instanceCacheVAOs[id][age].resize(instanceCache[id][age].size());
-      for(size_t index=0; index<instanceCache[id][age].size(); index++)
-      {
-        Instance &instance = instanceCache[id][age][index];
-        buildInstanceCacheVAO(treeType, instance, m_instanceCacheVAOs[id][age][index]);
-      }
-    }
-    //std::cout<<'\n';
-  }
-  //std::cout<<"\n---------------------------------------\n";
+  m_buildInstanceVAO = true;
 }

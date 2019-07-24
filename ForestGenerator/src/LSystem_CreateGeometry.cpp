@@ -84,7 +84,7 @@ void LSystem::createGeometry()
         parseBrackets(treeString, i, paramVar);
         lastVertex += paramVar*dir;
         vertices->push_back(lastVertex);
-        lastIndex = GLshort(m_vertices.size()-1);
+        lastIndex = GLshort(vertices->size()-1);
         indices->push_back(lastIndex);
         break;
       }
