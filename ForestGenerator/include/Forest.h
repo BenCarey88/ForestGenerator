@@ -100,7 +100,7 @@ public:
 
 
   ///@brief this is the number of hero trees PER tree type
-  int m_numHeroTrees = 20;
+  int m_numHeroTrees = 1;
 
   std::vector<OutputData> m_output;
 

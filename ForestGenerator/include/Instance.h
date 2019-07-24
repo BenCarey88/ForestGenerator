@@ -32,6 +32,7 @@ struct Instance
   //GLshort * m_instanceEnd;
   size_t m_instanceStart;
   size_t m_instanceEnd;
+  std::vector<GLshort> m_indices;
 
   struct ExitPoint
   {

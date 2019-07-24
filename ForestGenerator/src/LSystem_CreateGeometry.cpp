@@ -33,6 +33,8 @@ void LSystem::createGeometry()
   ngl::Mat4 r4;
   ngl::Mat3 r3;
   ngl::Mat4 t4;
+  ngl::Mat4 transform;
+  transform.identity();
 
   ngl::Vec3 lastVertex(0,0,0);
   GLshort lastIndex = 0;
@@ -215,6 +217,8 @@ void LSystem::createGeometry()
       case '}':
       {
         currentInstance->m_instanceEnd = indices->size();//&(indices->back());
+        currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
+                                                          indices->begin()+currentInstance->m_instanceEnd);
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -244,7 +248,7 @@ void LSystem::createGeometry()
 
         if(m_instanceCache[id][age].size()==0)
         {
-          Instance instance(t4*r4);
+          Instance instance(t4);
           instance.m_instanceStart = indices->size();//&(indices->back());
           m_instanceCache[id][age].push_back(instance);
           currentInstance = &m_instanceCache[id][age].back();
@@ -262,6 +266,8 @@ void LSystem::createGeometry()
       {
         //note that assuming > doesn't appear in any rules, we will only reach this case if we are using the corresponding < to make an instance
         currentInstance->m_instanceEnd = indices->size();//&(indices->back());
+        currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
+                                                          indices->begin()+currentInstance->m_instanceEnd);
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -325,7 +331,7 @@ void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_
 
 void LSystem::parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age)
 {
-  //don't need the outer if clause that parseBrackets() has because @, { and } are guaranteed to be followed by (
+  //don't need the outer if clause that parseBrackets() has because <, { are guaranteed to be followed by (
   size_t j=_i+2;
   for( ; j<_treeString.size(); j++)
   {
