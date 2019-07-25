@@ -189,9 +189,8 @@ void NGLScene::paintGL()
           for(size_t index=0; index<instanceCache[id][age].size(); index++)
           {
             Instance &instance = instanceCache[id][age][index];
-            //buildInstanceCacheVAO(treeType, instance, m_instanceCacheVAOs[id][age][index]);
-            buildLineVAO(treeType.m_heroVertices, instance.m_indices,
-                         m_instanceCacheVAOs[i][id][age][index]);
+            buildInstanceCacheVAO(treeType, instance, m_instanceCacheVAOs[i][id][age][index]);
+            //buildLineVAO(treeType.m_heroVertices, instance.m_indices, m_instanceCacheVAOs[i][id][age][index]);
           }
         }
         //std::cout<<'\n';

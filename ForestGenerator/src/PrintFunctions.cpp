@@ -142,7 +142,7 @@ void printIndices(std::vector<std::vector<std::vector<Instance>>> &_instanceCach
     {
       for(auto &instance : col)
       {
-        print(instance.m_indices);
+        //print(instance.m_indices);
       }
     }
   }

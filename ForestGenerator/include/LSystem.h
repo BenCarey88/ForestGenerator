@@ -150,6 +150,8 @@ public://-----------------------------------------------------------------------
   std::vector<GLshort> m_heroIndices= {};
   bool m_forestMode = false;
 
+  size_t m_maxInstancePerLevel = 10;
+
   //instance cache is vectors of instances nested 3 deep
   //outer layer separates instances by id
   //middle layer separates instances of the same id by age

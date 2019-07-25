@@ -54,6 +54,7 @@ void LSystem::createGeometry()
   std::vector<float> savedStep = {};
   std::vector<float> savedAngle = {};
 
+  Instance instance;
   Instance * currentInstance;
   std::vector<Instance *> savedInstance = {};
 
@@ -212,10 +213,18 @@ void LSystem::createGeometry()
                             k.m_x,          k.m_y,          k.m_z,          0,
                             lastVertex.m_x, lastVertex.m_y, lastVertex.m_z, 1);
 
-        Instance instance(transform);
+        instance = Instance(transform);
         instance.m_instanceStart = indices->size();//&(indices->back()); //except maybe should be &(indices->back())+1?
-        m_instanceCache[id][age].push_back(instance);
-        currentInstance = &m_instanceCache[id][age].back();
+        if(m_instanceCache[id][age].size()<m_maxInstancePerLevel)
+        {
+          m_instanceCache[id][age].push_back(instance);
+          currentInstance = &m_instanceCache[id][age].back();
+        }
+        else
+        {
+          currentInstance = &instance;
+        }
+
         savedInstance.push_back(currentInstance);
         break;
       }
@@ -224,8 +233,8 @@ void LSystem::createGeometry()
       case '}':
       {
         currentInstance->m_instanceEnd = indices->size();//&(indices->back());
-        currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
-                                                          indices->begin()+currentInstance->m_instanceEnd);
+        //currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
+        //                                                  indices->begin()+currentInstance->m_instanceEnd);
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -276,7 +285,7 @@ void LSystem::createGeometry()
 
         if(m_instanceCache[id][age].size()==0)
         {
-          Instance instance(transform);
+          instance = Instance(transform);
           instance.m_instanceStart = indices->size();//&(indices->back());
           m_instanceCache[id][age].push_back(instance);
           currentInstance = &m_instanceCache[id][age].back();
@@ -294,8 +303,8 @@ void LSystem::createGeometry()
       {
         //note that assuming > doesn't appear in any rules, we will only reach this case if we are using the corresponding < to make an instance
         currentInstance->m_instanceEnd = indices->size();//&(indices->back());
-        currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
-                                                          indices->begin()+currentInstance->m_instanceEnd);
+        //currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
+        //                                                  indices->begin()+currentInstance->m_instanceEnd);
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
