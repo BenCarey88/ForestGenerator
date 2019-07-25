@@ -62,6 +62,7 @@ void NGLScene::generate()
     }
   }
   m_currentLSystem->breakDownRules(currentRules);
+  m_currentLSystem->seedRandomEngine();
   m_currentLSystem->createGeometry();
   m_buildTreeVAO = true;
   update();

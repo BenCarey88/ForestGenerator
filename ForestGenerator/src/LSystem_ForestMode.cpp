@@ -135,6 +135,7 @@ void LSystem::resizeInstanceCache()
 
 void LSystem::fillInstanceCache(int _numHeroTrees)
 {
+  seedRandomEngine();
   m_forestMode = true;
   addInstancingCommands();
   resizeInstanceCache();

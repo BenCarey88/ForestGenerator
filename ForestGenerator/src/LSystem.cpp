@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <regex>
-#include <random>
+
 #include <chrono>
 #include <stdexcept>
 #include <iostream>
@@ -49,6 +49,22 @@ void LSystem::Rule::normalizeProbabilities()
   {
     prob *= sumProbInverse;
   }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void LSystem::seedRandomEngine()
+{
+  size_t seed;
+  if(m_useSeed)
+  {
+    seed = m_seed;
+  }
+  else
+  {
+    seed = size_t(std::chrono::system_clock::now().time_since_epoch().count());
+  }
+  m_gen.seed(seed);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -189,17 +205,6 @@ std::string LSystem::generateTreeString()
   std::string treeString = m_axiom;
   int numRules = int(m_rules.size());
 
-  std::default_random_engine gen;
-  size_t seed;
-  if(m_useSeed)
-  {
-    seed = m_seed;
-  }
-  else
-  {
-    seed = size_t(std::chrono::system_clock::now().time_since_epoch().count());
-  }
-  gen.seed(seed);
   std::uniform_real_distribution<float> dist(0.0,1.0);
 
   if(numRules>0)
@@ -226,7 +231,7 @@ std::string LSystem::generateTreeString()
         size_t len = lhs.size();
         while(pos != std::string::npos)
         {
-          float randNum = 0;//dist(gen);
+          float randNum = 0.5;//dist(m_gen);
           float count = 0;
           size_t j = 0;
           for( ; j<probabilities.size(); j++)

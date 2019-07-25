@@ -9,6 +9,7 @@
 #define LSYSTEM_H_
 
 #include <vector>
+#include <random>
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
 #include "Instance.h"
@@ -123,6 +124,9 @@ public://-----------------------------------------------------------------------
   //--------------------------------------------------------------------------------------------------------------------
   bool m_useSeed = false;
 
+  //the random number generator
+  std::default_random_engine m_gen;
+
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief bool to tell if an error was thrown while parsing brackets when creating geometry
   //--------------------------------------------------------------------------------------------------------------------
@@ -196,6 +200,8 @@ public://-----------------------------------------------------------------------
 
   void parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age);
   void skipToNextChevron(const std::string &_treeString, size_t &_i);
+
+  void seedRandomEngine();
 };
 
 
