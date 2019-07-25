@@ -33,8 +33,6 @@ void LSystem::createGeometry()
   ngl::Mat4 r4;
   ngl::Mat3 r3;
   ngl::Mat4 t4;
-  ngl::Mat4 transform;
-  transform.identity();
 
   ngl::Vec3 lastVertex(0,0,0);
   GLshort lastIndex = 0;
@@ -193,7 +191,7 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
-        ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
+        /*ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
         if(lrint(axis.lengthSquared())!=0)
         {
           float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
@@ -203,9 +201,15 @@ void LSystem::createGeometry()
         {
           r4.identity();
         }
-        t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
+        t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);*/
 
-        Instance instance(t4);
+        ngl::Vec3 k = right.cross(dir);
+        ngl::Mat4 transform(right.m_x,      right.m_y,      right.m_z,      0,
+                            dir.m_x,        dir.m_y,        dir.m_z,        0,
+                            k.m_x,          k.m_y,          k.m_z,          0,
+                            lastVertex.m_x, lastVertex.m_y, lastVertex.m_z, 1);
+
+        Instance instance(transform);
         instance.m_instanceStart = indices->size();//&(indices->back()); //except maybe should be &(indices->back())+1?
         m_instanceCache[id][age].push_back(instance);
         currentInstance = &m_instanceCache[id][age].back();
@@ -232,25 +236,39 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
-        ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
+        /*ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
         if(lrint(axis.lengthSquared())!=0)
         {
+          axis.normalize();
           float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
           r4.euler(theta, axis.m_x, axis.m_y, axis.m_z);
         }
         else
         {
           r4.identity();
-        }
+        }*/
         t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
 
-        //note that exitPoint transform should be relative to the beginning of the branch
-        //but instance transform is relative to base of tree
-        currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id,age,t4*currentInstance->m_transform.inverse()));
+        ngl::Vec3 k = right.cross(dir);
+        ngl::Mat4 transform(right.m_x,      right.m_y,      right.m_z,      0,
+                            dir.m_x,        dir.m_y,        dir.m_z,        0,
+                            k.m_x,          k.m_y,          k.m_z,          0,
+                            lastVertex.m_x, lastVertex.m_y, lastVertex.m_z, 1);
+
+
+        /*ngl::Mat4 _m = t4*r4;
+        std::cout<<_m.m_00<<" "<<_m.m_01<<" "<<_m.m_02<<" "<<_m.m_03<<"\n"
+                 <<_m.m_10<<" "<<_m.m_11<<" "<<_m.m_12<<" "<<_m.m_13<<"\n"
+                 <<_m.m_20<<" "<<_m.m_21<<" "<<_m.m_22<<" "<<_m.m_23<<"\n"
+                 <<_m.m_30<<" "<<_m.m_31<<" "<<_m.m_32<<" "<<_m.m_33<<"\n\n";*/
+
+        //note that exitPoint m_transform should be relative to the beginning of the branch
+        //whereas instance m_transform is relative to the base of the tree
+        currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id, age, currentInstance->m_transform.inverse()*transform));
 
         if(m_instanceCache[id][age].size()==0)
         {
-          Instance instance(t4);
+          Instance instance(transform);
           instance.m_instanceStart = indices->size();//&(indices->back());
           m_instanceCache[id][age].push_back(instance);
           currentInstance = &m_instanceCache[id][age].back();

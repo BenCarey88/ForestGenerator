@@ -123,13 +123,15 @@ void Forest::scatterForest()
     ngl::Mat4 scale;
     position.translate(distX(m_gen),0,distZ(m_gen));
     orientation.rotateY(distRotate(m_gen));
-    //scale = distScale(m_gen)*scale;
+    scale = distScale(m_gen)*scale;
     //m_treeData.push_back(Tree(distTreeType(m_gen), position*orientation*scale));
     m_treeData.push_back(Tree(0,position*orientation*scale));
   }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
+
+static int staticCount = 0;
 
 void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, size_t _age)
 {
@@ -140,6 +142,7 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
     Instance * instance = getInstance(_treeType, _id, _age, innerIndex);
     ngl::Mat4 T = _transform * instance->m_transform.inverse();
 
+    /*print("\nCOUNT=",staticCount++);
     print("\nID=", _id, ", AGE=", _age, ", INDEX=", innerIndex, "\n");
     print("\nTRANSFORM AT THIS POINT OF THE TREE CURRENTLY BEING CREATED IS\n");
     print(_transform);
@@ -153,7 +156,7 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
     {
       print("there are no vertices at this exit point\n");
     }
-    print("\n-----------------------------------------------\n");
+    print("\n-----------------------------------------------\n");*/
 
     m_output.push_back(OutputData(T, _id, _age, innerIndex));
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
@@ -161,6 +164,8 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
       size_t newAge = instance->m_exitPoints[i].m_exitAge;
       size_t newId = instance->m_exitPoints[i].m_exitId;
       ngl::Mat4 exitTransform = instance->m_exitPoints[i].m_exitTransform;
+      /*print("EXIT TRANSFORM IS \n");
+      print(exitTransform);*/
       ngl::Mat4 newTransform = _transform * exitTransform;
       createTree(_treeType, newTransform, newId, newAge);
     }
@@ -183,12 +188,13 @@ Instance * Forest::getInstance(LSystem &_treeType, size_t _id, size_t _age, size
 
 void Forest::createForest()
 {
+  staticCount=0;
   seedRandomEngine();
   m_output = {};
   for(auto &tree : m_treeData)
   {
-    print("\nCREATING TREE\n--------------------------------------\n");
-    createTree(m_treeTypes[tree.m_type],ngl::Mat4(),0,0);
+    //print("\nCREATING TREE\n--------------------------------------\n");
+    createTree(m_treeTypes[tree.m_type],tree.m_transform,0,0);
   }
 
   /*for(size_t id=0; id<m_treeTypes[0].m_instanceCache.size(); id++)
