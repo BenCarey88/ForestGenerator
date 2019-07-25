@@ -141,7 +141,10 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
     ngl::Mat4 T = _transform * instance->m_transform.inverse();
 
     print("\nID=", _id, ", AGE=", _age, ", INDEX=", innerIndex, "\n");
-    print(T);
+    print("\nTRANSFORM AT THIS POINT OF THE TREE CURRENTLY BEING CREATED IS\n");
+    print(_transform);
+    print("TRANSFORM OF THE INSTANCE WE'RE SELECTING IS\n");
+    print(instance->m_transform);
     if(instance->m_indices.size()>0)
     {
       print(m_treeTypes[0].m_heroVertices[instance->m_indices[0]]);
@@ -150,7 +153,7 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
     {
       print("there are no vertices at this exit point\n");
     }
-    print("\n----\n");
+    print("\n-----------------------------------------------\n");
 
     m_output.push_back(OutputData(T, _id, _age, innerIndex));
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
@@ -188,7 +191,7 @@ void Forest::createForest()
     createTree(m_treeTypes[tree.m_type],ngl::Mat4(),0,0);
   }
 
-  for(size_t id=0; id<m_treeTypes[0].m_instanceCache.size(); id++)
+  /*for(size_t id=0; id<m_treeTypes[0].m_instanceCache.size(); id++)
   {
     for(size_t age=0; age<m_treeTypes[0].m_instanceCache[id].size(); age++)
     {
@@ -206,5 +209,5 @@ void Forest::createForest()
         }
       }
     }
-  }
+  }*/
 }

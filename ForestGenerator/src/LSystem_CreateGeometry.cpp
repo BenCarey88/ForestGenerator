@@ -205,7 +205,7 @@ void LSystem::createGeometry()
         }
         t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
 
-        Instance instance(t4*r4);
+        Instance instance(t4);
         instance.m_instanceStart = indices->size();//&(indices->back()); //except maybe should be &(indices->back())+1?
         m_instanceCache[id][age].push_back(instance);
         currentInstance = &m_instanceCache[id][age].back();
@@ -244,7 +244,9 @@ void LSystem::createGeometry()
         }
         t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
 
-        currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id,age,t4*r4));
+        //note that exitPoint transform should be relative to the beginning of the branch
+        //but instance transform is relative to base of tree
+        currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id,age,t4*currentInstance->m_transform.inverse()));
 
         if(m_instanceCache[id][age].size()==0)
         {
