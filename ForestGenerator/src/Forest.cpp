@@ -140,15 +140,17 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
     Instance * instance = getInstance(_treeType, _id, _age, innerIndex);
     ngl::Mat4 T = _transform * instance->m_transform.inverse();
 
-    std::cout<<"\nID="<<_id<<", AGE="<<_age<<", INDEX="<<innerIndex<<"\n";
-    std::cout<<T.m_00<<" "<<T.m_01<<" "<<T.m_02<<" "<<T.m_03<<"\n"
-             <<T.m_10<<" "<<T.m_11<<" "<<T.m_12<<" "<<T.m_13<<"\n"
-             <<T.m_20<<" "<<T.m_21<<" "<<T.m_22<<" "<<T.m_23<<"\n"
-             <<T.m_30<<" "<<T.m_31<<" "<<T.m_32<<" "<<T.m_33<<"\n\n";
-    std::cout<<m_treeTypes[0].m_heroVertices[instance->m_indices.at(0)].m_x<<","
-             <<m_treeTypes[0].m_heroVertices[instance->m_indices.at(0)].m_y<<","
-             <<m_treeTypes[0].m_heroVertices[instance->m_indices.at(0)].m_z<<"\n";
-    std::cout<<"\n----\n";
+    print("\nID=", _id, ", AGE=", _age, ", INDEX=", innerIndex, "\n");
+    print(T);
+    if(instance->m_indices.size()>0)
+    {
+      print(m_treeTypes[0].m_heroVertices[instance->m_indices[0]]);
+    }
+    else
+    {
+      print("there are no vertices at this exit point\n");
+    }
+    print("\n----\n");
 
     m_output.push_back(OutputData(T, _id, _age, innerIndex));
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
@@ -182,7 +184,7 @@ void Forest::createForest()
   m_output = {};
   for(auto &tree : m_treeData)
   {
-    std::cout<<"\nCREATING TREE\n--------------------------------------\n";
+    print("\nCREATING TREE\n--------------------------------------\n");
     createTree(m_treeTypes[tree.m_type],ngl::Mat4(),0,0);
   }
 
@@ -192,20 +194,15 @@ void Forest::createForest()
     {
       for(size_t index=0; index<m_treeTypes[0].m_instanceCache[id][age].size(); index++)
       {
-        std::cout<<"\nID="<<id<<", AGE="<<age<<", INDEX="<<index
-                 <<"\n--------------------------------------\n";
+        print("\nID=", id, ", AGE=", age, ", INDEX=", index,
+              "\n--------------------------------------\n");
         Instance instance = m_treeTypes[0].m_instanceCache[id][age][index];
         ngl::Mat4 T = instance.m_transform;
         ngl::Mat4 t = T.inverse();
-        std::cout<<t.m_00<<" "<<t.m_01<<" "<<t.m_02<<" "<<t.m_03<<"\n"
-                 <<t.m_10<<" "<<t.m_11<<" "<<t.m_12<<" "<<t.m_13<<"\n"
-                 <<t.m_20<<" "<<t.m_21<<" "<<t.m_22<<" "<<t.m_23<<"\n"
-                 <<t.m_30<<" "<<t.m_31<<" "<<t.m_32<<" "<<t.m_33<<"\n\n";
+        print(t);
         for(auto i : instance.m_indices)
         {
-          std::cout<<m_treeTypes[0].m_heroVertices[i].m_x<<","
-                   <<m_treeTypes[0].m_heroVertices[i].m_y<<","
-                   <<m_treeTypes[0].m_heroVertices[i].m_z<<"\n";
+          print(m_treeTypes[0].m_heroVertices[i]);
         }
       }
     }

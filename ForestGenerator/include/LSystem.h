@@ -12,6 +12,7 @@
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
 #include "Instance.h"
+#include "PrintFunctions.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class LSystem
