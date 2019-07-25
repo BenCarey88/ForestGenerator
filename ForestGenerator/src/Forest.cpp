@@ -7,17 +7,15 @@
 #include <chrono>
 #include "Forest.h"
 
-Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width, float _length, size_t _numTrees) :
-  m_treeTypes(_treeTypes), m_width(_width), m_length(_length), m_numTrees(_numTrees)
+Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width, float _length, size_t _numTrees, int _numHeroTrees) :
+  m_treeTypes(_treeTypes), m_width(_width), m_length(_length), m_numTrees(_numTrees), m_numHeroTrees(_numHeroTrees)
 {
   scatterForest();
 
-  int i=1;
   for(auto &treeType : m_treeTypes)
   {
-    treeType.m_name = std::to_string(i);
-    i++;
     treeType.fillInstanceCache(m_numHeroTrees);
+    //m_treeTypes[0].fillInstanceCache(m_numHeroTrees);
     /*for(auto branch : treeType.m_branches)
     {
       std::cout<<branch<<'\n';
@@ -61,7 +59,7 @@ void Forest::scatterForest()
   std::uniform_real_distribution<float> distX(-m_width*0.5f, m_width*0.5f);
   std::uniform_real_distribution<float> distZ(-m_length*0.5f, m_length*0.5f);
   std::uniform_real_distribution<float> distRotate(0,360);
-  std::uniform_real_distribution<float> distScale(0.2f,0.4f);
+  std::uniform_real_distribution<float> distScale(0.6f,0.8f);
   std::uniform_int_distribution<size_t> distTreeType(0,m_treeTypes.size()-1);
 
   /*noise::module::Perlin perlinModule;
@@ -156,6 +154,10 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
     {
       print("there are no vertices at this exit point\n");
     }
+    for(auto exitPoint : instance->m_exitPoints)
+    {
+      print("\nNEW_ID=",exitPoint.m_exitId,", NEW_AGE=",exitPoint.m_exitAge,"\n");
+    }
     print("\n-----------------------------------------------\n");*/
 
     m_output.push_back(OutputData(T, _id, _age, innerIndex));
@@ -164,6 +166,7 @@ void Forest::createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, si
       size_t newAge = instance->m_exitPoints[i].m_exitAge;
       size_t newId = instance->m_exitPoints[i].m_exitId;
       ngl::Mat4 exitTransform = instance->m_exitPoints[i].m_exitTransform;
+      //print("NEW_ID=",newId,", NEW_AGE=",newAge,"\n--------------------------\n");
       /*print("EXIT TRANSFORM IS \n");
       print(exitTransform);*/
       ngl::Mat4 newTransform = _transform * exitTransform;
@@ -194,7 +197,9 @@ void Forest::createForest()
   for(auto &tree : m_treeData)
   {
     //print("\nCREATING TREE\n--------------------------------------\n");
+
     createTree(m_treeTypes[tree.m_type],tree.m_transform,0,0);
+    //createTree(m_treeTypes[tree.m_type],ngl::Mat4(),0,0);
   }
 
   /*for(size_t id=0; id<m_treeTypes[0].m_instanceCache.size(); id++)

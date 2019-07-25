@@ -231,7 +231,7 @@ std::string LSystem::generateTreeString()
         size_t len = lhs.size();
         while(pos != std::string::npos)
         {
-          float randNum = 0.5;//dist(m_gen);
+          float randNum = dist(m_gen);
           float count = 0;
           size_t j = 0;
           for( ; j<probabilities.size(); j++)

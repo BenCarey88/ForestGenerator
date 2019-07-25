@@ -33,7 +33,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief user ctor for Forest class
   //--------------------------------------------------------------------------------------------------------------------
-  Forest(const std::vector<LSystem> &_treeTypes, float _width, float _length, size_t _numTrees);
+  Forest(const std::vector<LSystem> &_treeTypes, float _width, float _length, size_t _numTrees, int _numHeroTrees);
 
   //TREE STRUCT
   //--------------------------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ public:
 
 
   ///@brief this is the number of hero trees PER tree type
-  int m_numHeroTrees = 1;
+  int m_numHeroTrees;
 
   std::vector<OutputData> m_output;
 

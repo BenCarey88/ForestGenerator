@@ -25,6 +25,9 @@ void LSystem::createGeometry()
   auto start = std::chrono::high_resolution_clock::now();
 
   std::string treeString = generateTreeString();
+
+  //std::cout<<treeString<<"\n\n";
+
   ngl::Vec3 dir(0,1,0);
   ngl::Vec3 right(1,0,0);
   //I am using an ngl::Mat4 matrix for now because there is a problem with the euler
@@ -264,7 +267,12 @@ void LSystem::createGeometry()
 
         //note that exitPoint m_transform should be relative to the beginning of the branch
         //whereas instance m_transform is relative to the base of the tree
-        currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id, age, currentInstance->m_transform.inverse()*transform));
+        //currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id, age, currentInstance->m_transform.inverse()*transform));
+        for(auto instance : savedInstance)
+        {
+          instance->m_exitPoints.push_back(Instance::ExitPoint(id, age, instance->m_transform.inverse()*transform));
+        }
+        //std::cout<<"\n"<<i<<"\n"<<currentInstance->m_exitPoints.size()<<"\n";
 
         if(m_instanceCache[id][age].size()==0)
         {
