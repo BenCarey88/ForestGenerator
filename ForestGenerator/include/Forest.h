@@ -64,10 +64,10 @@ public:
     //--------------------------------------------------------------------------------------------------------------------
     /// @brief
     //--------------------------------------------------------------------------------------------------------------------
-    OutputData(ngl::Mat4 _transform, size_t _id, size_t _age, size_t _innerIndex);
+    OutputData(ngl::Mat4 _transform, size_t _treeType, size_t _id, size_t _age, size_t _innerIndex);
 
     ngl::Mat4 m_transform;
-    size_t m_id, m_age, m_innerIndex;
+    size_t m_treeType, m_id, m_age, m_innerIndex;
   };
 
   //PUBLIC MEMBER VARIABLES
@@ -116,7 +116,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief create geometry of tree by taking instances from the instance cache
   //--------------------------------------------------------------------------------------------------------------------
-  void createTree(LSystem &_treeType, ngl::Mat4 _transform, size_t _id, size_t _age);
+  void createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size_t _age);
 
   Instance * getInstance(LSystem &_treeType, size_t _id, size_t _age, size_t &_innerIndex);
 

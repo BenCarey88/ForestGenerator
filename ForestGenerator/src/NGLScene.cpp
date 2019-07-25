@@ -36,6 +36,7 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_mouseTransforms[2].resize(1);
 
   initializeLSystems();
+  m_instanceCacheVAOs.resize(m_numTreeTabs);
 
   m_currentCamera = &m_cameras[0][0];
   m_currentMouseTransform = &m_mouseTransforms[0][0];
@@ -169,30 +170,35 @@ void NGLScene::paintGL()
 
   if(m_buildInstanceVAO)
   {
-    LSystem &treeType = m_forest.m_treeTypes[0];
-    std::vector<std::vector<std::vector<Instance>>> &instanceCache = treeType.m_instanceCache;
-    m_instanceCacheVAOs.resize(instanceCache.size());
-
-    for(size_t id=0; id<instanceCache.size(); id++)
+    for(size_t i=0; i<m_forest.m_treeTypes.size(); i++)
     {
-      //std::cout<<"id = "<<id<<'\n';
+      LSystem &treeType = m_forest.m_treeTypes[i];
+      std::vector<std::vector<std::vector<Instance>>> &instanceCache = treeType.m_instanceCache;
+      m_instanceCacheVAOs[i].resize(instanceCache.size());
 
-      m_instanceCacheVAOs[id].resize(instanceCache[id].size());
-      for(size_t age=0; age<instanceCache[id].size(); age++)
+      for(size_t id=0; id<instanceCache.size(); id++)
       {
-        //std::cout<<"  age = "<<age<<'\n';
-        //std::cout<<"    size of this level of nesting is "<<instanceCache[id][age].size()<<'\n';
-        m_instanceCacheVAOs[id][age].resize(instanceCache[id][age].size());
-        for(size_t index=0; index<instanceCache[id][age].size(); index++)
+        //std::cout<<"id = "<<id<<'\n';
+
+        m_instanceCacheVAOs[i][id].resize(instanceCache[id].size());
+        for(size_t age=0; age<instanceCache[id].size(); age++)
         {
-          Instance &instance = instanceCache[id][age][index];
-          //buildInstanceCacheVAO(treeType, instance, m_instanceCacheVAOs[id][age][index]);
-          buildLineVAO(treeType.m_heroVertices, instance.m_indices, m_instanceCacheVAOs[id][age][index]);
+          //std::cout<<"  age = "<<age<<'\n';
+          //std::cout<<"    size of this level of nesting is "<<instanceCache[id][age].size()<<'\n';
+          m_instanceCacheVAOs[i][id][age].resize(instanceCache[id][age].size());
+          for(size_t index=0; index<instanceCache[id][age].size(); index++)
+          {
+            Instance &instance = instanceCache[id][age][index];
+            //buildInstanceCacheVAO(treeType, instance, m_instanceCacheVAOs[id][age][index]);
+            buildLineVAO(treeType.m_heroVertices, instance.m_indices,
+                         m_instanceCacheVAOs[i][id][age][index]);
+          }
         }
+        //std::cout<<'\n';
       }
-      //std::cout<<'\n';
+      //std::cout<<"\n---------------------------------------\n";
     }
-    //std::cout<<"\n---------------------------------------\n";
+    m_buildInstanceVAO = false;
   }
 
   (*shader)["ColourShader"]->use();
@@ -224,9 +230,9 @@ void NGLScene::paintGL()
       for(auto const &o : m_forest.m_output)
       {
         shader->setUniform("MVP",MVP*o.m_transform);
-        m_instanceCacheVAOs.at(o.m_id).at(o.m_age).at(o.m_innerIndex)->bind();
-        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->draw();
-        m_instanceCacheVAOs[o.m_id][o.m_age][o.m_innerIndex]->unbind();
+        m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->bind();
+        m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->draw();
+        m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->unbind();
       }
 
 

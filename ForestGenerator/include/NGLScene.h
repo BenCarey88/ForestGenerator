@@ -191,8 +191,12 @@ protected:
 
   bool m_buildInstanceVAO = false;
 
-  //nested std::vector of VAOs corresponding to the instance cache
-  std::vector<std::vector<std::vector<std::unique_ptr<ngl::AbstractVAO>>>> m_instanceCacheVAOs;
+  //nested std::vector of VAOs corresponding to instance caches
+  //outer layer separates the instance caches of the differing tree types
+  //second layer separates within a cache by id
+  //third layer separates by age
+  //inner index corresponds to different instances of a given age and id
+  std::vector<std::vector<std::vector<std::vector<std::unique_ptr<ngl::AbstractVAO>>>>> m_instanceCacheVAOs;
 
 
   //----------------------------------------------------------------------------------------------------------------------
@@ -204,7 +208,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   float m_width = 500;
   float m_length = 500;
-  size_t m_numTrees = 100;
+  size_t m_numTrees = 1000;
   int m_numHeroTrees = 10;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief list of all L-Systems stored by the scene
