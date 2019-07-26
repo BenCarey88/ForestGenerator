@@ -124,8 +124,8 @@ void Forest::scatterForest()
     position.translate(distX(m_gen),0,distZ(m_gen));
     orientation.rotateY(distRotate(m_gen));
     scale = distScale(m_gen)*scale;
-    m_treeData.push_back(Tree(distTreeType(m_gen), position*orientation*scale));
-    //m_treeData.push_back(Tree(1,position*orientation*scale));
+    //m_treeData.push_back(Tree(distTreeType(m_gen), position*orientation*scale));
+    m_treeData.push_back(Tree(0,position*orientation*scale));
   }
 }
 

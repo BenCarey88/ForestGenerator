@@ -11,6 +11,7 @@
 #include <ngl/VAOFactory.h>
 #include <ngl/SimpleIndexVAO.h>
 
+#include "InstanceCacheVAO.h"
 #include "NGLScene.h"
 #include "Camera.h"
 
@@ -90,8 +91,8 @@ void NGLScene::initializeGL()
   shader->loadShader("GridShader", "shaders/GridVertex.glsl",
                      "shaders/GridFragment.glsl");
 
+  ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
   ngl::VAOFactory::listCreators();
-
 
   //set up LSystem VAOs:
   for(size_t i=0; i<m_numTreeTabs; i++)
@@ -105,6 +106,7 @@ void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLsho
                             std::unique_ptr<ngl::AbstractVAO> &_vao)
 {
   // create a vao using GL_LINES
+  //ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
   _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
   _vao->bind();
 
@@ -138,6 +140,24 @@ void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, st
   _vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
   _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
   _vao->unbind();
+}
+
+void NGLScene::buildTestVAO()
+{
+  // create a vao using GL_LINES
+  //ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
+  m_testVao=ngl::VAOFactory::createVAO("instanceCacheVAO",GL_LINES);
+  m_testVao->bind();
+
+  // set our data for the VAO
+  m_testVao->setData(ngl::InstanceCacheVAO::VertexData(
+                       sizeof(ngl::Vec3)*m_forest.m_treeTypes[0].m_heroVertices.size(),
+                       m_forest.m_treeTypes[0].m_heroVertices[0].m_x,
+                       m_forest));
+  // data is 12 bytes apart (=sizeof(Vec3))
+  m_testVao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
+  m_testVao->setNumIndices(_indices.size());
+  m_testVao->unbind();
 }
 
 void NGLScene::paintGL()
@@ -226,14 +246,17 @@ void NGLScene::paintGL()
         m_LSystemVAOs[type]->unbind();
       }*/
 
-      for(auto const &o : m_forest.m_output)
+      /*for(auto const &o : m_forest.m_output)
       {
         shader->setUniform("MVP",MVP*o.m_transform);
         m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->bind();
         m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->draw();
         m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->unbind();
-      }
-
+      }*/
+      buildTestVAO();
+      m_testVao->bind();
+      m_testVao->draw();
+      m_testVao->unbind();
 
       break;
 
