@@ -31,9 +31,11 @@ Forest::Tree::Tree(size_t _type, ngl::Mat4 _transform) :
   m_type(_type), m_transform(_transform) {}
 
 Forest::OutputData::OutputData(ngl::Mat4 _transform, size_t _treeType,
-                               size_t _id, size_t _age, size_t _innerIndex) :
+                               size_t _id, size_t _age, size_t _innerIndex,
+                               size_t _instanceStart, size_t _instanceEnd) :
   m_transform(_transform), m_treeType(_treeType),
-  m_id(_id), m_age(_age), m_innerIndex(_innerIndex) {}
+  m_id(_id), m_age(_age), m_innerIndex(_innerIndex),
+  m_instanceStart(_instanceStart), m_instanceEnd(_instanceEnd) {}
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -163,7 +165,7 @@ void Forest::createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size
     }
     print("\n-----------------------------------------------\n");*/
 
-    m_output.push_back(OutputData(T, _treeType, _id, _age, innerIndex));
+    m_output.push_back(OutputData(T, _treeType, _id, _age, innerIndex, instance->m_instanceStart, instance->m_instanceEnd));
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
     {
       size_t newAge = instance->m_exitPoints[i].m_exitAge;

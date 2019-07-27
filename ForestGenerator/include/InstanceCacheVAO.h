@@ -33,12 +33,23 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
         unsigned int m_indexSize;
         const GLvoid *m_indexData;
         GLenum m_indexType;*/
-      VertexData(size_t _size, const GLfloat &_data, Forest &_forest, GLenum _mode=GL_STATIC_DRAW ) :
-                    AbstractVAO::VertexData(_size,_data,_mode), m_forest(_forest)
+      VertexData(size_t _size, const GLfloat &_data,
+                 unsigned int _indexSize, const GLvoid *_indexData, GLenum _indexType,
+                 Forest &_forest, GLenum _mode=GL_STATIC_DRAW ) :
+                    AbstractVAO::VertexData(_size,_data,_mode),
+                    m_indexSize(_indexSize), m_indexData(_indexData), m_indexType(_indexType),
+                    m_forest(_forest)
                     {}
+      unsigned int m_indexSize;
+      const GLvoid *m_indexData;
+      GLenum m_indexType;
       Forest m_forest;
-      GLenum m_indexType = GL_UNSIGNED_SHORT;
     };
+
+    std::vector<GLsizei> m_numIndices;
+    std::vector<GLvoid *> m_indexOffsetPointers;
+    GLsizei m_instanceCount;
+
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief creator method for the factory
     /// @param _mode the mode to draw with.

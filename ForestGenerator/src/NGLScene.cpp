@@ -153,10 +153,13 @@ void NGLScene::buildTestVAO()
   m_testVao->setData(ngl::InstanceCacheVAO::VertexData(
                        sizeof(ngl::Vec3)*m_forest.m_treeTypes[0].m_heroVertices.size(),
                        m_forest.m_treeTypes[0].m_heroVertices[0].m_x,
+                       uint(m_forest.m_treeTypes[0].m_heroIndices.size()),
+                       &m_forest.m_treeTypes[0].m_heroIndices[0],
+                       GL_UNSIGNED_SHORT,
                        m_forest));
   // data is 12 bytes apart (=sizeof(Vec3))
   m_testVao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  m_testVao->setNumIndices(_indices.size());
+  //m_testVao->setNumIndices(_indices.size());
   m_testVao->unbind();
 }
 
@@ -253,6 +256,7 @@ void NGLScene::paintGL()
         m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->draw();
         m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->unbind();
       }*/
+      shader->setUniform("MVP",MVP);
       buildTestVAO();
       m_testVao->bind();
       m_testVao->draw();

@@ -64,10 +64,12 @@ public:
     //--------------------------------------------------------------------------------------------------------------------
     /// @brief
     //--------------------------------------------------------------------------------------------------------------------
-    OutputData(ngl::Mat4 _transform, size_t _treeType, size_t _id, size_t _age, size_t _innerIndex);
+    OutputData(ngl::Mat4 _transform, size_t _treeType, size_t _id, size_t _age, size_t _innerIndex,
+               size_t _instanceStart, size_t _instanceEnd);
 
     ngl::Mat4 m_transform;
     size_t m_treeType, m_id, m_age, m_innerIndex;
+    size_t m_instanceStart, m_instanceEnd;
   };
 
   //PUBLIC MEMBER VARIABLES
