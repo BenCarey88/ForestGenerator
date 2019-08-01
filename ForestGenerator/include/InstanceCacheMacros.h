@@ -44,7 +44,8 @@
   }
 
 
-/// Note that this macro gives _function access to the variables ID, AGE and INDEX
+/// @note this macro gives _function access to the variables ID, AGE and INDEX
+/// @note _function can be replaced by any string of commands, separated by ;s
 #define FOR_EACH_ELEMENT(_cache, _function)                       \
   for(size_t ID=0; ID<_cache.size(); ID++)                        \
   {                                                               \

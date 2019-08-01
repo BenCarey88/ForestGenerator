@@ -100,6 +100,7 @@ void NGLScene::initializeGL()
   shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
                      "shaders/ForestFragment.glsl");
 
+  //register the new VAO class created to take care of the instancing
   ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
   ngl::VAOFactory::listCreators();
 
@@ -135,9 +136,8 @@ void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLsho
 //------------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance,
-                                     std::unique_ptr<ngl::AbstractVAO> &_vao,
                                      std::vector<ngl::Mat4> &_transforms,
-                                     size_t _instanceCount)
+                                     std::unique_ptr<ngl::AbstractVAO> &_vao)
 {
   // create a vao using GL_LINES
   _vao=ngl::VAOFactory::createVAO("instanceCacheVAO",GL_LINES);
@@ -148,8 +148,6 @@ void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance,
                        _treeType.m_heroVertices[0].m_x,
                        uint(_instance.m_instanceEnd-_instance.m_instanceStart),
                        &_treeType.m_heroIndices[_instance.m_instanceStart],
-                       GL_UNSIGNED_SHORT,
-                       int(_instanceCount),
                        uint(_transforms.size()),
                        &_transforms[0]
                 ));
@@ -191,9 +189,8 @@ void NGLScene::paintGL()
       FOR_EACH_ELEMENT(m_instanceCacheVAOs[t],
                        buildInstanceCacheVAO(treeType,
                                              instanceCache[ID][AGE][INDEX],
-                                             m_instanceCacheVAOs[t][ID][AGE][INDEX],
                                              m_forest.m_transformCache[t][ID][AGE][INDEX],
-                                             m_forest.m_transformCache[t][ID][AGE][INDEX].size()))
+                                             m_instanceCacheVAOs[t][ID][AGE][INDEX]))
     }
     m_buildInstanceVAO = false;
   }
@@ -232,7 +229,6 @@ void NGLScene::paintGL()
                           m_instanceCacheVAOs[t][ID][AGE][INDEX]->bind();
                           m_instanceCacheVAOs[t][ID][AGE][INDEX]->draw();
                           m_instanceCacheVAOs[t][ID][AGE][INDEX]->unbind())
-
       }
       break;
     }

@@ -27,22 +27,19 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
     {
     public :
       VertexData(size_t _size, const GLfloat &_data,
-                 unsigned int _indexSize,const GLvoid *_indexData,GLenum _indexType,
-                 GLsizei _instanceCount,
-                 size_t _transformDataSize, const GLvoid * _transformData,
+                 unsigned int _indexSize,const GLvoid *_indexData,
+                 unsigned int _instanceCount, const GLvoid * _transformData,
                  GLenum _mode=GL_STATIC_DRAW) :
           AbstractVAO::VertexData(_size,_data,_mode),
-          m_indexSize(_indexSize), m_indexData(_indexData), m_indexType(_indexType),
-          m_instanceCount(_instanceCount),
-          m_transformDataSize(_transformDataSize), m_transformData(_transformData)
+          m_indexSize(_indexSize), m_indexData(_indexData),
+          m_instanceCount(_instanceCount), m_transformData(_transformData)
       {}
 
       unsigned int m_indexSize;
       const GLvoid *m_indexData;
-      GLenum m_indexType;
+      GLenum m_indexType = GL_UNSIGNED_SHORT;
 
-      GLsizei m_instanceCount;
-      size_t m_transformDataSize;
+      unsigned int m_instanceCount;
       const GLvoid * m_transformData;
     };
 
@@ -103,17 +100,18 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
 
   private :
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief the id of the buffer for the VAO
+    /// @brief the id of the buffers for the VAO
     //----------------------------------------------------------------------------------------------------------------------
     GLuint m_buffer=0;
     GLuint m_idxBuffer=0;
+    GLuint m_transformBuffer=0;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief data type of the index data (e.g. GL_UNSIGNED_INT)
     //----------------------------------------------------------------------------------------------------------------------
     GLenum m_indexType;
 
-    GLsizei m_instanceCount;
-    GLuint m_transformBuffer=0;
+    GLuint m_instanceCount;
+
 
 };
 

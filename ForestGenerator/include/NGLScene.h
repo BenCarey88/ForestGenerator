@@ -260,9 +260,8 @@ protected:
                     std::unique_ptr<ngl::AbstractVAO> &_vao);
 
   void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance,
-                             std::unique_ptr<ngl::AbstractVAO> &_vao,
                              std::vector<ngl::Mat4> &_transforms,
-                             size_t _instanceCount);
+                             std::unique_ptr<ngl::AbstractVAO> &_vao);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

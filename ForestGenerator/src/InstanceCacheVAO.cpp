@@ -63,19 +63,25 @@ namespace ngl
 
     // now we will bind an array buffer to the first one and load the data for the verts
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.m_size), &data.m_data, data.m_mode);
+    glBufferData(GL_ARRAY_BUFFER,
+                 static_cast<GLsizeiptr>(data.m_size),
+                 &data.m_data,
+                 data.m_mode);
 
     int size=sizeof(GLushort);
     // now for the indices
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.m_indexSize * static_cast<GLsizeiptr>(size), const_cast<GLvoid *>(data.m_indexData),data.m_mode);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 data.m_indexSize * static_cast<GLsizeiptr>(size),
+                 const_cast<GLvoid *>(data.m_indexData),
+                 data.m_mode);
 
     setVertexAttributePointer(0,3,GL_FLOAT,12,0);
 
     glGenBuffers(1, &m_transformBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_transformBuffer);
     glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(ngl::Mat4)*static_cast<GLuint>(data.m_transformDataSize),
+                 sizeof(ngl::Mat4)*data.m_instanceCount,
                  data.m_transformData,
                  GL_STATIC_DRAW);
 
