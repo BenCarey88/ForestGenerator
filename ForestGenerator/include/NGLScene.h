@@ -255,14 +255,14 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief build an openGL line VAO from lists of vertices and indices (used by paintGL)
   //----------------------------------------------------------------------------------------------------------------------
-  void buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices,
+  void buildLineVAO(std::vector<ngl::Vec3> &_vertices,
+                    std::vector<GLshort> &_indices,
                     std::unique_ptr<ngl::AbstractVAO> &_vao);
 
-  void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount);
-
-  void drawInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
-                            std::vector<ngl::Mat4> &_transforms,
-                            GLuint &_transformBuffer);
+  void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance,
+                             std::unique_ptr<ngl::AbstractVAO> &_vao,
+                             std::vector<ngl::Mat4> &_transforms,
+                             size_t _instanceCount);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

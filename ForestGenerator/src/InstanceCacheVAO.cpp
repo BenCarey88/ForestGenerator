@@ -17,6 +17,8 @@ namespace ngl
     {
       msg->addWarning("Warning trying to draw an unbound VOA");
     }
+
+
     glDrawElementsInstanced(m_mode,
                             static_cast<GLsizei>(m_indicesCount),
                             m_indexType,
@@ -62,19 +64,29 @@ namespace ngl
     // now we will bind an array buffer to the first one and load the data for the verts
     glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.m_size), &data.m_data, data.m_mode);
-    // we need to determine the size of the data type before we set it
-    // in default to a ushort
+
     int size=sizeof(GLushort);
-    switch(data.m_indexType)
-    {
-      case GL_UNSIGNED_INT   : size=sizeof(GLuint);   break;
-      case GL_UNSIGNED_SHORT : size=sizeof(GLushort); break;
-      case GL_UNSIGNED_BYTE  : size=sizeof(GLubyte);  break;
-      default : msg->addWarning("wrong data type send for index value"); break;
-    }
     // now for the indices
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.m_indexSize * static_cast<GLsizeiptr>(size), const_cast<GLvoid *>(data.m_indexData),data.m_mode);
+
+    setVertexAttributePointer(0,3,GL_FLOAT,12,0);
+
+    glGenBuffers(1, &m_transformBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_transformBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Mat4)*static_cast<GLuint>(data.m_transformDataSize),
+                 data.m_transformData,
+                 GL_STATIC_DRAW);
+
+    setVertexAttributePointer(1,4,GL_FLOAT,64,0);
+    setVertexAttributePointer(2,4,GL_FLOAT,64,4);
+    setVertexAttributePointer(3,4,GL_FLOAT,64,8);
+    setVertexAttributePointer(4,4,GL_FLOAT,64,12);
+    glVertexAttribDivisor(1,1);
+    glVertexAttribDivisor(2,1);
+    glVertexAttribDivisor(3,1);
+    glVertexAttribDivisor(4,1);
 
     m_allocated=true;
     m_indexType=data.m_indexType;

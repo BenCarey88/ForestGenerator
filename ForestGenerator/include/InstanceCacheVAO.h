@@ -14,7 +14,7 @@
 #define INSTANCECACHEVAO_H_
 
 #include "ngl/AbstractVAO.h"
-#include "Forest.h"
+#include "ngl/Mat4.h"
 
 namespace ngl
 {
@@ -26,20 +26,15 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
     class VertexData : public AbstractVAO::VertexData
     {
     public :
-          /*VertexData(size_t _size,const GLfloat &_data, unsigned int _indexSize,const GLvoid *_indexData,GLenum _indexType, GLenum _mode=GL_STATIC_DRAW ) :
-            AbstractVAO::VertexData(_size,_data,_mode),
-            m_indexSize(_indexSize), m_indexData(_indexData), m_indexType(_indexType){}
-
-        unsigned int m_indexSize;
-        const GLvoid *m_indexData;
-        GLenum m_indexType;*/
-
       VertexData(size_t _size, const GLfloat &_data,
                  unsigned int _indexSize,const GLvoid *_indexData,GLenum _indexType,
-                 GLsizei _instanceCount, GLenum _mode=GL_STATIC_DRAW ) :
+                 GLsizei _instanceCount,
+                 size_t _transformDataSize, const GLvoid * _transformData,
+                 GLenum _mode=GL_STATIC_DRAW) :
           AbstractVAO::VertexData(_size,_data,_mode),
           m_indexSize(_indexSize), m_indexData(_indexData), m_indexType(_indexType),
-          m_instanceCount(_instanceCount)
+          m_instanceCount(_instanceCount),
+          m_transformDataSize(_transformDataSize), m_transformData(_transformData)
       {}
 
       unsigned int m_indexSize;
@@ -47,9 +42,9 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
       GLenum m_indexType;
 
       GLsizei m_instanceCount;
+      size_t m_transformDataSize;
+      const GLvoid * m_transformData;
     };
-
-    GLsizei m_instanceCount;
 
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief creator method for the factory
@@ -64,7 +59,7 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief dtor don't do anything as the remove clears things
     //----------------------------------------------------------------------------------------------------------------------
-    virtual ~InstanceCacheVAO();
+    virtual ~InstanceCacheVAO() override;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief remove the VAO and buffers created
     //----------------------------------------------------------------------------------------------------------------------
@@ -116,6 +111,9 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
     /// @brief data type of the index data (e.g. GL_UNSIGNED_INT)
     //----------------------------------------------------------------------------------------------------------------------
     GLenum m_indexType;
+
+    GLsizei m_instanceCount;
+    GLuint m_transformBuffer=0;
 
 };
 

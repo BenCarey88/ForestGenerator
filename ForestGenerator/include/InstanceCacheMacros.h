@@ -19,17 +19,17 @@
 /// of variable, I have created the following macros to reduce repetition and improve readability of the code
 ///
 /// (I initially tried to do this with a templated class, but ran into issues when I tried to pass a unique
-/// pointer as the template argument, since some of the methods would require calling the copy constructor
+/// pointer as the template argument, since some of the methods would have required calling the copy constructor
 /// of the unique pointer)
 //----------------------------------------------------------------------------------------------------------------------
 
 #define CACHE_STRUCTURE(_class) std::vector<std::vector<std::vector<_class>>>
 
 #define RESIZE_CACHE_BY_VALUES(_cache, _idMax, _ageMax) \
-  _cache.resize(_idMax);                             \
-  for(auto &ROW : _cache)                         \
-  {                                               \
-    ROW.resize(_ageMax);                             \
+  _cache.resize(_idMax);                                \
+  for(auto &ROW : _cache)                               \
+  {                                                     \
+    ROW.resize(_ageMax);                                \
   }
 
 #define RESIZE_CACHE_BY_OTHER_CACHE(_cache, _otherCache)    \
@@ -44,8 +44,7 @@
   }
 
 
-/// Note that this macro gives function access to the variables ID, AGE and INDEX
-/// We can also replace function with f1(...); f2(...) if we want to do multiple things at once
+/// Note that this macro gives _function access to the variables ID, AGE and INDEX
 #define FOR_EACH_ELEMENT(_cache, _function)                       \
   for(size_t ID=0; ID<_cache.size(); ID++)                        \
   {                                                               \
