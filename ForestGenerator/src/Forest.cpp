@@ -38,15 +38,7 @@ void Forest::resizeOutputCache()
   m_outputCache.resize(m_treeTypes.size());
   for(size_t t=0; t<m_treeTypes.size(); t++)
   {
-    m_outputCache[t].resize(m_treeTypes[t].m_instanceCache.size(),{});
-    for(size_t id=0; id<m_treeTypes[t].m_instanceCache.size(); id++)
-    {
-      m_outputCache[t][id].resize(size_t(m_treeTypes[t].m_instanceCache[id].size()),{});
-      for(size_t age=0; age<m_treeTypes[t].m_instanceCache[id].size(); age++)
-      {
-        m_outputCache[t][id][age].resize(size_t(m_treeTypes[t].m_instanceCache[id][age].size()),{});
-      }
-    }
+    RESIZE_CACHE_BY_OTHER_CACHE(m_outputCache[t], m_treeTypes[t].m_instanceCache)
   }
 }
 

@@ -196,10 +196,10 @@ protected:
   //second layer separates within a cache by id
   //third layer separates by age
   //inner index corresponds to different instances of a given age and id
-  std::vector<std::vector<std::vector<std::vector<std::unique_ptr<ngl::AbstractVAO>>>>> m_instanceCacheVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_instanceCacheVAOs;
 
   //as above: separated by treeType/id/age/innerIndex
-  std::vector<std::vector<std::vector<std::vector<GLuint>>>> m_bufferIds;
+  std::vector<CACHE_STRUCTURE(GLuint)> m_bufferIds;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the forest object to be sent to the renderer
@@ -262,6 +262,10 @@ protected:
 
   std::unique_ptr<ngl::AbstractVAO> m_testVao;
   void buildTestVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount);
+
+  void drawInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
+                            std::vector<ngl::Mat4> &_transforms,
+                            GLuint &_transformBuffer);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

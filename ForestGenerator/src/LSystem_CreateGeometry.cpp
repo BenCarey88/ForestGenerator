@@ -32,7 +32,6 @@ void LSystem::createGeometry()
   //using the copy constructor to transfer that rotation to r3
   ngl::Mat4 r4;
   ngl::Mat3 r3;
-  ngl::Mat4 t4;
 
   ngl::Vec3 lastVertex(0,0,0);
   GLshort lastIndex = 0;
@@ -199,7 +198,7 @@ void LSystem::createGeometry()
                             lastVertex.m_x, lastVertex.m_y, lastVertex.m_z, 1);
 
         instance = Instance(transform);
-        instance.m_instanceStart = indices->size();//&(indices->back()); //except maybe should be &(indices->back())+1?
+        instance.m_instanceStart = indices->size();
         if(m_instanceCache[id][age].size()<=size_t(m_maxInstancePerLevel/(age+1)))
         {
           m_instanceCache[id][age].push_back(instance);
@@ -231,8 +230,6 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
-        t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
-
         ngl::Vec3 k = right.cross(dir);
         ngl::Mat4 transform(right.m_x,      right.m_y,      right.m_z,      0,
                             dir.m_x,        dir.m_y,        dir.m_z,        0,
@@ -244,10 +241,11 @@ void LSystem::createGeometry()
           instance->m_exitPoints.push_back(Instance::ExitPoint(id, age, instance->m_transform.inverse()*transform));
         }
 
+        //if the instance cachec currently has no entries for this (id,age) pair, add a new instance to it
         if(m_instanceCache[id][age].size()==0)
         {
           instance = Instance(transform);
-          instance.m_instanceStart = indices->size();//&(indices->back());
+          instance.m_instanceStart = indices->size();
           m_instanceCache[id][age].push_back(instance);
           currentInstance = &m_instanceCache[id][age].back();
           savedInstance.push_back(currentInstance);
@@ -262,7 +260,8 @@ void LSystem::createGeometry()
 
       case '>':
       {
-        //note that assuming > doesn't appear in any rules, we will only reach this case if we are using the corresponding < to make an instance
+        //note that assuming > doesn't appear in any rules, we will only reach this
+        //case if we are using the corresponding < to make an instance
         currentInstance->m_instanceEnd = indices->size();
         savedInstance.pop_back();
         if(savedInstance.size()>0)

@@ -13,6 +13,7 @@
 #include <ngl/Vec3.h>
 #include <ngl/Mat4.h>
 #include "Instance.h"
+#include "InstanceCacheMacros.h"
 #include "PrintFunctions.h"
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -157,9 +158,8 @@ public://-----------------------------------------------------------------------
   //middle layer separates instances of the same id by age
   //inner layer separates multiple possible instances of the same id and age
   //so accessing an istance is done by instanceCache[id][age][randomizer]
-  std::vector<std::vector<std::vector<Instance>>> m_instanceCache;
+  CACHE_STRUCTURE(Instance) m_instanceCache;
 
-  void resizeInstanceCache();
   ///@brief makes hero trees to fill instance cache
   void fillInstanceCache(int _numHeroTrees);
 
