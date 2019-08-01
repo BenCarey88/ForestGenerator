@@ -30,7 +30,8 @@ OTHER_FILES+= README.md \
               shaders/*.glsl
 # and add the include dir into the search path for Qt and make
 INCLUDEPATH +=./include \
-                $(HOME)/boost_1_70_0/boost
+                include/boost
+#                $(HOME)/boost_1_70_0/boost
 
 NGLPATH=$$(NGLDIR)
 isEmpty(NGLPATH){ # note brace must be here
@@ -41,3 +42,12 @@ else{ # note brace must be here
         message("Using custom NGL location")
         include($(NGLDIR)/UseNGL.pri)
 }
+
+INCLUDEPATH += $$PWD/include/noise
+unix: LIBS += -L$$PWD/lib -lnoise -lnoiseutils
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../Libnoise/bin/ -llibnoise
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../Libnoise/bin/ -llibnoised
+
+win32:INCLUDEPATH += $$PWD/../../Libnoise/bin
+win32:DEPENDPATH += $$PWD/../../Libnoise/bin

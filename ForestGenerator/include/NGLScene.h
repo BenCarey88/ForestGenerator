@@ -23,6 +23,8 @@
 #include "Camera.h"
 #include "Forest.h"
 #include "Grid.h"
+#include "TerrainData.h"
+#include "TerrainGenerator.h"
 
 #include <QEvent>
 #include <QResizeEvent>
@@ -237,6 +239,19 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   ngl::Mat4 * m_currentMouseTransform;
 
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief TerrainGenerator object used to generate heightmap values
+  //----------------------------------------------------------------------------------------------------------------------
+  TerrainGenerator m_terrainValues;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief TerrainData object which applies LOD algorithms to the heightmap values from m_terrainValues and creates
+  /// a vertex list to be passed into paintGL
+  //----------------------------------------------------------------------------------------------------------------------
+  TerrainData m_terrain;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief float to store the user-specified error tolerance passed into the LOD algorithm in m_terrain
+  //----------------------------------------------------------------------------------------------------------------------
+  float m_tolerance = 0.02f;
 
   //PROTECTED MEMBER FUNCTIONS
   //----------------------------------------------------------------------------------------------------------------------
@@ -255,9 +270,8 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief build an openGL line VAO from lists of vertices and indices (used by paintGL)
   //----------------------------------------------------------------------------------------------------------------------
-  void buildLineVAO(std::vector<ngl::Vec3> &_vertices,
-                    std::vector<GLshort> &_indices,
-                    std::unique_ptr<ngl::AbstractVAO> &_vao);
+  void buildVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices,
+                GLenum _mode, std::unique_ptr<ngl::AbstractVAO> &_vao);
 
   void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance,
                              std::vector<ngl::Mat4> &_transforms,

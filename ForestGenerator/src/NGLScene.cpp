@@ -44,12 +44,21 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_currentLSystem = &m_LSystems[0];
 
   m_currentLSystem->createGeometry();
+
+  int dimension = 129;
+  m_terrainValues = TerrainGenerator(dimension);
+  m_terrainValues.generate();
+  m_terrain = TerrainData(m_terrainValues.m_dimension, m_terrainValues.m_heightMap);
 }
 
 NGLScene::~NGLScene()
 {
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
   m_vao->removeVAO();
+  for(auto &LSystemVAO : m_LSystemVAOs)
+  {
+    LSystemVAO->removeVAO();
+  }
   for(size_t t=0; t<m_numTreeTabs; t++)
   {
     FOR_EACH_ELEMENT(m_instanceCacheVAOs[t],
@@ -99,6 +108,8 @@ void NGLScene::initializeGL()
                      "shaders/GridFragment.glsl");
   shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
                      "shaders/ForestFragment.glsl");
+  shader->loadShader("TerrainShader", "shaders/TerrainVertex.glsl",
+                     "shaders/TerrainFragment.glsl");
 
   //register the new VAO class created to take care of the instancing
   ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
@@ -107,17 +118,17 @@ void NGLScene::initializeGL()
   //set up LSystem VAOs:
   for(size_t i=0; i<m_numTreeTabs; i++)
   {
-    buildLineVAO(m_LSystems[i].m_vertices, m_LSystems[i].m_indices, m_LSystemVAOs[i]);
+    buildVAO(m_LSystems[i].m_vertices, m_LSystems[i].m_indices, GL_LINES, m_LSystemVAOs[i]);
   }
 }
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices,
-                            std::unique_ptr<ngl::AbstractVAO> &_vao)
+void NGLScene::buildVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices,
+                        GLenum _mode, std::unique_ptr<ngl::AbstractVAO> &_vao)
 {
   // create a vao using GL_LINES
-  _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
+  _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,_mode);
   _vao->bind();
 
   // set our data for the VAO
@@ -149,8 +160,7 @@ void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance,
                        uint(_instance.m_instanceEnd-_instance.m_instanceStart),
                        &_treeType.m_heroIndices[_instance.m_instanceStart],
                        uint(_transforms.size()),
-                       &_transforms[0]
-                ));
+                       &_transforms[0]));
   // data is 12 bytes apart (=sizeof(Vec3))
   _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
   _vao->unbind();
@@ -172,7 +182,8 @@ void NGLScene::paintGL()
 
   if(m_buildTreeVAO)
   {
-      buildLineVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices, m_LSystemVAOs[m_treeTabNum]);
+      buildVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices,
+               GL_LINES, m_LSystemVAOs[m_treeTabNum]);
       m_buildTreeVAO = false;
   }
 
@@ -199,11 +210,22 @@ void NGLScene::paintGL()
   {
     (*shader)["GridShader"]->use();
     shader->setUniform("MVP",MVP);
-    buildLineVAO(m_grid.m_vertices, m_grid.m_indices, m_vao);
+    buildVAO(m_grid.m_vertices, m_grid.m_indices, GL_LINES, m_vao);
     m_vao->bind();
     m_vao->draw();
     m_vao->unbind();
   }
+
+  (*shader)["TerrainShader"]->use();
+  shader->setUniform("MVP",MVP);
+  m_terrain.meshRefine(m_currentCamera->m_from, m_tolerance, 100.0);
+  m_terrain.fillVerticsAndIndicesForRendering();
+  buildVAO(m_terrain.m_vertsToBeRendered,
+           m_terrain.m_indicesToBeRendered,
+           GL_TRIANGLE_STRIP, m_vao);
+  m_vao->bind();
+  m_vao->draw();
+  m_vao->unbind();
 
   switch(m_superTabNum)
   {
