@@ -124,7 +124,7 @@ void LSystem::fillInstanceCache(int _numHeroTrees)
 {
   seedRandomEngine();
   addInstancingCommands();
-  RESIZE_CACHE_BY_VALUES(m_instanceCache, m_branches.size(), m_generation+1)
+  RESIZE_CACHE_BY_VALUES(m_instanceCache, m_branches.size(), size_t(m_generation)+1)
 
   m_forestMode = true;
   m_heroIndices = {};

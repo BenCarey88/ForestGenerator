@@ -17,7 +17,6 @@ Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width, float _leng
     treeType.fillInstanceCache(m_numHeroTrees);
   }
 
-  resizeOutputCache();
   createForest();
 }
 
@@ -32,13 +31,13 @@ Forest::OutputData::OutputData(ngl::Mat4 _transform, size_t _treeType,
   m_transform(_transform), m_treeType(_treeType),
   m_id(_id), m_age(_age), m_innerIndex(_innerIndex) {}
 
-void Forest::resizeOutputCache()
+void Forest::resizeTransformCache()
 {
-  m_outputCache={};
-  m_outputCache.resize(m_treeTypes.size());
+  m_transformCache={};
+  m_transformCache.resize(m_treeTypes.size());
   for(size_t t=0; t<m_treeTypes.size(); t++)
   {
-    RESIZE_CACHE_BY_OTHER_CACHE(m_outputCache[t], m_treeTypes[t].m_instanceCache)
+    RESIZE_CACHE_BY_OTHER_CACHE(m_transformCache[t], m_treeTypes[t].m_instanceCache)
   }
 }
 
@@ -94,8 +93,7 @@ void Forest::createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size
     size_t innerIndex = 0;
     Instance * instance = getInstance(treeType, _id, _age, innerIndex);
     ngl::Mat4 T = _transform * instance->m_transform.inverse();
-    m_output.push_back(OutputData(T, _treeType, _id, _age, innerIndex));
-    m_outputCache.at(_treeType).at(_id).at(_age).at(innerIndex).push_back(T);
+    m_transformCache.at(_treeType).at(_id).at(_age).at(innerIndex).push_back(T);
 
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
     {
@@ -124,10 +122,8 @@ Instance * Forest::getInstance(LSystem &_treeType, size_t _id, size_t _age, size
 
 void Forest::createForest()
 {
-  //staticCount=0;
   seedRandomEngine();
-  m_output = {};
-  resizeOutputCache();
+  resizeTransformCache();
   for(auto &tree : m_treeData)
     createTree(tree.m_type,tree.m_transform,0,0);
 }

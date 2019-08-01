@@ -125,26 +125,7 @@ void NGLScene::buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLsho
   _vao->unbind();
 }
 
-void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao)
-{
-  // create a vao using GL_LINES
-  _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,GL_LINES);
-  _vao->bind();
-
-  // set our data for the VAO
-  _vao->setData(ngl::SimpleIndexVAO::VertexData(
-                                                  sizeof(ngl::Vec3)*_treeType.m_heroVertices.size(),
-                                                  _treeType.m_heroVertices[0].m_x,
-                                                  uint(_instance.m_instanceEnd-_instance.m_instanceStart),
-                                                  &_treeType.m_heroIndices[_instance.m_instanceStart],
-                                                  GL_UNSIGNED_SHORT));
-  // data is 12 bytes apart (=sizeof(Vec3))
-  _vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
-  _vao->unbind();
-}
-
-void NGLScene::buildTestVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount)
+void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount)
 {
   // create a vao using GL_LINES
   //ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
@@ -212,16 +193,6 @@ void NGLScene::paintGL()
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
   ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform)*m_initialRotation;
 
-  if(m_showGrid)
-  {
-    (*shader)["GridShader"]->use();
-    shader->setUniform("MVP",MVP);
-    buildLineVAO(m_grid.m_vertices, m_grid.m_indices, m_vao);
-    m_vao->bind();
-    m_vao->draw();
-    m_vao->unbind();
-  }
-
   if(m_buildTreeVAO)
   {
       buildLineVAO(m_currentLSystem->m_vertices, m_currentLSystem->m_indices, m_LSystemVAOs[m_treeTabNum]);
@@ -239,19 +210,28 @@ void NGLScene::paintGL()
       RESIZE_CACHE_BY_OTHER_CACHE(m_instanceCacheVAOs[t], instanceCache)
       RESIZE_CACHE_BY_OTHER_CACHE(m_bufferIds[t], instanceCache)
       FOR_EACH_ELEMENT(m_instanceCacheVAOs[t],
-                       buildTestVAO(treeType,
-                                    instanceCache[ID][AGE][INDEX],
-                                    m_instanceCacheVAOs[t][ID][AGE][INDEX],
-                                    m_forest.m_outputCache[t][ID][AGE][INDEX].size()))
+                       buildInstanceCacheVAO(treeType,
+                                             instanceCache[ID][AGE][INDEX],
+                                             m_instanceCacheVAOs[t][ID][AGE][INDEX],
+                                             m_forest.m_transformCache[t][ID][AGE][INDEX].size()))
     }
     m_buildInstanceVAO = false;
   }
 
-  (*shader)["ColourShader"]->use();
+  if(m_showGrid)
+  {
+    (*shader)["GridShader"]->use();
+    shader->setUniform("MVP",MVP);
+    buildLineVAO(m_grid.m_vertices, m_grid.m_indices, m_vao);
+    m_vao->bind();
+    m_vao->draw();
+    m_vao->unbind();
+  }
 
   switch(m_superTabNum)
   {
     case 0:
+      (*shader)["ColourShader"]->use();
       shader->setUniform("MVP",MVP);
       m_LSystemVAOs[m_treeTabNum]->bind();
       m_LSystemVAOs[m_treeTabNum]->draw();
@@ -268,7 +248,7 @@ void NGLScene::paintGL()
 
       for(size_t t=0; t<m_numTreeTabs; t++)
       {
-        CACHE_STRUCTURE(std::vector<ngl::Mat4>) &outputCache = m_forest.m_outputCache[t];
+        CACHE_STRUCTURE(std::vector<ngl::Mat4>) &outputCache = m_forest.m_transformCache[t];
         FOR_EACH_ELEMENT(m_instanceCacheVAOs[t],
                          drawInstanceCacheVAO(m_instanceCacheVAOs[t][ID][AGE][INDEX],
                                               outputCache[ID][AGE][INDEX],

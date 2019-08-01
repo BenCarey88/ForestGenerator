@@ -133,13 +133,31 @@ void LSystem::breakDownRules(std::vector<std::string> _rules)
     //LRP aims to store rules in the form {LHS, RHS, Probability}
     std::vector<std::string> LRP;
     //use boost::split to get LRP={"A","B","C"} when rule is "A=B:C"
-    //note that if =,: symbols are used incorrectly this will give an incorrect result
     boost::split(LRP, ruleString, boost::is_any_of("=,:"));
+    //note that if =,: symbols are used incorrectly this will give an incorrect result
+    //for this reason, among others, I have added regex searches below to catch incorrect syntax
 
-    //only carry on if '=' appeared in the rule - otherwise, the rule is invalid
-    //this stops the program crashing if a rule doesn't have an =, and just skips this rule instead
-    //but technically this setup means "A=B:P" parses the same as "A:B=P" which is maybe a problem?
-    if(std::regex_search(ruleString, std::regex("=+")))
+    if(!std::regex_search(ruleString, std::regex("=")))
+    {
+      std::cerr<<"WARNING: excluding rule because no '=' command was given \n";
+    }
+    else if(std::regex_search(ruleString, std::regex("=.*=")))
+    {
+      std::cerr<<"WARNING: excluding rule because it had too many occurences of '=' \n";
+    }
+    else if(std::regex_search(ruleString, std::regex(":.*:")))
+    {
+      std::cerr<<"WARNING: excluding rule because it had too many occurences of ':' \n";
+    }
+    else if(std::regex_search(ruleString, std::regex(":.*=")))
+    {
+      std::cerr<<"WARNING: excluding rule because it contains ':' before '=' \n";
+    }
+    else if(std::regex_search(ruleString, std::regex("[{}<>]")))
+    {
+      std::cerr<<"WARNING: excluding rule because it uses one of the reserved characters '{', '}', '<', or '>' \n";
+    }
+    else
     {
       //define probability as 1 unless given otherwise
       float probability = 1;
@@ -179,11 +197,6 @@ void LSystem::breakDownRules(std::vector<std::string> _rules)
         m_rules.push_back(r);
         m_nonTerminals += LRP[0];
       }
-    }
-    //if '=' doesn't appear in the rules, display error message
-    else
-    {
-      std::cerr<<"WARNING: excluding rule because no replacement command was given \n";
     }
   }
   //normalize all probabilities in the rules

@@ -102,10 +102,9 @@ public:
   ///@brief this is the number of hero trees PER tree type
   int m_numHeroTrees;
 
-  std::vector<OutputData> m_output;
-  //outputData arranged to mimic the instanceCaches of each treeType
+  //outputCache arranged to mimic the instanceCaches of each treeType
   //separate by: treeType/id/age/innerIndex/different-branches-using-the-same-instance
-  std::vector<CACHE_STRUCTURE(std::vector<ngl::Mat4>)> m_outputCache;
+  std::vector<CACHE_STRUCTURE(std::vector<ngl::Mat4>)> m_transformCache;
 
   //the random number generator
   std::default_random_engine m_gen;
@@ -125,7 +124,7 @@ public:
 
   void createForest();
 
-  void resizeOutputCache();
+  void resizeTransformCache();
 
   void seedRandomEngine();
 

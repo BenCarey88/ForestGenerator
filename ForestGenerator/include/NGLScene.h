@@ -258,10 +258,7 @@ protected:
   void buildLineVAO(std::vector<ngl::Vec3> &_vertices, std::vector<GLshort> &_indices,
                     std::unique_ptr<ngl::AbstractVAO> &_vao);
 
-  void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao);
-
-  std::unique_ptr<ngl::AbstractVAO> m_testVao;
-  void buildTestVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount);
+  void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount);
 
   void drawInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
                             std::vector<ngl::Mat4> &_transforms,
