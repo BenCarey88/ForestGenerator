@@ -64,12 +64,10 @@ public:
     //--------------------------------------------------------------------------------------------------------------------
     /// @brief
     //--------------------------------------------------------------------------------------------------------------------
-    OutputData(ngl::Mat4 _transform, size_t _treeType, size_t _id, size_t _age, size_t _innerIndex,
-               size_t _instanceStart, size_t _instanceEnd);
+    OutputData(ngl::Mat4 _transform, size_t _treeType, size_t _id, size_t _age, size_t _innerIndex);
 
     ngl::Mat4 m_transform;
     size_t m_treeType, m_id, m_age, m_innerIndex;
-    size_t m_instanceStart, m_instanceEnd;
   };
 
   //PUBLIC MEMBER VARIABLES
@@ -105,6 +103,9 @@ public:
   int m_numHeroTrees;
 
   std::vector<OutputData> m_output;
+  //outputData arranged to mimic the instanceCache
+  //separate by: treeType/id/age/innerIndex/different-branches-using-the-same-instance
+  std::vector<std::vector<std::vector<std::vector<std::vector<ngl::Mat4>>>>> m_outputCache;
 
   //the random number generator
   std::default_random_engine m_gen;
@@ -123,6 +124,8 @@ public:
   Instance * getInstance(LSystem &_treeType, size_t _id, size_t _age, size_t &_innerIndex);
 
   void createForest();
+
+  void resizeOutputCache();
 
   void seedRandomEngine();
 

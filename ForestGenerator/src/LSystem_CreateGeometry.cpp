@@ -21,9 +21,6 @@
 
 void LSystem::createGeometry()
 {
-
-  auto start = std::chrono::high_resolution_clock::now();
-
   std::string treeString = generateTreeString();
 
   //std::cout<<treeString<<"\n\n";
@@ -195,18 +192,6 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
-        /*ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
-        if(lrint(axis.lengthSquared())!=0)
-        {
-          float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
-          r4.euler(theta, axis.m_x, axis.m_y, axis.m_z);
-        }
-        else
-        {
-          r4.identity();
-        }
-        t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);*/
-
         ngl::Vec3 k = right.cross(dir);
         ngl::Mat4 transform(right.m_x,      right.m_y,      right.m_z,      0,
                             dir.m_x,        dir.m_y,        dir.m_z,        0,
@@ -215,7 +200,7 @@ void LSystem::createGeometry()
 
         instance = Instance(transform);
         instance.m_instanceStart = indices->size();//&(indices->back()); //except maybe should be &(indices->back())+1?
-        if(m_instanceCache[id][age].size()<m_maxInstancePerLevel)
+        if(m_instanceCache[id][age].size()<=size_t(m_maxInstancePerLevel/(age+1)))
         {
           m_instanceCache[id][age].push_back(instance);
           currentInstance = &m_instanceCache[id][age].back();
@@ -232,9 +217,7 @@ void LSystem::createGeometry()
       //stopInstance
       case '}':
       {
-        currentInstance->m_instanceEnd = indices->size();//&(indices->back());
-        //currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
-        //                                                  indices->begin()+currentInstance->m_instanceEnd);
+        currentInstance->m_instanceEnd = indices->size();
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -248,17 +231,6 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
-        /*ngl::Vec3 axis = ngl::Vec3(0,1,0).cross(dir);
-        if(lrint(axis.lengthSquared())!=0)
-        {
-          axis.normalize();
-          float theta = float(acos(double(ngl::Vec3(0,1,0).dot(dir)))*180/M_PI);
-          r4.euler(theta, axis.m_x, axis.m_y, axis.m_z);
-        }
-        else
-        {
-          r4.identity();
-        }*/
         t4.translate(lastVertex.m_x, lastVertex.m_y, lastVertex.m_z);
 
         ngl::Vec3 k = right.cross(dir);
@@ -267,21 +239,10 @@ void LSystem::createGeometry()
                             k.m_x,          k.m_y,          k.m_z,          0,
                             lastVertex.m_x, lastVertex.m_y, lastVertex.m_z, 1);
 
-
-        /*ngl::Mat4 _m = t4*r4;
-        std::cout<<_m.m_00<<" "<<_m.m_01<<" "<<_m.m_02<<" "<<_m.m_03<<"\n"
-                 <<_m.m_10<<" "<<_m.m_11<<" "<<_m.m_12<<" "<<_m.m_13<<"\n"
-                 <<_m.m_20<<" "<<_m.m_21<<" "<<_m.m_22<<" "<<_m.m_23<<"\n"
-                 <<_m.m_30<<" "<<_m.m_31<<" "<<_m.m_32<<" "<<_m.m_33<<"\n\n";*/
-
-        //note that exitPoint m_transform should be relative to the beginning of the branch
-        //whereas instance m_transform is relative to the base of the tree
-        //currentInstance->m_exitPoints.push_back(Instance::ExitPoint(id, age, currentInstance->m_transform.inverse()*transform));
         for(auto instance : savedInstance)
         {
           instance->m_exitPoints.push_back(Instance::ExitPoint(id, age, instance->m_transform.inverse()*transform));
         }
-        //std::cout<<"\n"<<i<<"\n"<<currentInstance->m_exitPoints.size()<<"\n";
 
         if(m_instanceCache[id][age].size()==0)
         {
@@ -302,9 +263,7 @@ void LSystem::createGeometry()
       case '>':
       {
         //note that assuming > doesn't appear in any rules, we will only reach this case if we are using the corresponding < to make an instance
-        currentInstance->m_instanceEnd = indices->size();//&(indices->back());
-        //currentInstance->m_indices = std::vector<GLshort>(indices->begin()+currentInstance->m_instanceStart,
-        //                                                  indices->begin()+currentInstance->m_instanceEnd);
+        currentInstance->m_instanceEnd = indices->size();
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -324,10 +283,6 @@ void LSystem::createGeometry()
     std::cerr<<"WARNING: unable to parse one or more parameters \n";
     m_parameterError = false;
   }
-
-  auto finish = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> elapsed = finish - start;
-  //std::cout << "\ncreateGeometry() Elapsed time: " << elapsed.count() << " s\n";
 }
 
 //----------------------------------------------------------------------------------------------------------------------

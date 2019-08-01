@@ -90,6 +90,8 @@ void NGLScene::initializeGL()
                      "shaders/ColourFragment.glsl");
   shader->loadShader("GridShader", "shaders/GridVertex.glsl",
                      "shaders/GridFragment.glsl");
+  shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
+                     "shaders/ForestFragment.glsl");
 
   ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
   ngl::VAOFactory::listCreators();
@@ -142,25 +144,25 @@ void NGLScene::buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, st
   _vao->unbind();
 }
 
-void NGLScene::buildTestVAO()
+void NGLScene::buildTestVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount)
 {
   // create a vao using GL_LINES
   //ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
-  m_testVao=ngl::VAOFactory::createVAO("instanceCacheVAO",GL_LINES);
-  m_testVao->bind();
+  _vao=ngl::VAOFactory::createVAO("instanceCacheVAO",GL_LINES);
+  _vao->bind();
 
   // set our data for the VAO
-  m_testVao->setData(ngl::InstanceCacheVAO::VertexData(
-                       sizeof(ngl::Vec3)*m_forest.m_treeTypes[0].m_heroVertices.size(),
-                       m_forest.m_treeTypes[0].m_heroVertices[0].m_x,
-                       uint(m_forest.m_treeTypes[0].m_heroIndices.size()),
-                       &m_forest.m_treeTypes[0].m_heroIndices[0],
+  _vao->setData(ngl::InstanceCacheVAO::VertexData(
+                       sizeof(ngl::Vec3)*_treeType.m_heroVertices.size(),
+                       _treeType.m_heroVertices[0].m_x,
+                       uint(_instance.m_instanceEnd-_instance.m_instanceStart),
+                       &_treeType.m_heroIndices[_instance.m_instanceStart],
                        GL_UNSIGNED_SHORT,
-                       m_forest));
+                       int(_instanceCount)));
   // data is 12 bytes apart (=sizeof(Vec3))
-  m_testVao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  //m_testVao->setNumIndices(_indices.size());
-  m_testVao->unbind();
+  _vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
+  _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
+  _vao->unbind();
 }
 
 void NGLScene::paintGL()
@@ -193,32 +195,34 @@ void NGLScene::paintGL()
 
   if(m_buildInstanceVAO)
   {
-    for(size_t i=0; i<m_forest.m_treeTypes.size(); i++)
+    m_instanceCacheVAOs.resize(m_numTreeTabs);
+    m_bufferIds.resize(m_numTreeTabs);
+    for(size_t t=0; t<m_forest.m_treeTypes.size(); t++)
     {
-      LSystem &treeType = m_forest.m_treeTypes[i];
+      LSystem &treeType = m_forest.m_treeTypes[t];
       std::vector<std::vector<std::vector<Instance>>> &instanceCache = treeType.m_instanceCache;
-      m_instanceCacheVAOs[i].resize(instanceCache.size());
+      m_instanceCacheVAOs[t].resize(instanceCache.size());
+      m_bufferIds[t].resize(instanceCache.size());
 
       for(size_t id=0; id<instanceCache.size(); id++)
       {
         //std::cout<<"id = "<<id<<'\n';
-
-        m_instanceCacheVAOs[i][id].resize(instanceCache[id].size());
+        m_instanceCacheVAOs[t][id].resize(instanceCache[id].size());
+        m_bufferIds[t][id].resize(instanceCache[id].size());
         for(size_t age=0; age<instanceCache[id].size(); age++)
         {
-          //std::cout<<"  age = "<<age<<'\n';
-          //std::cout<<"    size of this level of nesting is "<<instanceCache[id][age].size()<<'\n';
-          m_instanceCacheVAOs[i][id][age].resize(instanceCache[id][age].size());
+          m_instanceCacheVAOs[t][id][age].resize(instanceCache[id][age].size());
+          m_bufferIds[t][id][age].resize(instanceCache[id][age].size());
           for(size_t index=0; index<instanceCache[id][age].size(); index++)
           {
             Instance &instance = instanceCache[id][age][index];
-            buildInstanceCacheVAO(treeType, instance, m_instanceCacheVAOs[i][id][age][index]);
-            //buildLineVAO(treeType.m_heroVertices, instance.m_indices, m_instanceCacheVAOs[i][id][age][index]);
+            buildTestVAO(treeType,
+                         instance,
+                         m_instanceCacheVAOs[t][id][age][index],
+                         m_forest.m_outputCache[t][id][age][index].size());
           }
         }
-        //std::cout<<'\n';
       }
-      //std::cout<<"\n---------------------------------------\n";
     }
     m_buildInstanceVAO = false;
   }
@@ -238,7 +242,8 @@ void NGLScene::paintGL()
       break;
 
     case 2:
-      /*for(size_t i=0; i<m_forest.m_numTrees; i++)
+    {
+    /*for(size_t i=0; i<m_forest.m_numTrees; i++)
       {
         size_t type = m_forest.m_treeData[i].m_type;
         ngl::Mat4 trans = m_forest.m_treeData[i].m_transform;
@@ -256,13 +261,68 @@ void NGLScene::paintGL()
         m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->draw();
         m_instanceCacheVAOs[o.m_treeType][o.m_id][o.m_age][o.m_innerIndex]->unbind();
       }*/
-      shader->setUniform("MVP",MVP);
-      buildTestVAO();
+
+      /*buildTestVAO();
       m_testVao->bind();
       m_testVao->draw();
-      m_testVao->unbind();
+      m_testVao->unbind();*/
 
+      (*shader)["ForestShader"]->use();
+      shader->setUniform("MVP",MVP);
+
+      std::vector<std::vector<std::vector<std::vector<std::vector<ngl::Mat4>>>>> &outputCache = m_forest.m_outputCache;
+
+      for(size_t t=0; t<outputCache.size(); t++)
+      {
+        for(size_t id=0; id<outputCache[t].size(); id++)
+        {
+          for(size_t age=0; age<outputCache[t][id].size(); age++)
+          {
+            for(size_t innerIndex=0; innerIndex<outputCache[t][id][age].size(); innerIndex++)
+            {
+
+              m_instanceCacheVAOs[t][id][age][innerIndex]->bind();
+
+              std::vector<ngl::Mat4> &transforms = outputCache[t][id][age][innerIndex];
+              GLuint &transformBuffer = m_bufferIds[t][id][age][innerIndex];
+
+
+              glGenBuffers(1, &transformBuffer);
+              glBindBuffer(GL_ARRAY_BUFFER, transformBuffer);
+
+              //glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.m_size), &data.m_data, data.m_mode);
+
+              glBufferData(GL_ARRAY_BUFFER,
+                           sizeof(ngl::Mat4)*static_cast<GLsizeiptr>(transforms.size()),
+                           &transforms[0],
+                           GL_STATIC_DRAW);
+
+              glEnableVertexAttribArray(1);
+              glEnableVertexAttribArray(2);
+              glEnableVertexAttribArray(3);
+              glEnableVertexAttribArray(4);
+
+              glVertexAttribPointer(1,4,GL_FLOAT,false,64,
+                                    static_cast<ngl::Real *>(NULL));
+              glVertexAttribPointer(2,4,GL_FLOAT,false,64,
+                                    static_cast<ngl::Real *>(NULL)+4);
+              glVertexAttribPointer(3,4,GL_FLOAT,false,64,
+                                    static_cast<ngl::Real *>(NULL)+8);
+              glVertexAttribPointer(4,4,GL_FLOAT,false,64,
+                                    static_cast<ngl::Real *>(NULL)+12);
+              glVertexAttribDivisor(1,1);
+              glVertexAttribDivisor(2,1);
+              glVertexAttribDivisor(3,1);
+              glVertexAttribDivisor(4,1);
+
+              m_instanceCacheVAOs[t][id][age][innerIndex]->draw();
+              m_instanceCacheVAOs[t][id][age][innerIndex]->unbind();
+            }
+          }
+        }
+      }
       break;
+    }
 
     default:
       break;

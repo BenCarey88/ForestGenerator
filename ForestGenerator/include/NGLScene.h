@@ -198,6 +198,8 @@ protected:
   //inner index corresponds to different instances of a given age and id
   std::vector<std::vector<std::vector<std::vector<std::unique_ptr<ngl::AbstractVAO>>>>> m_instanceCacheVAOs;
 
+  //as above: separated by treeType/id/age/innerIndex
+  std::vector<std::vector<std::vector<std::vector<GLuint>>>> m_bufferIds;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the forest object to be sent to the renderer
@@ -206,9 +208,9 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief width, length and number of trees for m_forest
   //----------------------------------------------------------------------------------------------------------------------
-  float m_width = 500;
-  float m_length = 500;
-  size_t m_numTrees = 1000;
+  float m_width = 2000;
+  float m_length = 2000;
+  size_t m_numTrees = 10000;
   int m_numHeroTrees = 10;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief list of all L-Systems stored by the scene
@@ -259,7 +261,7 @@ protected:
   void buildInstanceCacheVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao);
 
   std::unique_ptr<ngl::AbstractVAO> m_testVao;
-  void buildTestVAO();
+  void buildTestVAO(LSystem &_treeType, Instance &_instance, std::unique_ptr<ngl::AbstractVAO> &_vao, size_t _instanceCount);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

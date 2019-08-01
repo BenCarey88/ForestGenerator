@@ -200,8 +200,6 @@ void LSystem::breakDownRules(std::vector<std::string> _rules)
 
 std::string LSystem::generateTreeString()
 {
-  auto start = std::chrono::high_resolution_clock::now();
-
   std::string treeString = m_axiom;
   int numRules = int(m_rules.size());
 
@@ -250,11 +248,5 @@ std::string LSystem::generateTreeString()
       }
     }
   }
-
-  auto finish = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> elapsed = finish - start;
-
-  //std::cout << "\ngenerateTreeString() Elapsed time: " << elapsed.count() << " s\n";
-
   return treeString;
 }

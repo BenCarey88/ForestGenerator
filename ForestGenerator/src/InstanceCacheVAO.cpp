@@ -17,12 +17,11 @@ namespace ngl
     {
       msg->addWarning("Warning trying to draw an unbound VOA");
     }
-    //glDrawElements(m_mode,static_cast<GLsizei>(m_indicesCount),m_indexType,static_cast<GLvoid *>(nullptr));
-    glMultiDrawElements(m_mode,
-                        &m_numIndices[0],
-                        m_indexType,
-                        &m_indexOffsetPointers[0],
-                        m_instanceCount);
+    glDrawElementsInstanced(m_mode,
+                            static_cast<GLsizei>(m_indicesCount),
+                            m_indexType,
+                            static_cast<GLvoid *>(nullptr),
+                            m_instanceCount);
   }
 
   void InstanceCacheVAO::removeVAO()
@@ -47,7 +46,7 @@ namespace ngl
     const VertexData &data = static_cast<const VertexData &>(_data);
     if(m_bound == false)
     {
-      msg->addWarning("trying to set VAO data when unbound");
+      msg->addWarning("trying to set VOA data when unbound");
     }
     if( m_allocated ==true)
     {
@@ -73,22 +72,14 @@ namespace ngl
       case GL_UNSIGNED_BYTE  : size=sizeof(GLubyte);  break;
       default : msg->addWarning("wrong data type send for index value"); break;
     }
-
     // now for the indices
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idxBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.m_indexSize * static_cast<GLsizeiptr>(size), const_cast<GLvoid *>(data.m_indexData),data.m_mode);
 
-    m_numIndices = {};
-    m_indexOffsetPointers = {};
-    for(auto &output : data.m_forest.m_output)
-    {
-      m_numIndices.push_back(static_cast<GLsizei>(output.m_instanceEnd-output.m_instanceStart));
-      m_indexOffsetPointers.push_back(static_cast<char*>(nullptr) + output.m_instanceStart);    //static_cast<GLvoid *>(output.m_instanceStart));
-    }
-    m_instanceCount = data.m_forest.m_output.size();
-
     m_allocated=true;
     m_indexType=data.m_indexType;
+
+    m_instanceCount = data.m_instanceCount;
   }
 
   Real * InstanceCacheVAO::mapBuffer(unsigned int _index, GLenum _accessMode)
@@ -99,4 +90,5 @@ namespace ngl
     ptr = static_cast<Real *>(glMapBuffer(GL_ARRAY_BUFFER, _accessMode));
     return ptr;
   }
+
 }

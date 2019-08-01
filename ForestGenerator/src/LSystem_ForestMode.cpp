@@ -136,11 +136,13 @@ void LSystem::resizeInstanceCache()
 void LSystem::fillInstanceCache(int _numHeroTrees)
 {
   seedRandomEngine();
-  m_forestMode = true;
   addInstancingCommands();
   resizeInstanceCache();
+
+  m_forestMode = true;
   m_heroIndices = {};
   m_heroVertices = {};
+
 
   for(int i=0; i<_numHeroTrees; i++)
   {
@@ -148,18 +150,4 @@ void LSystem::fillInstanceCache(int _numHeroTrees)
   }
 
   m_forestMode = false;
-
-  /*for(size_t id=0; id<m_instanceCache.size(); id++)
-  {
-    std::cout<<"id = "<<id<<'\n';
-
-    for(size_t age=0; age<m_instanceCache[id].size(); age++)
-    {
-      std::cout<<"  age = "<<age<<'\n';
-
-      std::cout<<"    size of this level of nesting is "<<m_instanceCache[id][age].size()<<'\n';
-    }
-    std::cout<<'\n';
-  }
-  std::cout<<"\n--------------------------------------------------------\n";*/
 }
