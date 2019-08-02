@@ -13,7 +13,6 @@
 
 #include <iostream>
 #include <vector>
-#include "noiseutils.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class TerrainGenerator

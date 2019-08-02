@@ -29,10 +29,14 @@ FORMS += $$PWD/ui/*.ui
 OTHER_FILES+= README.md \
               shaders/*.glsl
 # and add the include dir into the search path for Qt and make
-INCLUDEPATH +=./include \
-                include/boost
-#                $(HOME)/boost_1_70_0/boost
+# note that for some reason the 'Libnoise' path must be above the
+# plain 'include' path for linking to work on my laptop
+INCLUDEPATH += $(HOME)/Users/Ben/Libnoise/include \
+               include/noise \
+               include \
+               include/boost
 
+#add UseNGL.pri
 NGLPATH=$$(NGLDIR)
 isEmpty(NGLPATH){ # note brace must be here
         message("including $HOME/NGL")
@@ -43,11 +47,10 @@ else{ # note brace must be here
         include($(NGLDIR)/UseNGL.pri)
 }
 
-INCLUDEPATH += $$PWD/include/noise
+#add libnoise library
 unix: LIBS += -L$$PWD/lib -lnoise -lnoiseutils
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../Libnoise/bin/ -llibnoise
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../Libnoise/bin/ -llibnoised
+win32:CONFIG(release, debug|release): LIBS += -L$(HOME)/Users/Ben/Libnoise/bin/ -llibnoise
+else:win32:CONFIG(debug, debug|release): LIBS += -L$(HOME)/Users/Ben/Libnoise/bin/ -llibnoised
 
-win32:INCLUDEPATH += $$PWD/../../Libnoise/bin
-win32:DEPENDPATH += $$PWD/../../Libnoise/bin
+

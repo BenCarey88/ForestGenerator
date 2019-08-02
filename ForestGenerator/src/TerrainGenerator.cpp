@@ -4,6 +4,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 #include "TerrainGenerator.h"
+#include "noiseutils.h"
 
 
 TerrainGenerator::TerrainGenerator(int _dimension) : m_dimension(_dimension) {}
