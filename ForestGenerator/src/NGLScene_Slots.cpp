@@ -152,3 +152,54 @@ void NGLScene::setRule7(QString _rule)
 {
   m_currentLSystem->m_ruleArray[6]=_rule.toStdString();
 }
+
+//------------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::setOctaves(int _octaves)
+{
+    m_forest.m_terrainGen.m_octaves = _octaves;
+}
+
+void NGLScene::setFrequency(double _frequency)
+{
+    m_forest.m_terrainGen.m_frequency = _frequency;
+}
+
+void NGLScene::setLacunarity(double _lacunarity)
+{
+    m_forest.m_terrainGen.m_lacunarity = _lacunarity;
+}
+
+void NGLScene::setPersistence(double _persistence)
+{
+    m_forest.m_terrainGen.m_persistence = _persistence;
+}
+
+void NGLScene::setAmplitude(double _amplitude)
+{
+    m_forest.m_terrainGen.m_amplitude = float(_amplitude);
+}
+
+void NGLScene::setTerrainSeed(double _seed)
+{
+    m_forest.m_terrainGen.m_seed = _seed;
+}
+
+void NGLScene::updateTerrain()
+{
+    m_forest.m_terrainGen.generate();
+    m_terrain = TerrainData(m_forest.m_terrainGen);
+    update();
+}
+
+void NGLScene::setTolerance(double _tolerance)
+{
+    m_tolerance = float(_tolerance);
+    update();
+}
+
+void NGLScene::toggleWireframe(bool _mode	 )
+{
+    m_wireframe=_mode;
+    update();
+}

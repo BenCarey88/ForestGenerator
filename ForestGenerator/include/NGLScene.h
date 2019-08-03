@@ -134,6 +134,50 @@ public slots:
   void setRule5(QString _rule);
   void setRule6(QString _rule);
   void setRule7(QString _rule);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to toggle wireframe mode
+  /// @param[in] mode, the mode passed from the togglebutton
+  //----------------------------------------------------------------------------------------------------------------------
+  void toggleWireframe( bool _mode );
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the number of octaves for the terrain generation
+  /// @param[in] octaves, the int passed from m_octaves in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setOctaves(int _octaves);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the frequency for the terrain generation
+  /// @param[in] frequency, the double passed from m_frequency in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setFrequency(double _frequency);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the lacunarity for the terrain generation
+  /// @param[in] lacunarity, the double passed from m_lacunarity in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setLacunarity(double _lacunarity);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the persistence for the terrain generation
+  /// @param[in] persistence, the double passed from m_persistence in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setPersistence(double _persistence);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the amplitude for the terrain generation
+  /// @param[in] amplitude, the double passed from m_amplitude in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setAmplitude(double _amplitude);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the seed for the terrain generation
+  /// @param[in] seed, the double passed from m_terrainSeed in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setTerrainSeed(double _seed);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to generate a new terrain based on current values
+  //----------------------------------------------------------------------------------------------------------------------
+  void updateTerrain();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the tolerance for the LOD algorithm
+  /// @param[in] tolerance, the double passed from m_tolerance in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setTolerance(double _tolerance);
 
 protected:
 
@@ -252,6 +296,8 @@ protected:
   float m_tolerance = 0.02f;
 
   int m_terrainDimension;
+
+  bool m_wireframe = false;
 
 
   //PROTECTED MEMBER FUNCTIONS

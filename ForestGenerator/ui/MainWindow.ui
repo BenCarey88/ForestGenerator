@@ -32,7 +32,7 @@
      </widget>
     </item>
     <item row="0" column="0">
-     <spacer name="horizontalSpacer">
+     <spacer name="mainSpacer">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -48,7 +48,7 @@
      </spacer>
     </item>
     <item row="0" column="2">
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="controlBox" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -89,9 +89,9 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
-       <widget class="QWidget" name="tab_3">
+       <widget class="QWidget" name="LSystemsTab">
         <attribute name="title">
          <string>L-Systems</string>
         </attribute>
@@ -117,13 +117,13 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
-         <widget class="QWidget" name="tab">
+         <widget class="QWidget" name="treeTab1">
           <attribute name="title">
            <string>Tree1</string>
           </attribute>
-          <widget class="QGroupBox" name="s_transformGB">
+          <widget class="QGroupBox" name="LSystemBox_1">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -143,7 +143,7 @@
            </property>
            <layout class="QGridLayout" name="gridLayout">
             <item row="27" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_11">
+             <layout class="QHBoxLayout" name="seedBox_1">
               <item>
                <widget class="QCheckBox" name="m_seedToggle_1">
                 <property name="text">
@@ -161,7 +161,7 @@
              </layout>
             </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="axiomLabel_1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -197,9 +197,9 @@
              </widget>
             </item>
             <item row="24" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <layout class="QHBoxLayout" name="angleScaleBox_1">
               <item>
-               <widget class="QLabel" name="label_7">
+               <widget class="QLabel" name="angleScaleLabel_1">
                 <property name="text">
                  <string>Angle Scale</string>
                 </property>
@@ -225,9 +225,9 @@
              </widget>
             </item>
             <item row="17" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout">
+             <layout class="QHBoxLayout" name="stepSizeBox_1">
               <item>
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="stepSizeLabel_1">
                 <property name="text">
                  <string>Step Size</string>
                 </property>
@@ -249,9 +249,9 @@
              </layout>
             </item>
             <item row="18" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="stepScaleBox_1">
               <item>
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="stepScaleLabel_1">
                 <property name="text">
                  <string>Step Scale</string>
                 </property>
@@ -270,9 +270,9 @@
              </layout>
             </item>
             <item row="21" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout" name="angleBox_1">
               <item>
-               <widget class="QLabel" name="label_6">
+               <widget class="QLabel" name="angleLabel_1">
                 <property name="text">
                  <string>Angle</string>
                 </property>
@@ -291,9 +291,9 @@
              </layout>
             </item>
             <item row="26" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <layout class="QHBoxLayout" name="generationsBox_1">
               <item>
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="generationsLabel_1">
                 <property name="text">
                  <string>Generations</string>
                 </property>
@@ -339,7 +339,7 @@
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="rulesLabel_1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -416,11 +416,11 @@
            </layout>
           </widget>
          </widget>
-         <widget class="QWidget" name="tab_2">
+         <widget class="QWidget" name="treeTab2">
           <attribute name="title">
            <string>Tree2</string>
           </attribute>
-          <widget class="QGroupBox" name="s_transformGB_2">
+          <widget class="QGroupBox" name="LSystemBox_2">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -440,7 +440,7 @@
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="2" column="0">
-             <widget class="QLabel" name="label_14">
+             <widget class="QLabel" name="rulesLabel_2">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -467,9 +467,9 @@
              </widget>
             </item>
             <item row="11" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <layout class="QHBoxLayout" name="stepSizeBox_2">
               <item>
-               <widget class="QLabel" name="label_9">
+               <widget class="QLabel" name="stepSizeLabel_2">
                 <property name="text">
                  <string>Step Size</string>
                 </property>
@@ -491,9 +491,9 @@
              </layout>
             </item>
             <item row="18" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <layout class="QHBoxLayout" name="angleScaleBox_2">
               <item>
-               <widget class="QLabel" name="label_8">
+               <widget class="QLabel" name="angleScaleLabel_2">
                 <property name="text">
                  <string>Angle Scale</string>
                 </property>
@@ -522,9 +522,9 @@
              </widget>
             </item>
             <item row="15" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <layout class="QHBoxLayout" name="angleBox_2">
               <item>
-               <widget class="QLabel" name="label_10">
+               <widget class="QLabel" name="angleLabel_2">
                 <property name="text">
                  <string>Angle</string>
                 </property>
@@ -563,9 +563,9 @@
              </widget>
             </item>
             <item row="12" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <layout class="QHBoxLayout" name="stepScaleBox_2">
               <item>
-               <widget class="QLabel" name="label_12">
+               <widget class="QLabel" name="stepScaleLabel_2">
                 <property name="text">
                  <string>Step Scale</string>
                 </property>
@@ -584,9 +584,9 @@
              </layout>
             </item>
             <item row="20" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QHBoxLayout" name="generationsBox_2">
               <item>
-               <widget class="QLabel" name="label_11">
+               <widget class="QLabel" name="generationsLabel_2">
                 <property name="text">
                  <string>Generations</string>
                 </property>
@@ -615,7 +615,7 @@
              </widget>
             </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_13">
+             <widget class="QLabel" name="axiomLabel_2">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -680,7 +680,7 @@
              </widget>
             </item>
             <item row="21" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <layout class="QHBoxLayout" name="seedBox_2">
               <item>
                <widget class="QCheckBox" name="m_seedToggle_2">
                 <property name="text">
@@ -718,25 +718,263 @@
          </widget>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab_4">
+       <widget class="QWidget" name="layoutTab">
         <attribute name="title">
          <string>Layout</string>
         </attribute>
-        <widget class="QPushButton" name="m_resetCamera_layout">
+        <widget class="QGroupBox" name="terrainGenerationBox">
          <property name="geometry">
           <rect>
-           <x>30</x>
-           <y>20</y>
-           <width>257</width>
-           <height>25</height>
+           <x>10</x>
+           <y>10</y>
+           <width>291</width>
+           <height>661</height>
           </rect>
          </property>
-         <property name="text">
-          <string>Reset Camera</string>
+         <property name="title">
+          <string>Terrain Generation</string>
          </property>
+         <widget class="QWidget" name="verticalLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>30</y>
+            <width>271</width>
+            <height>391</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QHBoxLayout" name="octaveCountBox">
+             <item>
+              <widget class="QLabel" name="octaveCountLabel">
+               <property name="text">
+                <string>Octave Count</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="m_octaves">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="amplitudeBox">
+             <item>
+              <widget class="QLabel" name="amplitudeLabel">
+               <property name="text">
+                <string>Amplitude</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="m_amplitude">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="frequencyBox">
+             <item>
+              <widget class="QLabel" name="frequencyLabel">
+               <property name="text">
+                <string>Frequency</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="m_frequency">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="persistenceBox">
+             <item>
+              <widget class="QLabel" name="persistenceLabel">
+               <property name="text">
+                <string>Persistence</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="m_persistence">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="lacunarityBox">
+             <item>
+              <widget class="QLabel" name="lacunarityLabel">
+               <property name="text">
+                <string>Lacunarity</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="m_lacunarity">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="terrainSeedBox">
+             <item>
+              <widget class="QLabel" name="terrainSeedLabel">
+               <property name="text">
+                <string>Seed</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="m_terrainSeed">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="toleranceBox">
+             <item>
+              <widget class="QLabel" name="toleranceLabel">
+               <property name="text">
+                <string>LOD Tolerance</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="m_tolerance">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="m_wireframe">
+             <property name="text">
+              <string> Wireframe Mode</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="m_updateTerrain">
+             <property name="text">
+              <string>Update Terrain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="m_resetCamera_layout">
+             <property name="text">
+              <string>Reset Camera</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab_5">
+       <widget class="QWidget" name="renderTab">
         <attribute name="title">
          <string>Render</string>
         </attribute>
@@ -774,6 +1012,19 @@
      </widget>
     </item>
    </layout>
+   <widget class="QSplitter" name="splitter">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>0</width>
+      <height>0</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -787,6 +1038,56 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>m_superTab</tabstop>
+  <tabstop>m_tab</tabstop>
+  <tabstop>m_axiom_1</tabstop>
+  <tabstop>m_rule1_1</tabstop>
+  <tabstop>m_rule2_1</tabstop>
+  <tabstop>m_rule3_1</tabstop>
+  <tabstop>m_rule4_1</tabstop>
+  <tabstop>m_rule5_1</tabstop>
+  <tabstop>m_rule6_1</tabstop>
+  <tabstop>m_rule7_1</tabstop>
+  <tabstop>m_stepSize_1</tabstop>
+  <tabstop>m_stepScale_1</tabstop>
+  <tabstop>m_angle_1</tabstop>
+  <tabstop>m_angleScale_1</tabstop>
+  <tabstop>m_generation_1</tabstop>
+  <tabstop>m_seedToggle_1</tabstop>
+  <tabstop>m_seed_1</tabstop>
+  <tabstop>m_generate_1</tabstop>
+  <tabstop>m_resetCamera_1</tabstop>
+  <tabstop>m_axiom_2</tabstop>
+  <tabstop>m_rule1_2</tabstop>
+  <tabstop>m_rule2_2</tabstop>
+  <tabstop>m_rule3_2</tabstop>
+  <tabstop>m_rule4_2</tabstop>
+  <tabstop>m_rule5_2</tabstop>
+  <tabstop>m_rule6_2</tabstop>
+  <tabstop>m_rule7_2</tabstop>
+  <tabstop>m_stepSize_2</tabstop>
+  <tabstop>m_stepScale_2</tabstop>
+  <tabstop>m_angle_2</tabstop>
+  <tabstop>m_angleScale_2</tabstop>
+  <tabstop>m_generation_2</tabstop>
+  <tabstop>m_seedToggle_2</tabstop>
+  <tabstop>m_seed_2</tabstop>
+  <tabstop>m_generate_2</tabstop>
+  <tabstop>m_resetCamera_2</tabstop>
+  <tabstop>m_octaves</tabstop>
+  <tabstop>m_amplitude</tabstop>
+  <tabstop>m_frequency</tabstop>
+  <tabstop>m_persistence</tabstop>
+  <tabstop>m_lacunarity</tabstop>
+  <tabstop>m_terrainSeed</tabstop>
+  <tabstop>m_tolerance</tabstop>
+  <tabstop>m_wireframe</tabstop>
+  <tabstop>m_updateTerrain</tabstop>
+  <tabstop>m_resetCamera_layout</tabstop>
+  <tabstop>m_resetCamera_render</tabstop>
+  <tabstop>m_grid</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

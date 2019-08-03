@@ -178,7 +178,14 @@ void NGLScene::paintGL()
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
-  glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+  if (m_wireframe == true)
+  {
+      glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+  }
+  else
+  {
+      glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  }
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
   ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform)*m_initialRotation;
