@@ -30,9 +30,9 @@ OTHER_FILES+= README.md \
               shaders/*.glsl
 # and add the include dir into the search path for Qt and make
 # also add boost headers and noiseutils header
-INCLUDEPATH += include \
-               include/boost \
-               include/noiseutils
+INCLUDEPATH += $$PWD/include \
+               $$PWD/include/boost \
+               $$PWD/include/noiseutils
 
 #add UseNGL.pri
 NGLPATH=$$(NGLDIR)
@@ -46,7 +46,8 @@ else{ # note brace must be here
 }
 
 #add libnoise library
-unix: LIBS += -L$$PWD/lib -lnoise -lnoiseutils
+unix: LIBS += -L$$(HOME)/libnoise/lib -lnoise -lnoiseutils
+unix: INCLUDEPATH += $$(HOME)/libnoise/include
 
 win32:CONFIG(release, debug|release): LIBS += -L$(HOME)/Users/Ben/Libnoise/bin/ -llibnoise
 else:win32:CONFIG(debug, debug|release): LIBS += -L$(HOME)/Users/Ben/Libnoise/bin/ -llibnoised

@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <vector>
+#include "noiseutils.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class TerrainGenerator
@@ -33,7 +34,7 @@ public:
   /// @param [in] dimension, [in] dimension, the dimension of the terrain being generated
   /// (this must be 2^n+1 for some positive integer n, based on the way the algorithm is designed)
   //--------------------------------------------------------------------------------------------------------------------
-  TerrainGenerator(int _dimension);
+  TerrainGenerator(int _dimension, float _scale);
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief default dtor for our Generator class
   //--------------------------------------------------------------------------------------------------------------------
@@ -48,6 +49,9 @@ public:
   /// @brief heightmap values to be passed into TerrainData class
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<float> m_heightMap;
+
+  float m_scale;
+
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief seed used to randomise terrain generation
   //--------------------------------------------------------------------------------------------------------------------
@@ -59,7 +63,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief frequency of libnoise Perlin module used to generate heightmap values
   //--------------------------------------------------------------------------------------------------------------------
-  double m_frequency = 1;
+  double m_frequency = 0.005;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief persistence of libnoise Perlin module used to generate heightmap values
   //--------------------------------------------------------------------------------------------------------------------
@@ -71,7 +75,8 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief amplitude of heightmap values generated
   //--------------------------------------------------------------------------------------------------------------------
-  float m_amplitude = 10;
+  float m_amplitude = 45;
+
 
   //PUBLIC MEMBER FUNCTION
   //--------------------------------------------------------------------------------------------------------------------
@@ -86,12 +91,12 @@ private:
   /// @brief returns the x coordinate corresponding to a particular heightmap index
   /// @param [in] index, the heightmap index
   //--------------------------------------------------------------------------------------------------------------------
-  double getX(const int _index) const;
+  double getSceneX(const int _index) const;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief returns the y coordinate corresponding to a particular heightmap index
   /// @param [in] index, the heightmap index
   //--------------------------------------------------------------------------------------------------------------------
-  double getY(const int _index) const;
+  double getSceneZ(const int _index) const;
 
 };
 

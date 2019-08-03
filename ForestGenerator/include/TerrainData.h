@@ -5,7 +5,7 @@
 /// @date 23/01/19 updated to NCCA coding standards
 /// Revision History :
 /// Initial Version 14/12/18, used for ASE TerrainGeneration project
-/// 01/09/19 added to ForestGeneration masters project
+/// 01/09/19 added to ForestGeneration masters project and slightly updated
 //----------------------------------------------------------------------------------------------------------------------
 
 #ifndef TERRAINDATA_H_
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <ngl/Vec3.h>
+#include "TerrainGenerator.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class TerrainData
@@ -38,11 +39,9 @@ public:
   TerrainData()=default;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief ctor for our TerrainData class
-  /// @param [in] dimension, the dimension of the grid being drawn
-  /// (this must be 2^n+1 for positive integer n, based on the way the algorithm is designed)
-  /// @param [in] heightmap, the std::vector of z-values for the terrain vertices
+  /// @param [in] a terrainGenerator object, used to determine the dimension, heightmap values and scale of our terrain
   //--------------------------------------------------------------------------------------------------------------------
-  TerrainData(int _dimension, std::vector<float> _heightMap);
+  TerrainData(TerrainGenerator &_terrainGen);
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief default dtor for our TerrainData class
   //--------------------------------------------------------------------------------------------------------------------
@@ -139,17 +138,17 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief scale used to transform vertices to scene position
   //--------------------------------------------------------------------------------------------------------------------
-  float m_scale = 50.0f/m_dimension;
+  float m_scale;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief the maximum refinement level for the LOD algorithm (equal to the height of the DAG)
   //--------------------------------------------------------------------------------------------------------------------
   int m_maxRefinementLevel = int(2*std::log2(m_dimension-1));
 
   std::vector<ngl::Vec3> m_vertsToBeRendered = {};
-  std::vector<GLshort> m_indicesToBeRendered = {};
+  std::vector<GLuint> m_indicesToBeRendered = {};
 
   //call this after meshRefine
-  void fillVerticsAndIndicesForRendering();
+  void fillVerticesAndIndicesForRendering();
 
   //PUBLIC MEMBER FUNCTION: MESHREFINE
   //--------------------------------------------------------------------------------------------------------------------

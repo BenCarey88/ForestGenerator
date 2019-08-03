@@ -96,6 +96,7 @@ void print(std::vector<float> _vec)
   for(auto x : _vec)
   {
     print(x);
+    print(", ");
   }
 }
 void print(std::vector<GLshort> _vec)
@@ -103,6 +104,7 @@ void print(std::vector<GLshort> _vec)
   for(auto x : _vec)
   {
     print(x);
+    print(", ");
   }
 }
 void print(std::vector<std::string> _vec)
@@ -110,6 +112,7 @@ void print(std::vector<std::string> _vec)
   for(auto x : _vec)
   {
     print(x);
+    print(", ");
   }
 }
 void print(std::vector<ngl::Mat4> _vec)
@@ -117,6 +120,7 @@ void print(std::vector<ngl::Mat4> _vec)
   for(auto x : _vec)
   {
     print(x);
+    print(", ");
   }
 }
 void print(std::vector<ngl::Mat3> _vec)
@@ -124,6 +128,7 @@ void print(std::vector<ngl::Mat3> _vec)
   for(auto x : _vec)
   {
     print(x);
+    print(", ");
   }
 }
 void print(std::vector<ngl::Vec3> _vec)

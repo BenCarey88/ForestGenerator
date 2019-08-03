@@ -4,11 +4,10 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 #include "TerrainGenerator.h"
-#include "noiseutils.h"
 
 
-TerrainGenerator::TerrainGenerator(int _dimension) : m_dimension(_dimension) {}
-
+TerrainGenerator::TerrainGenerator(int _dimension, float _scale) :
+  m_dimension(_dimension), m_scale(_scale/_dimension) {}
 
 void TerrainGenerator::generate()
 {
@@ -23,18 +22,18 @@ void TerrainGenerator::generate()
 
   for (int i =0; i<m_dimension*m_dimension; ++i)
   {
-    float height = float(perlinModule.GetValue(getX(i)/10,getY(i)/10,m_seed));
+    float height = float(perlinModule.GetValue(getSceneX(i),getSceneZ(i),m_seed));
     m_heightMap.push_back(m_amplitude*height);
   }
 }
 
 
-double TerrainGenerator::getX(const int _index) const
+double TerrainGenerator::getSceneX(const int _index) const
 {
-  return _index%m_dimension;
+  return ((_index%m_dimension)-m_dimension/2)*double(m_scale);
 }
 
-double TerrainGenerator::getY(const int _index) const
+double TerrainGenerator::getSceneZ(const int _index) const
 {
-  return _index/m_dimension;
+  return ((_index/m_dimension)-m_dimension/2)*double(m_scale);
 }

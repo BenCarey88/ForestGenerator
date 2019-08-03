@@ -32,7 +32,7 @@ struct Grid
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_vertices;
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief index list to tell ngl how to draw the order to draw the L-system vertices in
+  /// @brief index list to tell ngl the order to draw the vertices in
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<GLshort> m_indices;
 };

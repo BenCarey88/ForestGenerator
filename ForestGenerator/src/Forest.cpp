@@ -6,10 +6,17 @@
 #include <math.h>
 #include <chrono>
 #include "Forest.h"
+#include "noiseutils.h"
 
-Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width, float _length, size_t _numTrees, int _numHeroTrees) :
-  m_treeTypes(_treeTypes), m_width(_width), m_length(_length), m_numTrees(_numTrees), m_numHeroTrees(_numHeroTrees)
+Forest::Forest(const std::vector<LSystem> &_treeTypes,
+               float _width, float _length,
+               size_t _numTrees, int _numHeroTrees,
+               int _terrainDimension) :
+  m_treeTypes(_treeTypes), m_width(_width), m_length(_length),
+  m_numTrees(_numTrees), m_numHeroTrees(_numHeroTrees)
 {
+  m_terrainGen = TerrainGenerator(_terrainDimension, _width);
+
   scatterForest();
 
   for(auto &treeType : m_treeTypes)
@@ -70,12 +77,24 @@ void Forest::scatterForest()
   std::uniform_real_distribution<float> distScale(0.6f,0.8f);
   std::uniform_int_distribution<size_t> distTreeType(0,m_treeTypes.size()-1);
 
+  noise::module::Perlin perlinModule;
+  perlinModule.SetOctaveCount(m_terrainGen.m_octaves);
+  perlinModule.SetFrequency(m_terrainGen.m_frequency);
+  perlinModule.SetPersistence(m_terrainGen.m_persistence);
+  perlinModule.SetLacunarity(m_terrainGen.m_lacunarity);
+
   for(size_t i=0; i<m_numTrees; i++)
   {
     ngl::Mat4 position;
     ngl::Mat4 orientation;
     ngl::Mat4 scale;
-    position.translate(distX(m_gen),0,distZ(m_gen));
+    float xPos = distX(m_gen);
+    float zPos = distZ(m_gen);
+    float yPos = float(perlinModule.GetValue(double(xPos),
+                                             double(zPos),
+                                             m_terrainGen.m_seed));
+    yPos *= m_terrainGen.m_amplitude;
+    position.translate(xPos,yPos,zPos);
     orientation.rotateY(distRotate(m_gen));
     scale = distScale(m_gen)*scale;
     m_treeData.push_back(Tree(distTreeType(m_gen), position*orientation*scale));
