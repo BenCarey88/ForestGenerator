@@ -7,7 +7,6 @@
 #include <QGuiApplication>
 
 #include <ngl/NGLInit.h>
-#include <ngl/ShaderLib.h>
 #include <ngl/VAOFactory.h>
 #include <ngl/SimpleIndexVAO.h>
 #include <ngl/SimpleVAO.h>
@@ -39,20 +38,20 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
 
   m_terrainDimension = 1025;
   initializeLSystems();
-  m_forestVAOs.resize(m_numTreeTabs);
   m_forest = Forest(m_LSystems,
                     m_width, m_length,
                     m_numTrees, m_numHeroTrees,
                     m_terrainDimension);
+  m_forestVAOs.resize(m_numTreeTabs);
+  m_forest.m_terrainGen.generate();
+  m_terrain = TerrainData(m_forest.m_terrainGen);
 
   m_currentCamera = &m_cameras[0][0];
   m_currentMouseTransform = &m_mouseTransforms[0][0];
   m_currentLSystem = &m_LSystems[0];
 
   m_currentLSystem->createGeometry();
-
-  m_forest.m_terrainGen.generate();
-  m_terrain = TerrainData(m_forest.m_terrainGen);
+  m_showGrid.resize(m_numTreeTabs, true);
 }
 
 NGLScene::~NGLScene()
@@ -125,6 +124,7 @@ void NGLScene::initializeGL()
   {
     buildVAO(m_treeVAOs[i], m_LSystems[i].m_vertices, m_LSystems[i].m_indices, GL_LINES, GL_UNSIGNED_SHORT);
   }
+  buildVAO(m_gridVAO, m_grid.m_vertices, m_grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
 }
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ template<class dataType>
 void NGLScene::buildVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
                         std::vector<dataType> &_indices, GLenum _mode, GLenum _indexType)
 {
-  // create a vao using GL_LINES
+  // create a vao using _mode
   _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,_mode);
   _vao->bind();
 
@@ -158,7 +158,10 @@ void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LS
   // create a vao using GL_LINES
   _vao=ngl::VAOFactory::createVAO("instanceCacheVAO",GL_LINES);
   _vao->bind();
-  // set our data for the VAO
+  // set our data for the VAO:
+  //    (1) vertexBufferSize, (2) vertexBufferStart,
+  //    (3) indexBufferSize, (4) indexBufferStart,
+  //    (5) transformBufferSize, (6) transformBufferStart
   _vao->setData(ngl::InstanceCacheVAO::VertexData(
                        sizeof(ngl::Vec3)*_treeType.m_heroVertices.size(),
                        _treeType.m_heroVertices[0].m_x,
@@ -169,6 +172,29 @@ void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LS
   // set number of indices to length of current instance
   _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
   _vao->unbind();
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO,
+                       ngl::ShaderLib *_shader, const std::string &_shaderName, ngl::Mat4 &_MVP)
+{
+  (*_shader)[_shaderName]->use();
+  _shader->setUniform("MVP",_MVP);
+  _VAO->bind();
+  _VAO->draw();
+  _VAO->unbind();
+}
+
+void NGLScene::refineTerrain()
+{
+  ngl::Vec3 from = m_currentCamera->m_from;
+  from = m_initialRotation.inverse()*m_currentMouseTransform->inverse()*from;
+  m_terrain.meshRefine(from, m_tolerance, 100.0);
+  buildVAO(m_terrainVAO,
+           m_terrain.m_vertsToBeRendered,
+           m_terrain.m_indicesToBeRendered,
+           GL_TRIANGLE_STRIP, GL_UNSIGNED_INT);
 }
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -190,12 +216,6 @@ void NGLScene::paintGL()
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
   ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform)*m_initialRotation;
 
-  if(m_buildGridVAO)
-  {
-    buildVAO(m_gridVAO, m_grid.m_vertices, m_grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
-    m_buildGridVAO = false;
-  }
-
   if(m_buildTreeVAO)
   {
     buildVAO(m_treeVAOs[m_treeTabNum],
@@ -207,7 +227,6 @@ void NGLScene::paintGL()
 
   if(m_buildForestVAOs)
   {
-    m_forestVAOs.resize(m_numTreeTabs);
     for(size_t t=0; t<m_forest.m_treeTypes.size(); t++)
     {
       LSystem &treeType = m_forest.m_treeTypes[t];
@@ -222,112 +241,32 @@ void NGLScene::paintGL()
     m_buildForestVAOs = false;
   }
 
-  if(m_showGrid)
-  {
-    (*shader)["GridShader"]->use();
-    shader->setUniform("MVP",MVP);
-    m_gridVAO->bind();
-    m_gridVAO->draw();
-    m_gridVAO->unbind();
-  }
-
   switch(m_superTabNum)
   {
     case 0:
-      (*shader)["TreeShader"]->use();
-      shader->setUniform("MVP",MVP);
-      m_treeVAOs[m_treeTabNum]->bind();
-      m_treeVAOs[m_treeTabNum]->draw();
-      m_treeVAOs[m_treeTabNum]->unbind();
+    {
+      if(m_showGrid[m_treeTabNum]==true)
+      {
+        drawVAO(m_gridVAO, shader, "GridShader", MVP);
+      }
+      drawVAO(m_treeVAOs[m_treeTabNum], shader, "TreeShader", MVP);
       break;
+    }
 
     case 1:
     {
-      (*shader)["TerrainShader"]->use();
-      shader->setUniform("MVP",MVP);
-
-      ngl::Vec3 from = m_currentCamera->m_from;
-      from = m_initialRotation.inverse()*m_currentMouseTransform->inverse()*from;
-      //print(from);
-      m_terrain.meshRefine(from, m_tolerance, 100.0);
-
-      buildVAO(m_terrainVAO,
-               m_terrain.m_vertsToBeRendered,
-               m_terrain.m_indicesToBeRendered,
-               GL_TRIANGLE_STRIP, GL_UNSIGNED_INT);
-      m_terrainVAO->bind();
-      m_terrainVAO->draw();
-      m_terrainVAO->unbind();
-
-      /*(*shader)["TerrainShader"]->use();
-      shader->setUniform("MVP",MVP);*/
-
-
-      /*size_t i=0;
-      while(i < m_terrainTest.m_indices[0].size())
-      {
-        m_tempVertices = {};
-        m_tempIndices = {};
-        size_t limit = i+10000;
-        if(limit > m_terrainTest.m_indices[0].size())
-        {
-          limit = m_terrainTest.m_indices[0].size();
-        }
-
-        for(; i<limit; i++)
-        {
-          m_tempVertices.push_back(m_terrainTest.m_vertices[0][m_terrainTest.m_indices[0][i]]);
-        }
-        for(size_t j=0; j<m_tempVertices.size(); j++)
-        {
-          m_tempIndices.push_back(GLshort(j));
-        }
-        print(m_tempIndices.size());
-        newLine();
-        //print(m_tempIndices);
-        //newLine();
-
-        buildVAO(m_tempVertices,
-                 m_tempIndices,//m_terrainTest.m_indices[0],
-                 GL_TRIANGLE_STRIP, m_terrainVao);
-        m_terrainVao->bind();
-        m_terrainVao->draw();
-        m_terrainVao->unbind();
-      }*//*
-      for(size_t i=0; i<m_terrainTest.m_vertices.size(); i++)
-      {
-        buildVAO(m_terrainVao,
-                 m_terrainTest.m_vertices.at(i),
-                 m_terrainTest.m_indices.at(i),
-                 GL_TRIANGLE_STRIP, GL_UNSIGNED_INT);
-        m_terrainVao->bind();
-        m_terrainVao->draw();
-        m_terrainVao->unbind();
-      }*/
+      refineTerrain();
+      drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
       break;
     }
 
     case 2:
     {
-      (*shader)["TerrainShader"]->use();
-      shader->setUniform("MVP",MVP);
-
-      ngl::Vec3 from = m_currentCamera->m_from;
-      from = m_initialRotation.inverse()*m_currentMouseTransform->inverse()*from;
-      m_terrain.meshRefine(from, m_tolerance, 100.0);
-
-      buildVAO(m_terrainVAO,
-               m_terrain.m_vertsToBeRendered,
-               m_terrain.m_indicesToBeRendered,
-               GL_TRIANGLE_STRIP, GL_UNSIGNED_INT);
-      m_terrainVAO->bind();
-      m_terrainVAO->draw();
-      m_terrainVAO->unbind();
-
+      refineTerrain();
+      drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
 
       (*shader)["ForestShader"]->use();
       shader->setUniform("MVP",MVP);
-
       for(size_t t=0; t<m_numTreeTabs; t++)
       {
         FOR_EACH_ELEMENT(m_forestVAOs[t],

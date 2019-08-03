@@ -16,6 +16,7 @@
 #include <ngl/AbstractVAO.h>
 #include <ngl/Mat4.h>
 #include <ngl/Vec3.h>
+#include <ngl/ShaderLib.h>
 #include "WindowParams.h"
 #include <QOpenGLWindow>
 #include <memory>
@@ -69,9 +70,9 @@ public slots:
   void changeSuperTab(int _superTabNum);
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the current L-System tab number for the qtGUI
-  /// @param[in] treeTabNum, the int passed from m_tab in ui
+  /// @param[in] treeTabNum, the int passed from m_treeTab in ui
   //----------------------------------------------------------------------------------------------------------------------
-  void changeTab(int _treeTabNum);
+  void changeTreeTab(int _treeTabNum);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to tell QT to create a new tree from the L-System based on the user inputs
@@ -219,7 +220,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief toggle to decide whether we display the grid
   //----------------------------------------------------------------------------------------------------------------------
-  bool m_showGrid = true;
+  std::vector<bool> m_showGrid;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief grid VAO
@@ -247,7 +248,6 @@ protected:
   bool m_buildTreeVAO = false;
 
   bool m_buildForestVAOs = false;
-  bool m_buildGridVAO = true;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the forest object to be sent to the renderer
@@ -324,6 +324,9 @@ protected:
   void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
                              LSystem &_treeType, Instance &_instance,
                              std::vector<ngl::Mat4> &_transforms);
+  void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO,
+               ngl::ShaderLib *_shader, const std::string &_shaderName, ngl::Mat4 &_MVP);
+  void refineTerrain();
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

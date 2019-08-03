@@ -12,7 +12,7 @@
 
 void NGLScene::toggleGrid(int _clicked)
 {
-  m_showGrid = bool(_clicked);
+  m_showGrid[m_treeTabNum] = bool(_clicked);
   update();
 }
 
@@ -38,7 +38,7 @@ void NGLScene::changeSuperTab(int _superTabNum)
   update();
 }
 
-void NGLScene::changeTab(int _treeTabNum)
+void NGLScene::changeTreeTab(int _treeTabNum)
 {
   m_treeTabNum = size_t(_treeTabNum);
 

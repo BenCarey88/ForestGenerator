@@ -19,72 +19,55 @@ MainWindow::MainWindow(QWidget *parent) :
   ///@brief Signals and Slots
   //------------------------------------------------------------------------------------
 
-  //GENERAL SIGNALS
+  //TAB CONTROLS
+  //-----------------------------------------------------------------------------------
+  connect(m_ui->m_superTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeSuperTab(int)));
+  connect(m_ui->m_treeTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeTreeTab(int)));
+
+  //TREE TAB
   //------------------------------------------------------------------------------------
+  #define LSYSTEM_SIGNALS_AND_SLOTS(NUM)                                                                 \
+    connect(m_ui->m_axiom_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setAxiom(QString)));           \
+    connect(m_ui->m_rule1_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule1(QString)));           \
+    connect(m_ui->m_rule2_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule2(QString)));           \
+    connect(m_ui->m_rule3_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule3(QString)));           \
+    connect(m_ui->m_rule4_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule4(QString)));           \
+    connect(m_ui->m_rule5_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule5(QString)));           \
+    connect(m_ui->m_rule6_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule6(QString)));           \
+    connect(m_ui->m_rule7_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule7(QString)));           \
+                                                                                                         \
+    connect(m_ui->m_generate_##NUM, SIGNAL(clicked()), m_gl, SLOT(generate()));                          \
+    connect(m_ui->m_resetCamera_##NUM, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));                    \
+    connect(m_ui->m_stepSize_##NUM, SIGNAL(valueChanged(double)), m_gl, SLOT(setStepSize(double)));      \
+    connect(m_ui->m_stepScale_##NUM, SIGNAL(valueChanged(double)), m_gl, SLOT(setStepScale(double)));    \
+    connect(m_ui->m_angle_##NUM, SIGNAL(valueChanged(double)), m_gl, SLOT(setAngle(double)));            \
+    connect(m_ui->m_angleScale_##NUM, SIGNAL(valueChanged(double)), m_gl, SLOT(setAngleScale(double)));  \
+    connect(m_ui->m_generation_##NUM, SIGNAL(valueChanged(int)), m_gl, SLOT(setGeneration(int)));        \
+    connect(m_ui->m_seed_##NUM, SIGNAL(valueChanged(int)), m_gl, SLOT(setSeed(int)));                    \
+    connect(m_ui->m_seedToggle_##NUM, SIGNAL(stateChanged(int)), m_gl, SLOT(seedToggle(int)));           \
+    connect(m_ui->m_grid_##NUM, SIGNAL(stateChanged(int)), m_gl, SLOT(toggleGrid(int)));
 
-  connect(m_ui->m_grid,SIGNAL(stateChanged(int)),m_gl,SLOT(toggleGrid(int)));
-  connect(m_ui->m_resetCamera_layout,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
-  connect(m_ui->m_resetCamera_render,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
-
-  connect(m_ui->m_superTab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeSuperTab(int)));
-  connect(m_ui->m_tab,SIGNAL(currentChanged(int)),m_gl,SLOT(changeTab(int)));
-
-  //TREE 1
-  //------------------------------------------------------------------------------------
-
-  connect(m_ui->m_axiom_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setAxiom(QString)));
-  connect(m_ui->m_rule1_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule1(QString)));
-  connect(m_ui->m_rule2_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule2(QString)));
-  connect(m_ui->m_rule3_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule3(QString)));
-  connect(m_ui->m_rule4_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule4(QString)));
-  connect(m_ui->m_rule5_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule5(QString)));
-  connect(m_ui->m_rule6_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule6(QString)));
-  connect(m_ui->m_rule7_1,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule7(QString)));
-
-  connect(m_ui->m_generate_1,SIGNAL(clicked()),m_gl,SLOT(generate()));
-  connect(m_ui->m_resetCamera_1,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
-  connect(m_ui->m_stepSize_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepSize(double)));
-  connect(m_ui->m_stepScale_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepScale(double)));
-  connect(m_ui->m_angle_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngle(double)));
-  connect(m_ui->m_angleScale_1,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngleScale(double)));
-  connect(m_ui->m_generation_1,SIGNAL(valueChanged(int)),m_gl,SLOT(setGeneration(int)));
-  connect(m_ui->m_seed_1,SIGNAL(valueChanged(int)),m_gl,SLOT(setSeed(int)));
-  connect(m_ui->m_seedToggle_1,SIGNAL(stateChanged(int)),m_gl,SLOT(seedToggle(int)));
-
-  //TREE 2
-  //------------------------------------------------------------------------------------
-
-  connect(m_ui->m_axiom_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setAxiom(QString)));
-  connect(m_ui->m_rule1_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule1(QString)));
-  connect(m_ui->m_rule2_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule2(QString)));
-  connect(m_ui->m_rule3_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule3(QString)));
-  connect(m_ui->m_rule4_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule4(QString)));
-  connect(m_ui->m_rule5_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule5(QString)));
-  connect(m_ui->m_rule6_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule6(QString)));
-  connect(m_ui->m_rule7_2,SIGNAL(textChanged(QString)),m_gl,SLOT(setRule7(QString)));
-
-  connect(m_ui->m_generate_2,SIGNAL(clicked()),m_gl,SLOT(generate()));
-  connect(m_ui->m_resetCamera_2,SIGNAL(clicked()),m_gl,SLOT(resetCamera()));
-  connect(m_ui->m_stepSize_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepSize(double)));
-  connect(m_ui->m_stepScale_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setStepScale(double)));
-  connect(m_ui->m_angle_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngle(double)));
-  connect(m_ui->m_angleScale_2,SIGNAL(valueChanged(double)),m_gl,SLOT(setAngleScale(double)));
-  connect(m_ui->m_generation_2,SIGNAL(valueChanged(int)),m_gl,SLOT(setGeneration(int)));
-  connect(m_ui->m_seed_2,SIGNAL(valueChanged(int)),m_gl,SLOT(setSeed(int)));
-  connect(m_ui->m_seedToggle_2,SIGNAL(stateChanged(int)),m_gl,SLOT(seedToggle(int)));
+  LSYSTEM_SIGNALS_AND_SLOTS(1);
+  LSYSTEM_SIGNALS_AND_SLOTS(2);
+  #undef LSYSTEM_SIGNALS_AND_SLOTS
 
   //TERRAIN
   //------------------------------------------------------------------------------------
-  connect(m_ui->m_octaves,SIGNAL(valueChanged(int)),m_gl,SLOT(setOctaves(int)));
-  connect(m_ui->m_frequency,SIGNAL(valueChanged(double)),m_gl,SLOT(setFrequency(double)));
-  connect(m_ui->m_lacunarity,SIGNAL(valueChanged(double)),m_gl,SLOT(setLacunarity(double)));
-  connect(m_ui->m_persistence,SIGNAL(valueChanged(double)),m_gl,SLOT(setPersistence(double)));
-  connect(m_ui->m_amplitude,SIGNAL(valueChanged(double)),m_gl,SLOT(setAmplitude(double)));
-  connect(m_ui->m_terrainSeed,SIGNAL(valueChanged(double)),m_gl,SLOT(setTerrainSeed(double)));
+  connect(m_ui->m_octaves, SIGNAL(valueChanged(int)), m_gl, SLOT(setOctaves(int)));
+  connect(m_ui->m_frequency, SIGNAL(valueChanged(double)), m_gl, SLOT(setFrequency(double)));
+  connect(m_ui->m_lacunarity, SIGNAL(valueChanged(double)), m_gl, SLOT(setLacunarity(double)));
+  connect(m_ui->m_persistence, SIGNAL(valueChanged(double)), m_gl, SLOT(setPersistence(double)));
+  connect(m_ui->m_amplitude, SIGNAL(valueChanged(double)), m_gl, SLOT(setAmplitude(double)));
+  connect(m_ui->m_terrainSeed, SIGNAL(valueChanged(double)), m_gl, SLOT(setTerrainSeed(double)));
 
-  connect(m_ui->m_updateTerrain,SIGNAL(clicked()),m_gl,SLOT(updateTerrain()));
-  connect(m_ui->m_tolerance,SIGNAL(valueChanged(double)),m_gl,SLOT(setTolerance(double)));
-  connect(m_ui->m_wireframe,SIGNAL(toggled(bool)),m_gl,SLOT(toggleWireframe(bool)));
+  connect(m_ui->m_updateTerrain, SIGNAL(clicked()), m_gl, SLOT(updateTerrain()));
+  connect(m_ui->m_tolerance, SIGNAL(valueChanged(double)), m_gl, SLOT(setTolerance(double)));
+  connect(m_ui->m_wireframe, SIGNAL(toggled(bool)), m_gl, SLOT(toggleWireframe(bool)));
+  connect(m_ui->m_resetCamera_layout, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
+
+  //FOREST
+  //------------------------------------------------------------------------------------
+  connect(m_ui->m_resetCamera_render, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 
 }
 

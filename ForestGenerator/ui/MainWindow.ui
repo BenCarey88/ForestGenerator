@@ -89,13 +89,13 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="LSystemsTab">
         <attribute name="title">
          <string>L-Systems</string>
         </attribute>
-        <widget class="QTabWidget" name="m_tab">
+        <widget class="QTabWidget" name="m_treeTab">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -117,7 +117,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="treeTab1">
           <attribute name="title">
@@ -142,39 +142,8 @@
             <string>L-System Generation</string>
            </property>
            <layout class="QGridLayout" name="gridLayout">
-            <item row="27" column="0">
-             <layout class="QHBoxLayout" name="seedBox_1">
-              <item>
-               <widget class="QCheckBox" name="m_seedToggle_1">
-                <property name="text">
-                 <string>Seed</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="m_seed_1">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="axiomLabel_1">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Axiom</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLineEdit" name="m_axiom_1">
+            <item row="4" column="0">
+             <widget class="QLineEdit" name="m_rule2_1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -182,71 +151,19 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>FFFA</string>
-              </property>
-              <property name="maxLength">
-               <number>32765</number>
+               <string>B=&amp;FFFA</string>
               </property>
              </widget>
             </item>
-            <item row="30" column="0">
-             <widget class="QPushButton" name="m_resetCamera_1">
-              <property name="text">
-               <string>Reset Camera</string>
+            <item row="13" column="0">
+             <widget class="QLineEdit" name="m_rule5_1">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
              </widget>
-            </item>
-            <item row="24" column="0">
-             <layout class="QHBoxLayout" name="angleScaleBox_1">
-              <item>
-               <widget class="QLabel" name="angleScaleLabel_1">
-                <property name="text">
-                 <string>Angle Scale</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="m_angleScale_1">
-                <property name="singleStep">
-                 <double>0.010000000000000</double>
-                </property>
-                <property name="value">
-                 <double>0.900000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="29" column="0">
-             <widget class="QPushButton" name="m_generate_1">
-              <property name="text">
-               <string>Generate</string>
-              </property>
-             </widget>
-            </item>
-            <item row="17" column="0">
-             <layout class="QHBoxLayout" name="stepSizeBox_1">
-              <item>
-               <widget class="QLabel" name="stepSizeLabel_1">
-                <property name="text">
-                 <string>Step Size</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="m_stepSize_1">
-                <property name="decimals">
-                 <number>1</number>
-                </property>
-                <property name="singleStep">
-                 <double>0.100000000000000</double>
-                </property>
-                <property name="value">
-                 <double>2.000000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </item>
             <item row="18" column="0">
              <layout class="QHBoxLayout" name="stepScaleBox_1">
@@ -290,6 +207,26 @@
               </item>
              </layout>
             </item>
+            <item row="7" column="0">
+             <widget class="QLineEdit" name="m_rule3_1">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLineEdit" name="m_rule4_1">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
             <item row="26" column="0">
              <layout class="QHBoxLayout" name="generationsBox_1">
               <item>
@@ -308,28 +245,8 @@
               </item>
              </layout>
             </item>
-            <item row="7" column="0">
-             <widget class="QLineEdit" name="m_rule3_1">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
             <item row="15" column="0">
              <widget class="QLineEdit" name="m_rule7_1">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLineEdit" name="m_rule4_1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -367,6 +284,16 @@
               </property>
              </spacer>
             </item>
+            <item row="14" column="0">
+             <widget class="QLineEdit" name="m_rule6_1">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
             <item row="3" column="0">
              <widget class="QLineEdit" name="m_rule1_1">
               <property name="sizePolicy">
@@ -380,18 +307,33 @@
               </property>
              </widget>
             </item>
-            <item row="14" column="0">
-             <widget class="QLineEdit" name="m_rule6_1">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+            <item row="29" column="0">
+             <widget class="QPushButton" name="m_generate_1">
+              <property name="text">
+               <string>Generate</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLineEdit" name="m_rule2_1">
+            <item row="27" column="0">
+             <layout class="QHBoxLayout" name="seedBox_1">
+              <item>
+               <widget class="QCheckBox" name="m_seedToggle_1">
+                <property name="text">
+                 <string>Seed</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="m_seed_1">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLineEdit" name="m_axiom_1">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -399,17 +341,88 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>B=&amp;FFFA</string>
+               <string>FFFA</string>
+              </property>
+              <property name="maxLength">
+               <number>32765</number>
               </property>
              </widget>
             </item>
-            <item row="13" column="0">
-             <widget class="QLineEdit" name="m_rule5_1">
+            <item row="24" column="0">
+             <layout class="QHBoxLayout" name="angleScaleBox_1">
+              <item>
+               <widget class="QLabel" name="angleScaleLabel_1">
+                <property name="text">
+                 <string>Angle Scale</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="m_angleScale_1">
+                <property name="singleStep">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="value">
+                 <double>0.900000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="30" column="0">
+             <widget class="QPushButton" name="m_resetCamera_1">
+              <property name="text">
+               <string>Reset Camera</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="axiomLabel_1">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Axiom</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="0">
+             <layout class="QHBoxLayout" name="stepSizeBox_1">
+              <item>
+               <widget class="QLabel" name="stepSizeLabel_1">
+                <property name="text">
+                 <string>Step Size</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="m_stepSize_1">
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>2.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="31" column="0">
+             <widget class="QCheckBox" name="m_grid_1">
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string>Show Grid</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -521,6 +534,26 @@
               </property>
              </widget>
             </item>
+            <item row="10" column="0">
+             <widget class="QLineEdit" name="m_rule7_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLineEdit" name="m_rule6_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
             <item row="15" column="0">
              <layout class="QHBoxLayout" name="angleBox_2">
               <item>
@@ -541,26 +574,6 @@
                </widget>
               </item>
              </layout>
-            </item>
-            <item row="10" column="0">
-             <widget class="QLineEdit" name="m_rule7_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0">
-             <widget class="QLineEdit" name="m_rule6_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
             </item>
             <item row="12" column="0">
              <layout class="QHBoxLayout" name="stepScaleBox_2">
@@ -583,6 +596,19 @@
               </item>
              </layout>
             </item>
+            <item row="6" column="0">
+             <widget class="QLineEdit" name="m_rule4_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
             <item row="20" column="0">
              <layout class="QHBoxLayout" name="generationsBox_2">
               <item>
@@ -601,42 +627,6 @@
               </item>
              </layout>
             </item>
-            <item row="6" column="0">
-             <widget class="QLineEdit" name="m_rule4_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="axiomLabel_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Axiom</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLineEdit" name="m_rule3_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
             <item row="4" column="0">
              <widget class="QLineEdit" name="m_rule2_2">
               <property name="sizePolicy">
@@ -647,19 +637,6 @@
               </property>
               <property name="text">
                <string>F=FF</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLineEdit" name="m_rule1_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>A=F&amp;[[A]^A]^F^[^FA]&amp;A</string>
               </property>
              </widget>
             </item>
@@ -679,6 +656,58 @@
               </property>
              </widget>
             </item>
+            <item row="3" column="0">
+             <widget class="QLineEdit" name="m_rule1_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>A=F&amp;[[A]^A]^F^[^FA]&amp;A</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLineEdit" name="m_rule3_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="axiomLabel_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Axiom</string>
+              </property>
+             </widget>
+            </item>
+            <item row="22" column="0">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item row="21" column="0">
              <layout class="QHBoxLayout" name="seedBox_2">
               <item>
@@ -697,21 +726,18 @@
               </item>
              </layout>
             </item>
-            <item row="22" column="0">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
+            <item row="25" column="0">
+             <widget class="QCheckBox" name="m_grid_2">
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
               </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
+              <property name="text">
+               <string>Show Grid</string>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>5</height>
-               </size>
+              <property name="checked">
+               <bool>true</bool>
               </property>
-             </spacer>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -993,22 +1019,6 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QCheckBox" name="m_grid">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>750</y>
-         <width>91</width>
-         <height>26</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Show Grid</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -1040,7 +1050,7 @@
  </widget>
  <tabstops>
   <tabstop>m_superTab</tabstop>
-  <tabstop>m_tab</tabstop>
+  <tabstop>m_treeTab</tabstop>
   <tabstop>m_axiom_1</tabstop>
   <tabstop>m_rule1_1</tabstop>
   <tabstop>m_rule2_1</tabstop>
@@ -1086,7 +1096,7 @@
   <tabstop>m_updateTerrain</tabstop>
   <tabstop>m_resetCamera_layout</tabstop>
   <tabstop>m_resetCamera_render</tabstop>
-  <tabstop>m_grid</tabstop>
+  <tabstop>m_grid_2</tabstop>
  </tabstops>
  <resources/>
  <connections/>
