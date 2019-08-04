@@ -45,9 +45,10 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
     int diffY      = static_cast<int>( _event->y() - m_win.origYPos );
     m_win.origXPos = _event->x();
     m_win.origYPos = _event->y();
+    ngl::Real multiplier = (m_currentCamera->m_to - m_currentCamera->m_from).length()/100;
 
     ngl::Mat4 trans;
-    trans.translate(INCREMENT*diffX,-INCREMENT*diffY,0);
+    trans.translate(multiplier*INCREMENT*diffX,-multiplier*INCREMENT*diffY,0);
     *m_currentMouseTransform = trans*(*m_currentMouseTransform);
 
     update();
@@ -60,7 +61,7 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
 {
   // that method is called when the mouse button is pressed in this case we
   // store the value where the maouse was clicked (x,y) and set the Rotate flag to true
-  if ( _event->button() == Qt::LeftButton )
+  if (m_rotate==true && _event->button() == Qt::LeftButton )
   {
     m_win.origX  = _event->x();
     m_win.origY  = _event->y();

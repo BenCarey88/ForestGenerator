@@ -10,10 +10,8 @@ Camera::Camera()
   reset();
 }
 
-Camera::Camera(ngl::Vec3 _initialFrom, ngl::Vec3 _initialTo,
-               ngl::Vec3 _initialUp, ngl::Vec3 _initialAxis) :
-  m_initialFrom(_initialFrom), m_initialTo(_initialTo),
-  m_initialUp(_initialUp), m_initialAxis(_initialAxis)
+Camera::Camera(ngl::Vec3 _initialFrom, ngl::Vec3 _initialTo) :
+  m_initialFrom(_initialFrom), m_initialTo(_initialTo)
 {
   reset();
 }

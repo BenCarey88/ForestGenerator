@@ -31,6 +31,10 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_cameras[1].resize(m_numTerrainTabs);
   m_cameras[2].resize(1);
 
+  m_cameras[1][0]=Camera({0,200,1000},{0,0,0});
+  m_cameras[1][1]=Camera({0,0,2600},{0,0,0});
+  m_cameras[2][0]=m_cameras[1][0];
+
   m_mouseTransforms.resize(m_numSuperTabs);
   m_mouseTransforms[0].resize(m_numTreeTabs);
   m_mouseTransforms[1].resize(m_numTerrainTabs);
@@ -256,6 +260,12 @@ void NGLScene::paintGL()
       if(m_terrainTabNum==0)
       {
         refineTerrain();
+        drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+      }
+      else
+      {
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        MVP = MVP*m_layoutRotation;
         drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
       }
       break;

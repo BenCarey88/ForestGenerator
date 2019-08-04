@@ -223,6 +223,12 @@ protected:
                                           0,                    1,  0,                    0,
                                           std::sqrt(2.0f)*0.5f, 0,  std::sqrt(2.0f)*0.5f, 0,
                                           0,                    0,  0,                    1);
+
+  ngl::Mat4 m_layoutRotation = m_initialRotation.inverse() * ngl::Mat4(1,0,0,0,
+                                                                       0,0,1,0,
+                                                                       0,1,0,0,
+                                                                       0,0,0,1);
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the grid representing the ground plane
   //----------------------------------------------------------------------------------------------------------------------
@@ -304,9 +310,11 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   float m_tolerance = 0.02f;
 
-  int m_terrainDimension = 1025;
+  int m_terrainDimension = 513;
 
   bool m_wireframe = false;
+
+  bool m_rotate = true;
 
 
   //PROTECTED MEMBER FUNCTIONS

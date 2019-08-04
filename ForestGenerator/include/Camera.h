@@ -28,8 +28,7 @@ struct Camera
   //--------------------------------------------------------------------------------------------------------------------
   Camera();
 
-  Camera(ngl::Vec3 _initialFrom, ngl::Vec3 _initialTo,
-         ngl::Vec3 _initialUp, ngl::Vec3 _initialAxis);
+  Camera(ngl::Vec3 _initialFrom, ngl::Vec3 _initialTo);
 
   //MEMBER VARIABLES
   //--------------------------------------------------------------------------------------------------------------------
