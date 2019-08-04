@@ -209,6 +209,8 @@ protected:
 
   size_t m_terrainTabNum = 0;
 
+  std::vector<ngl::Vec3> m_points = {};
+  std::vector<GLshort> m_pointIndices = {};
 
 
   //----------------------------------------------------------------------------------------------------------------------

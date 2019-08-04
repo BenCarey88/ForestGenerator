@@ -276,6 +276,15 @@ void NGLScene::paintGL()
         buildVAO(m_terrainVAO, grid.m_vertices,  grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
         drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
       }
+
+      for(GLshort i=0; i<m_points.size(); i++)
+      {
+        m_pointIndices.push_back(i);
+      }
+      buildVAO(m_terrainVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
+      glPointSize(20);
+      drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+
       break;
     }
 

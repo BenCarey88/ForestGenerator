@@ -76,6 +76,21 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
   }
 
   std::cout<<"("<<_event->x()<<", "<<_event->y()<<")\n";
+
+  float screenSize = m_win.height;
+  if(screenSize>m_win.width)
+  {
+    screenSize = m_win.width;
+  }
+  float gridSize = 25*80;
+
+  float xVal = _event->x()*gridSize/screenSize - gridSize/2;
+  float zVal = gridSize/2 - _event->y()*gridSize/screenSize;
+
+  std::cout<<"("<<xVal<<", "<<zVal<<")\n\n";
+
+  m_points.push_back({xVal,0,zVal});
+  update();
 }
 
 //----------------------------------------------------------------------------------------------------------------------

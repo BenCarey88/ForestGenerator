@@ -17,16 +17,13 @@ void NGLScene::changeSuperTab(int _superTabNum)
 
   if(_superTabNum==0)
   {
-    m_rotate=true;
     i=m_treeTabNum;
+    m_rotate=true;
   }
   else if(_superTabNum==1)
   {
+    m_rotate = bool(1-m_terrainTabNum);
     i=m_terrainTabNum;
-    if(i==1)
-    {
-      m_rotate=false;
-    }
   }
   else if(_superTabNum==2)
   {
@@ -57,14 +54,8 @@ void NGLScene::changeTerrainTab(int _terrainTabNum)
 
   m_currentCamera = &m_cameras[1][m_terrainTabNum];
   m_currentMouseTransform = &m_mouseTransforms[1][m_terrainTabNum];
-  if(m_terrainTabNum==0)
-  {
-    m_rotate = true;
-  }
-  else if(m_terrainTabNum==1)
-  {
-    m_rotate = false;
-  }
+
+  m_rotate = bool(1-m_terrainTabNum);
 
   update();
 }
