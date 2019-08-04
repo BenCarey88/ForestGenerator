@@ -58,12 +58,6 @@ public slots:
 
   //SLOTS
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to toggle wether or not we display the grid
-  /// @param[in] _clicked, the int passed from m_grid in ui
-  //----------------------------------------------------------------------------------------------------------------------
-  void toggleGrid(int _clicked);
-
-  //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the current supertab number for the qtGUI
   /// @param[in] superTabNum, the int passed from m_SuperTab in ui
   //----------------------------------------------------------------------------------------------------------------------
@@ -74,14 +68,24 @@ public slots:
   //----------------------------------------------------------------------------------------------------------------------
   void changeTreeTab(int _treeTabNum);
 
+  void changeTerrainTab(int _terrainTabNum);
+
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to tell QT to create a new tree from the L-System based on the user inputs
+  /// @brief a slot to set the axiom for the L-System
+  /// @param[in] axiom, the QString passed from m_axiom in ui
   //----------------------------------------------------------------------------------------------------------------------
-  void generate();
+  void setAxiom(QString _axiom);
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to tell QT to reset the camera values
+  /// @brief slots to set the rules for the L-System
+  /// @param[in] rule, the QString passed from m_rulei in ui
   //----------------------------------------------------------------------------------------------------------------------
-  void resetCamera();
+  void setRule1(QString _rule);
+  void setRule2(QString _rule);
+  void setRule3(QString _rule);
+  void setRule4(QString _rule);
+  void setRule5(QString _rule);
+  void setRule6(QString _rule);
+  void setRule7(QString _rule);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the size of steps in the L-system
@@ -120,21 +124,19 @@ public slots:
   void setSeed(int _seed);
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to set the axiom for the L-System
-  /// @param[in] axiom, the QString passed from m_axiom in ui
+  /// @brief a slot to tell QT to create a new tree from the L-System based on the user inputs
   //----------------------------------------------------------------------------------------------------------------------
-  void setAxiom(QString _axiom);
+  void generate();
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief slots to set the rules for the L-System
-  /// @param[in] rule, the QString passed from m_rulei in ui
+  /// @brief a slot to tell QT to reset the camera values
   //----------------------------------------------------------------------------------------------------------------------
-  void setRule1(QString _rule);
-  void setRule2(QString _rule);
-  void setRule3(QString _rule);
-  void setRule4(QString _rule);
-  void setRule5(QString _rule);
-  void setRule6(QString _rule);
-  void setRule7(QString _rule);
+  void resetCamera();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to toggle wether or not we display the grid
+  /// @param[in] _clicked, the int passed from m_grid in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void toggleGrid(int _clicked);
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to toggle wireframe mode
   /// @param[in] mode, the mode passed from the togglebutton
@@ -180,6 +182,9 @@ public slots:
   //----------------------------------------------------------------------------------------------------------------------
   void setTolerance(double _tolerance);
 
+  void setTerrainSize(double _terrainSize);
+  void setLOD(int _LOD);
+
 protected:
 
   //PROTECTED MEMBER VARIABLES
@@ -192,6 +197,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   const size_t m_numSuperTabs = 3;
   const size_t m_numTreeTabs = 2;
+  const size_t m_numTerrainTabs = 2;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the current superTab number
   //----------------------------------------------------------------------------------------------------------------------
@@ -200,6 +206,10 @@ protected:
   /// @brief the current treeTab number
   //----------------------------------------------------------------------------------------------------------------------
   size_t m_treeTabNum = 0;
+
+  size_t m_terrainTabNum = 0;
+
+
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
@@ -254,10 +264,9 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   Forest m_forest;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief width, length and number of trees for m_forest
+  /// @brief width and number of trees for m_forest
   //----------------------------------------------------------------------------------------------------------------------
   float m_width = 2000;
-  float m_length = 2000;
   size_t m_numTrees = 1000;
   int m_numHeroTrees = 10;
   //----------------------------------------------------------------------------------------------------------------------
@@ -295,7 +304,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   float m_tolerance = 0.02f;
 
-  int m_terrainDimension;
+  int m_terrainDimension = 1025;
 
   bool m_wireframe = false;
 

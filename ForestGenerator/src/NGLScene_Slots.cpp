@@ -10,14 +10,6 @@
 ///PUBLIC SLOTS
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::toggleGrid(int _clicked)
-{
-  m_showGrid[m_treeTabNum] = bool(_clicked);
-  update();
-}
-
-//------------------------------------------------------------------------------------------------------------------------
-
 void NGLScene::changeSuperTab(int _superTabNum)
 {
   m_superTabNum = size_t(_superTabNum);
@@ -25,6 +17,10 @@ void NGLScene::changeSuperTab(int _superTabNum)
   if(_superTabNum==0)
   {
     i=m_treeTabNum;
+  }
+  else if(_superTabNum==1)
+  {
+    i=m_terrainTabNum;
   }
 
   m_currentCamera = &m_cameras[m_superTabNum][i];
@@ -45,6 +41,16 @@ void NGLScene::changeTreeTab(int _treeTabNum)
   m_currentCamera = &m_cameras[0][m_treeTabNum];
   m_currentMouseTransform = &m_mouseTransforms[0][m_treeTabNum];
   m_currentLSystem = &m_LSystems[m_treeTabNum];
+
+  update();
+}
+
+void NGLScene::changeTerrainTab(int _terrainTabNum)
+{
+  m_terrainTabNum = size_t(_terrainTabNum);
+
+  m_currentCamera = &m_cameras[1][m_terrainTabNum];
+  m_currentMouseTransform = &m_mouseTransforms[1][m_terrainTabNum];
 
   update();
 }
@@ -72,6 +78,12 @@ void NGLScene::resetCamera()
 {
   m_currentCamera->reset();
   m_currentMouseTransform->identity();
+  update();
+}
+
+void NGLScene::toggleGrid(int _clicked)
+{
+  m_showGrid[m_treeTabNum] = bool(_clicked);
   update();
 }
 
@@ -157,49 +169,62 @@ void NGLScene::setRule7(QString _rule)
 
 void NGLScene::setOctaves(int _octaves)
 {
-    m_forest.m_terrainGen.m_octaves = _octaves;
+  m_forest.m_terrainGen.m_octaves = _octaves;
 }
 
 void NGLScene::setFrequency(double _frequency)
 {
-    m_forest.m_terrainGen.m_frequency = _frequency;
+  m_forest.m_terrainGen.m_frequency = _frequency*0.05;
 }
 
 void NGLScene::setLacunarity(double _lacunarity)
 {
-    m_forest.m_terrainGen.m_lacunarity = _lacunarity;
+  m_forest.m_terrainGen.m_lacunarity = _lacunarity;
 }
 
 void NGLScene::setPersistence(double _persistence)
 {
-    m_forest.m_terrainGen.m_persistence = _persistence;
+  m_forest.m_terrainGen.m_persistence = _persistence;
 }
 
 void NGLScene::setAmplitude(double _amplitude)
 {
-    m_forest.m_terrainGen.m_amplitude = float(_amplitude);
+  m_forest.m_terrainGen.m_amplitude = float(_amplitude);
 }
 
 void NGLScene::setTerrainSeed(double _seed)
 {
-    m_forest.m_terrainGen.m_seed = _seed;
+  m_forest.m_terrainGen.m_seed = _seed*50;
 }
 
 void NGLScene::updateTerrain()
 {
-    m_forest.m_terrainGen.generate();
-    m_terrain = TerrainData(m_forest.m_terrainGen);
-    update();
+  m_forest.m_terrainGen.generate();
+  m_terrain = TerrainData(m_forest.m_terrainGen);
+  update();
 }
 
 void NGLScene::setTolerance(double _tolerance)
 {
-    m_tolerance = float(_tolerance);
-    update();
+  m_tolerance = float(_tolerance);
+  update();
 }
 
 void NGLScene::toggleWireframe(bool _mode	 )
 {
-    m_wireframe=_mode;
-    update();
+  m_wireframe=_mode;
+  update();
+}
+
+void NGLScene::setTerrainSize(double _terrainSize)
+{
+  m_width = _terrainSize;
+  m_forest.m_terrainGen.m_scale = m_width/m_terrainDimension;
+}
+
+void NGLScene::setLOD(int _LOD)
+{
+  m_terrainDimension = std::pow(2,_LOD)+1;
+  m_forest.m_terrainGen.m_dimension = m_terrainDimension;
+  m_forest.m_terrainGen.m_scale = m_width/m_terrainDimension;
 }

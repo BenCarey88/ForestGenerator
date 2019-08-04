@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
   //-----------------------------------------------------------------------------------
   connect(m_ui->m_superTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeSuperTab(int)));
   connect(m_ui->m_treeTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeTreeTab(int)));
+  connect(m_ui->m_terraintTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeTerrainTab(int)));
 
   //TREE TAB
   //------------------------------------------------------------------------------------
@@ -49,10 +50,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
   LSYSTEM_SIGNALS_AND_SLOTS(1);
   LSYSTEM_SIGNALS_AND_SLOTS(2);
-  #undef LSYSTEM_SIGNALS_AND_SLOTS
+  #undef LSYSTEM_SIGNALS_AND_SLOTS;
 
   //TERRAIN
   //------------------------------------------------------------------------------------
+  connect(m_ui->m_terrainSize, SIGNAL(valueChanged(double)), m_gl, SLOT(setTerrainSize(double)));
+  connect(m_ui->m_LOD, SIGNAL(valueChanged(int)), m_gl, SLOT(setLOD(int)));
   connect(m_ui->m_octaves, SIGNAL(valueChanged(int)), m_gl, SLOT(setOctaves(int)));
   connect(m_ui->m_frequency, SIGNAL(valueChanged(double)), m_gl, SLOT(setFrequency(double)));
   connect(m_ui->m_lacunarity, SIGNAL(valueChanged(double)), m_gl, SLOT(setLacunarity(double)));
@@ -60,10 +63,10 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_amplitude, SIGNAL(valueChanged(double)), m_gl, SLOT(setAmplitude(double)));
   connect(m_ui->m_terrainSeed, SIGNAL(valueChanged(double)), m_gl, SLOT(setTerrainSeed(double)));
 
-  connect(m_ui->m_updateTerrain, SIGNAL(clicked()), m_gl, SLOT(updateTerrain()));
   connect(m_ui->m_tolerance, SIGNAL(valueChanged(double)), m_gl, SLOT(setTolerance(double)));
   connect(m_ui->m_wireframe, SIGNAL(toggled(bool)), m_gl, SLOT(toggleWireframe(bool)));
-  connect(m_ui->m_resetCamera_layout, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
+  connect(m_ui->m_updateTerrain, SIGNAL(clicked()), m_gl, SLOT(updateTerrain()));
+  connect(m_ui->m_resetCamera_terrain, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 
   //FOREST
   //------------------------------------------------------------------------------------

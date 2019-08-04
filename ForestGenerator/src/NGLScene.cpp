@@ -28,20 +28,18 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
 
   m_cameras.resize(m_numSuperTabs);
   m_cameras[0].resize(m_numTreeTabs);
-  m_cameras[1].resize(1);
+  m_cameras[1].resize(m_numTerrainTabs);
   m_cameras[2].resize(1);
 
   m_mouseTransforms.resize(m_numSuperTabs);
   m_mouseTransforms[0].resize(m_numTreeTabs);
-  m_mouseTransforms[1].resize(1);
+  m_mouseTransforms[1].resize(m_numTerrainTabs);
   m_mouseTransforms[2].resize(1);
 
-  m_terrainDimension = 1025;
   initializeLSystems();
   m_forest = Forest(m_LSystems,
-                    m_width, m_length,
-                    m_numTrees, m_numHeroTrees,
-                    m_terrainDimension);
+                    m_width, m_terrainDimension,
+                    m_numTrees, m_numHeroTrees);
   m_forestVAOs.resize(m_numTreeTabs);
   m_forest.m_terrainGen.generate();
   m_terrain = TerrainData(m_forest.m_terrainGen);
@@ -255,8 +253,11 @@ void NGLScene::paintGL()
 
     case 1:
     {
-      refineTerrain();
-      drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+      if(m_terrainTabNum==0)
+      {
+        refineTerrain();
+        drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+      }
       break;
     }
 

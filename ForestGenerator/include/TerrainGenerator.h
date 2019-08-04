@@ -34,7 +34,7 @@ public:
   /// @param [in] dimension, [in] dimension, the dimension of the terrain being generated
   /// (this must be 2^n+1 for some positive integer n, based on the way the algorithm is designed)
   //--------------------------------------------------------------------------------------------------------------------
-  TerrainGenerator(int _dimension, float _scale);
+  TerrainGenerator(int _dimension, float _width);
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief default dtor for our Generator class
   //--------------------------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief amplitude of heightmap values generated
   //--------------------------------------------------------------------------------------------------------------------
-  float m_amplitude = 45;
+  float m_amplitude = 50;
 
 
   //PUBLIC MEMBER FUNCTION

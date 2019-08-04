@@ -42,7 +42,6 @@ namespace ngl
     }
 
 
-  //void SimpleIndexVAO::setData(size_t _size, const GLfloat &_data, unsigned int _indexSize, const GLvoid *_indexData, GLenum _indexType, GLenum _mode  )
   void InstanceCacheVAO::setData(const AbstractVAO::VertexData &_data)
   {
     const VertexData &data = static_cast<const VertexData &>(_data);
@@ -55,10 +54,10 @@ namespace ngl
         glDeleteBuffers(1,&m_buffer);
     }
 
-//    GLuint vboID;
+    // GLuint vboID;
     glGenBuffers(1, &m_buffer);
 
-//    GLuint iboID;
+    // GLuint iboID;
     glGenBuffers(1, &m_idxBuffer);
 
     // now we will bind an array buffer to the first one and load the data for the verts
@@ -76,8 +75,11 @@ namespace ngl
                  const_cast<GLvoid *>(data.m_indexData),
                  data.m_mode);
 
+    // Now set the vertex attribute for the vertex array
+    // so we can rebind the array buffer to the transform data
     setVertexAttributePointer(0,3,GL_FLOAT,12,0);
 
+    // bind the transformBuffer data
     glGenBuffers(1, &m_transformBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_transformBuffer);
     glBufferData(GL_ARRAY_BUFFER,
@@ -85,10 +87,15 @@ namespace ngl
                  data.m_transformData,
                  GL_STATIC_DRAW);
 
+    // set the array data for indices 1,2,3,4 as each row of the transform matrix
+    // data is 64 bytes apart = sizeof(ngl::mat4)
     setVertexAttributePointer(1,4,GL_FLOAT,64,0);
     setVertexAttributePointer(2,4,GL_FLOAT,64,4);
     setVertexAttributePointer(3,4,GL_FLOAT,64,8);
     setVertexAttributePointer(4,4,GL_FLOAT,64,12);
+
+    // set glVertex attribute divisor to 1 for the matrix data so that the
+    // shader updates it each instance
     glVertexAttribDivisor(1,1);
     glVertexAttribDivisor(2,1);
     glVertexAttribDivisor(3,1);

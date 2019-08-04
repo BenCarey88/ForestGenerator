@@ -9,10 +9,9 @@
 #include "noiseutils.h"
 
 Forest::Forest(const std::vector<LSystem> &_treeTypes,
-               float _width, float _length,
-               size_t _numTrees, int _numHeroTrees,
-               int _terrainDimension) :
-  m_treeTypes(_treeTypes), m_width(_width), m_length(_length),
+               float _width, int _terrainDimension,
+               size_t _numTrees, int _numHeroTrees) :
+  m_treeTypes(_treeTypes), m_width(_width),
   m_numTrees(_numTrees), m_numHeroTrees(_numHeroTrees)
 {
   m_terrainGen = TerrainGenerator(_terrainDimension, _width);
@@ -72,7 +71,7 @@ void Forest::scatterForest()
   m_treeData = {};
 
   std::uniform_real_distribution<float> distX(-m_width*0.5f, m_width*0.5f);
-  std::uniform_real_distribution<float> distZ(-m_length*0.5f, m_length*0.5f);
+  std::uniform_real_distribution<float> distZ(-m_width*0.5f, m_width*0.5f);
   std::uniform_real_distribution<float> distRotate(0,360);
   std::uniform_real_distribution<float> distScale(0.6f,0.8f);
   std::uniform_int_distribution<size_t> distTreeType(0,m_treeTypes.size()-1);

@@ -6,8 +6,8 @@
 #include "TerrainGenerator.h"
 
 
-TerrainGenerator::TerrainGenerator(int _dimension, float _scale) :
-  m_dimension(_dimension), m_scale(_scale/_dimension) {}
+TerrainGenerator::TerrainGenerator(int _dimension, float _width) :
+  m_dimension(_dimension), m_scale(_width/_dimension) {}
 
 void TerrainGenerator::generate()
 {
