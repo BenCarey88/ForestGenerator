@@ -74,6 +74,8 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
     m_win.origYPos  = _event->y();
     m_win.translate = true;
   }
+
+  std::cout<<"("<<_event->x()<<", "<<_event->y()<<")\n";
 }
 
 //----------------------------------------------------------------------------------------------------------------------

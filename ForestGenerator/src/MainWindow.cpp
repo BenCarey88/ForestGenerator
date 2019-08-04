@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   LSYSTEM_SIGNALS_AND_SLOTS(1);
   LSYSTEM_SIGNALS_AND_SLOTS(2);
-  #undef LSYSTEM_SIGNALS_AND_SLOTS;
+  #undef LSYSTEM_SIGNALS_AND_SLOTS
 
   //TERRAIN
   //------------------------------------------------------------------------------------
@@ -67,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_wireframe, SIGNAL(toggled(bool)), m_gl, SLOT(toggleWireframe(bool)));
   connect(m_ui->m_updateTerrain, SIGNAL(clicked()), m_gl, SLOT(updateTerrain()));
   connect(m_ui->m_resetCamera_terrain, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
+
+  connect(m_ui->m_resetCamera_layout, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 
   //FOREST
   //------------------------------------------------------------------------------------

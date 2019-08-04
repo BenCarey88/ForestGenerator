@@ -1167,6 +1167,19 @@
           <attribute name="title">
            <string>Forest Layout</string>
           </attribute>
+          <widget class="QPushButton" name="m_resetCamera_layout">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>20</y>
+             <width>257</width>
+             <height>25</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Reset Camera</string>
+           </property>
+          </widget>
          </widget>
         </widget>
        </widget>

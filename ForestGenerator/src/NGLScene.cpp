@@ -14,6 +14,7 @@
 #include "InstanceCacheVAO.h"
 #include "NGLScene.h"
 #include "Camera.h"
+#include "PrintFunctions.h"
 
 //------------------------------------------------------------------------------------------------------------------------
 ///CONSTRUCTORS AND DESTRUCTORS
@@ -54,6 +55,8 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
 
   m_currentLSystem->createGeometry();
   m_showGrid.resize(m_numTreeTabs, true);
+
+  print("(",m_win.width,", ",m_win.height,")\n");
 }
 
 NGLScene::~NGLScene()
@@ -82,6 +85,8 @@ void NGLScene::resizeGL( int _w, int _h )
   m_project=ngl::perspective(fieldOfView, static_cast<float>( _w ) / _h, nearFrame, farFrame );
   m_win.width  = static_cast<int>( _w * devicePixelRatio() );
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
+
+  print("(",m_win.width,", ",m_win.height,")\n");
 }
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -266,6 +271,9 @@ void NGLScene::paintGL()
       {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         MVP = MVP*m_layoutRotation;
+        //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+        Grid grid(25,80);
+        buildVAO(m_terrainVAO, grid.m_vertices,  grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
         drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
       }
       break;
