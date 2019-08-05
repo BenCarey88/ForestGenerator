@@ -15,7 +15,7 @@ void main ()
 
     fragColour.rgb = lightIntensity*vertColour;
 
-    fragColour = texture(myTexture, UV);
+    fragColour = lightIntensity*texture(myTexture, UV);
 
     /*vec2 pos = mod(gl_FragCoord.xy, vec2(50.0)) - vec2(25.0);
     float dist_squared = dot(pos, pos);

@@ -15,7 +15,6 @@
 #include "NGLScene.h"
 #include "Camera.h"
 #include "PrintFunctions.h"
-#include "BitmapReader.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
