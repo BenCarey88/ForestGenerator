@@ -113,8 +113,12 @@ void TerrainData::fillVerticesAndIndicesForRendering()
   m_normalsToBeRendered = {};
   for(auto &vert : m_vertices)
   {
+    //Note that I used a different convention in my ASE project and had z as the vertical axis,
+    //but for this project the z-coordinate is depth, in keeping with openGL conventions
+    //hence I have swapped z and y below
     m_vertsToBeRendered.push_back(ngl::Vec3(vert.sceneX, vert.sceneZ, vert.sceneY));
     m_normalsToBeRendered.push_back(vert.normal);
+    m_UVsToBeRendered.push_back(ngl::Vec2(float(vert.originalX),float(vert.originalY))/m_dimension);
   }
   for(auto ind : m_indices)
   {

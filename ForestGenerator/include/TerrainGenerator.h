@@ -15,6 +15,7 @@
 #include <vector>
 #include "noiseutils.h"
 #include "ngl/Vec3.h"
+#include "ngl/Vec2.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class TerrainGenerator
@@ -52,6 +53,7 @@ public:
   std::vector<float> m_heightMap;
 
   std::vector<ngl::Vec3> m_normals;
+  std::vector<ngl::Vec2> m_UVs;
 
   float m_scale;
 

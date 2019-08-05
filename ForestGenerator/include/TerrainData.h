@@ -152,6 +152,7 @@ public:
   std::vector<ngl::Vec3> m_vertsToBeRendered = {};
   std::vector<ngl::Vec3> m_normalsToBeRendered = {};
   std::vector<GLuint> m_indicesToBeRendered = {};
+  std::vector<ngl::Vec2> m_UVsToBeRendered = {};
 
   //call this after meshRefine
   void fillVerticesAndIndicesForRendering();

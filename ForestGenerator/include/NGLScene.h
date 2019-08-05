@@ -212,7 +212,7 @@ protected:
   std::vector<ngl::Vec3> m_points = {};
   std::vector<GLshort> m_pointIndices = {};
   GLuint m_normalBuffer = 0;
-
+  GLuint m_UVBuffer = 0;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view

@@ -2,9 +2,12 @@
 
 in vec3 vertColour;
 in float lightIntensity;
+in vec2 UV;
 
 /// @brief our output fragment colour
 layout (location =0)out vec4 fragColour;
+
+uniform sampler2D myTexture;
 
 void main ()
 {
@@ -12,6 +15,7 @@ void main ()
 
     fragColour.rgb = lightIntensity*vertColour;
 
+    fragColour = texture(myTexture, UV);
 
     /*vec2 pos = mod(gl_FragCoord.xy, vec2(50.0)) - vec2(25.0);
     float dist_squared = dot(pos, pos);

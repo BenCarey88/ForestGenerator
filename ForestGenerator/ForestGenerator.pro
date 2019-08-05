@@ -29,10 +29,11 @@ FORMS += $$PWD/ui/*.ui
 OTHER_FILES+= README.md \
               shaders/*.glsl
 # and add the include dir into the search path for Qt and make
-# also add boost headers and noiseutils header
+# also add boost headers, noiseutils.h and stb_image.h
 INCLUDEPATH += $$PWD/include \
                $$PWD/include/boost \
-               $$PWD/include/noiseutils
+               $$PWD/include/noiseutils \
+               $$PWD/include/stb_image
 
 #add UseNGL.pri
 NGLPATH=$$(NGLDIR)

@@ -15,6 +15,10 @@
 #include "NGLScene.h"
 #include "Camera.h"
 #include "PrintFunctions.h"
+#include "BitmapReader.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 //------------------------------------------------------------------------------------------------------------------------
 ///CONSTRUCTORS AND DESTRUCTORS
@@ -282,11 +286,44 @@ void NGLScene::paintGL()
                      &m_terrain.m_normalsToBeRendered[0],
                      GL_STATIC_DRAW);
         m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
+
+        unsigned int texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        // set the texture wrapping/filtering options (on the currently bound texture object)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // load and generate the texture
+        int width, height, nrChannels;
+        unsigned char *data = stbi_load("groundTexture.jpg", &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture" << std::endl;
+        }
+        stbi_image_free(data);
+
+        //loadBMP("../groundTexture.bmp");
+        glGenBuffers(1, &m_UVBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
+        glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(ngl::Vec2)*m_terrain.m_UVsToBeRendered.size(),
+                     &m_terrain.m_UVsToBeRendered[0],
+                     GL_STATIC_DRAW);
+        m_terrainVAO->setVertexAttributePointer(2,2,GL_FLOAT,sizeof(ngl::Vec2),0);
         m_terrainVAO->unbind();
 
-        /*for(auto normal : m_terrain.m_normalsToBeRendered)
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        /*for(auto UV : m_terrain.m_UVsToBeRendered)
         {
-          print(normal);
+          print(UV.m_x, " ", UV.m_y, "\n");
         }*/
 
         (*shader)["TerrainShader"]->use();

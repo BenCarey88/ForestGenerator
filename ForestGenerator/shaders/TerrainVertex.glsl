@@ -3,6 +3,7 @@
 /// @brief the vertex passed in
 layout(location =0)in vec3 inVert;
 layout(location =1)in vec3 inNormal;
+layout(location =2)in vec2 inUV;
 
 uniform float maxHeight;
 
@@ -13,8 +14,10 @@ uniform vec3 lightPos;
 uniform float Kd = 0.9;
 uniform float Ld = 1;
 
+
 out vec3 vertColour;
 out float lightIntensity;
+out vec2 UV;
 
 void main()
 {
@@ -36,5 +39,6 @@ void main()
                    vec3(0.4f,0.8f,0.2f),
                    smoothstep(0,1, height/maxHeight));
 
+  UV = inUV;
   //vertColour = inNormal;
 }
