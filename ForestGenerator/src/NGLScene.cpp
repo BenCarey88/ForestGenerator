@@ -33,7 +33,7 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_cameras[2].resize(1);
 
   m_cameras[1][0]=Camera({0,200,1000},{0,0,0});
-  m_cameras[1][1]=Camera({0,0,2600},{0,0,0});
+  m_cameras[1][1]=Camera({0,0,2500},{0,0,0});
   m_cameras[2][0]=m_cameras[1][0];
 
   m_mouseTransforms.resize(m_numSuperTabs);
@@ -55,8 +55,6 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
 
   m_currentLSystem->createGeometry();
   m_showGrid.resize(m_numTreeTabs, true);
-
-  print("(",m_win.width,", ",m_win.height,")\n");
 }
 
 NGLScene::~NGLScene()
@@ -85,8 +83,6 @@ void NGLScene::resizeGL( int _w, int _h )
   m_project=ngl::perspective(fieldOfView, static_cast<float>( _w ) / _h, nearFrame, farFrame );
   m_win.width  = static_cast<int>( _w * devicePixelRatio() );
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
-
-  print("(",m_win.width,", ",m_win.height,")\n");
 }
 
 //------------------------------------------------------------------------------------------------------------------------
