@@ -64,7 +64,7 @@ public:
     /// @param [in] y, the y coordinate (before transformation)
     /// @param [in] z, the z (height) coordinate taken from m_heightmap (before transformation)
     //------------------------------------------------------------------------------------------------------------------
-    Vertex(int _x, int _y, float _z, int _dimension, float _scale);
+    Vertex(int _x, int _y, float _z, int _dimension, float _scale, ngl::Vec3 _normal);
     //------------------------------------------------------------------------------------------------------------------
     /// @brief the x coordinate of the vertex as it apears in NGL scene
     //------------------------------------------------------------------------------------------------------------------
@@ -109,6 +109,9 @@ public:
     //------------------------------------------------------------------------------------------------------------------
     /// @brief method returning the distance between this vertex and another one
     //------------------------------------------------------------------------------------------------------------------
+
+    ngl::Vec3 normal;
+
     float distanceTo(Vertex v) const;
   };
 
@@ -144,7 +147,10 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   int m_maxRefinementLevel = int(2*std::log2(m_dimension-1));
 
+  std::vector<ngl::Vec3> m_normals = {};
+
   std::vector<ngl::Vec3> m_vertsToBeRendered = {};
+  std::vector<ngl::Vec3> m_normalsToBeRendered = {};
   std::vector<GLuint> m_indicesToBeRendered = {};
 
   //call this after meshRefine

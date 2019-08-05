@@ -14,11 +14,12 @@
 //On construction, we fill m_vertices from the heightmap values, then assign all relevant attributes to the vertices
 
 TerrainData::TerrainData(TerrainGenerator &_terrainGen) :
-    m_dimension(_terrainGen.m_dimension), m_heightMap(_terrainGen.m_heightMap), m_scale(_terrainGen.m_scale)
+    m_dimension(_terrainGen.m_dimension), m_heightMap(_terrainGen.m_heightMap),
+    m_scale(_terrainGen.m_scale), m_normals(_terrainGen.m_normals)
 {
   //Fill m_vertices
   size_t dimension = size_t(m_dimension);
-  m_vertices.resize(9,Vertex(0,0,0,m_dimension, m_scale));
+  m_vertices.resize(9,Vertex(0,0,0,m_dimension, m_scale, {0,1,0}));
   m_vertices[0] = getVertex(dimension*dimension - dimension);          //SW corner
   m_vertices[1] = getVertex(dimension*dimension - 1);                  //SE corner
   m_vertices[2] = getVertex(dimension - 1);                            //NE corner
@@ -62,11 +63,12 @@ TerrainData::TerrainData(TerrainGenerator &_terrainGen) :
 ///VERTEX METHODS
 //----------------------------------------------------------------------------------------------------------------------
 
-TerrainData::Vertex::Vertex(int _x, int _y, float _z, int _dimension, float _scale)
+TerrainData::Vertex::Vertex(int _x, int _y, float _z, int _dimension, float _scale, ngl::Vec3 _normal)
 {
   originalX = _x;
   originalY = _y;
   originalZ = _z;
+  normal = _normal;
   //for scene coordinates, centre the grid at (0,0) then scale
   sceneX = (float(_x-_dimension/2))*_scale;
   sceneY = (float(_y-_dimension/2))*_scale;
@@ -108,9 +110,11 @@ void TerrainData::fillVerticesAndIndicesForRendering()
 {
   m_vertsToBeRendered = {};
   m_indicesToBeRendered = {};
+  m_normalsToBeRendered = {};
   for(auto &vert : m_vertices)
   {
     m_vertsToBeRendered.push_back(ngl::Vec3(vert.sceneX, vert.sceneZ, vert.sceneY));
+    m_normalsToBeRendered.push_back(vert.normal);
   }
   for(auto ind : m_indices)
   {
@@ -140,7 +144,7 @@ size_t TerrainData::getHeightMapIndex(const int _x, const int _y) const
 
 TerrainData::Vertex TerrainData::getVertex(const size_t _index) const
 {
-  return Vertex(getX(_index), getY(_index), m_heightMap[_index], m_dimension, m_scale);
+  return Vertex(getX(_index), getY(_index), m_heightMap[_index], m_dimension, m_scale, m_normals[_index]);
 }
 
 
@@ -162,7 +166,7 @@ void TerrainData::createVerticesWQT(size_t _QTParentHeightMapIndex, size_t _QTPa
     size_t verticesIndexChild4 = verticesIndexChild3 + 1;
     if(m_vertices.size()<verticesIndexChild4+1)
     {
-      m_vertices.resize(verticesIndexChild4+1,Vertex(0,0,0,m_dimension,m_scale));
+      m_vertices.resize(verticesIndexChild4+1,Vertex(0,0,0,m_dimension,m_scale,{0,1,0}));
     }
 
     size_t heightMapIndexChild1 = getHeightMapIndex(x - _distance, y + _distance);
@@ -200,7 +204,7 @@ void TerrainData::createVerticesBQT(size_t _QTParentHeightMapIndex, size_t _QTPa
     size_t verticesIndexChild4 = verticesIndexChild3 + 1;
     if(m_vertices.size()<verticesIndexChild4+1)
     {
-      m_vertices.resize(verticesIndexChild4+1,Vertex(0,0,0,m_dimension, m_scale));
+      m_vertices.resize(verticesIndexChild4+1,Vertex(0,0,0,m_dimension, m_scale, {0,1,0}));
     }
 
     if(y>0)

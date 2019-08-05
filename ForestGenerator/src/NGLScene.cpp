@@ -141,6 +141,10 @@ void NGLScene::buildVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl
   _vao->bind();
 
   // set our data for the VAO
+  // set our data for the VAO:
+  //    (1) vertexBufferSize, (2) vertexBufferStart,
+  //    (3) indexBufferSize, (4) indexBufferStart,
+  //    (5) type of indices
   _vao->setData(ngl::SimpleIndexVAO::VertexData(
                                                   sizeof(ngl::Vec3)*_vertices.size(),
                                                   _vertices[0].m_x,
@@ -191,9 +195,11 @@ void NGLScene::drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO,
 
 void NGLScene::refineTerrain()
 {
+  //call meshRefine on terrain using the current eye coordinates
   ngl::Vec3 from = m_currentCamera->m_from;
-  from = m_initialRotation.inverse()*m_currentMouseTransform->inverse()*from;
+  from = m_initialRotation.inverse() * m_currentMouseTransform->inverse() * from;
   m_terrain.meshRefine(from, m_tolerance, 100.0);
+  //note that we need to use GLuints for the terrain because the data can be too large for GLushorts
   buildVAO(m_terrainVAO,
            m_terrain.m_vertsToBeRendered,
            m_terrain.m_indicesToBeRendered,
@@ -217,7 +223,12 @@ void NGLScene::paintGL()
   }
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
-  ngl::Mat4 MVP= m_project*m_view*(*m_currentMouseTransform)*m_initialRotation;
+
+  ngl::Mat4 currentTransform = (*m_currentMouseTransform)*m_initialRotation;
+  ngl::Mat4 MVP= m_project*m_view*currentTransform;
+  ngl::Mat4 MV = m_view*currentTransform;
+  ngl::Mat3 normalMatrix= MV.inverse().transpose();
+  ngl::Vec3 lightPos = (currentTransform * ngl::Vec4(0,100,100,1)).toVec3();
 
   if(m_buildTreeVAO)
   {
@@ -261,7 +272,33 @@ void NGLScene::paintGL()
       if(m_terrainTabNum==0)
       {
         refineTerrain();
-        drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+        //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+
+        m_terrainVAO->bind();
+        glGenBuffers(1, &m_normalBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
+        glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(ngl::Vec3)*m_terrain.m_normalsToBeRendered.size(),
+                     &m_terrain.m_normalsToBeRendered[0],
+                     GL_STATIC_DRAW);
+        m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
+        m_terrainVAO->unbind();
+
+        /*for(auto normal : m_terrain.m_normalsToBeRendered)
+        {
+          print(normal);
+        }*/
+
+        (*shader)["TerrainShader"]->use();
+        shader->setUniform("MVP",MVP);
+        shader->setUniform("normalMatrix",normalMatrix);
+        shader->setUniform("MV",MV);
+        shader->setUniform("lightPosition",lightPos);
+        shader->setUniform("maxHeight",m_forest.m_terrainGen.m_amplitude);
+
+        m_terrainVAO->bind();
+        m_terrainVAO->draw();
+        m_terrainVAO->unbind();
       }
       else
       {
@@ -273,7 +310,7 @@ void NGLScene::paintGL()
         drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
       }
 
-      for(GLshort i=0; i<m_points.size(); i++)
+      for(GLshort i=0; size_t(i)<m_points.size(); i++)
       {
         m_pointIndices.push_back(i);
       }

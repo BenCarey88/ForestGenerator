@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include "noiseutils.h"
+#include "ngl/Vec3.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class TerrainGenerator
@@ -49,6 +50,8 @@ public:
   /// @brief heightmap values to be passed into TerrainData class
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<float> m_heightMap;
+
+  std::vector<ngl::Vec3> m_normals;
 
   float m_scale;
 
@@ -97,6 +100,12 @@ private:
   /// @param [in] index, the heightmap index
   //--------------------------------------------------------------------------------------------------------------------
   double getSceneZ(const int _index) const;
+
+  int getGridX(const int _index) const;
+  int getGridZ(const int _index) const;
+  size_t getIndex(const int _gridX, const int _gridZ) const;
+
+  void computeNormals();
 
 };
 
