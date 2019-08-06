@@ -1,13 +1,15 @@
 #version 330 core
 
 layout (lines) in;
-layout (triangle_strip, max_vertices=10) out;
+layout (triangle_strip, max_vertices=18) out;
 
 in vec3 vertCol[2];
 in vec3 worldSpacePos[2];
 in vec3 rightVector[2];
 
 out vec3 colour;
+out vec3 normal;
+out vec3 worldPos;
 
 uniform mat4 MVP;
 
@@ -16,108 +18,29 @@ void main ()
     //vec3 lineDir = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
     vec3 lineDir = worldSpacePos[1] - worldSpacePos[0];
     lineDir = normalize(lineDir);
-    vec3 right = rightVector[1];
-    vec3 k = cross(lineDir,right);
+    vec3 N = rightVector[1];
+    vec3 E = cross(lineDir,N);
+    vec3 NE = normalize(N+E);
+    vec3 SE = normalize(E-N);
+
+    vec3[9] compass = vec3[9](N,NE,E,SE,-N,-NE,-E,-SE,N);
 
     float a = 0.5;
 
-    /*vec3 xDir = cross(lineDir,vec3(0,1,0));
-    if(length(xDir)<0.0000001)
+    for(int i=0; i<9; i++)
     {
-        xDir = cross(lineDir,vec3(1,0,0));
+        gl_Position = MVP * vec4(worldSpacePos[0] + a*compass[i], 1);
+        colour = vertCol[0];
+        normal = compass[i];
+        worldPos = worldSpacePos[0];
+        EmitVertex();
+
+        gl_Position = MVP * vec4(worldSpacePos[1] + a*compass[i], 1);
+        colour = vertCol[1];
+        normal = compass[i];
+        worldPos = worldSpacePos[0];
+        EmitVertex();
     }
-    vec3 zDir = cross(lineDir,xDir);
-    xDir = normalize(xDir);
-    zDir = normalize(zDir);
-    mat3 rotMVP = mat3(MVP);
-    xDir = rotMVP * xDir;
-    zDir = rotMVP * zDir;
-
-    vec4 x = vec4(xDir,1);
-    vec4 z = vec4(zDir,1);*/
-
-    gl_Position = MVP * vec4(worldSpacePos[0] + a*right, 1);
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[1] + a*right, 1);
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[0] + a*k, 1);
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[1] + a*k, 1);
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[0] - a*right, 1);
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[1] - a*right, 1);
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[0] - a*k, 1);
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[1] - a*k, 1);
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[0] + a*right, 1);
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = MVP * vec4(worldSpacePos[1] + a*right, 1);
-    colour = vertCol[1];
-    EmitVertex();
 
     EndPrimitive();
-
-    /*gl_Position = gl_in[0].gl_Position + x;
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = gl_in[1].gl_Position + x;
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = gl_in[0].gl_Position + z;
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = gl_in[1].gl_Position + z;
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = gl_in[0].gl_Position - x;
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = gl_in[1].gl_Position - x;
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = gl_in[0].gl_Position - z;
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = gl_in[1].gl_Position - z;
-    colour = vertCol[1];
-    EmitVertex();
-
-    gl_Position = gl_in[0].gl_Position + x;
-    colour = vertCol[0];
-    EmitVertex();
-
-    gl_Position = gl_in[1].gl_Position + x;
-    colour = vertCol[1];
-    EmitVertex();
-
-    EndPrimitive();*/
-
 }

@@ -242,10 +242,16 @@ void NGLScene::paintGL()
              m_currentLSystem->m_indices,
              GL_LINES, GL_UNSIGNED_SHORT);
 
-    for(auto &vec : m_currentLSystem->m_rightVectors)
+    /*for(auto &vec : m_currentLSystem->m_rightVectors)
     {
-      //print(vec);
-    }
+      print(vec);
+    }*/
+    (*shader)["TreeShader_Geom"]->use();
+    shader->setUniform("MVP",MVP);
+    shader->setUniform("normalMatrix",normalMatrix);
+    shader->setUniform("MV",MV);
+    shader->setUniform("lightPos",lightPos);
+
     m_treeVAOs[m_treeTabNum]->bind();
     glGenBuffers(1, &m_rightBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_rightBuffer);
@@ -283,6 +289,13 @@ void NGLScene::paintGL()
       {
         drawVAO(m_gridVAO, shader, "GridShader", MVP);
       }
+      lightPos = (currentTransform * ngl::Vec4(0,50,0,1)).toVec3();
+      (*shader)["TreeShader_Geom"]->use();
+      shader->setUniform("MVP",MVP);
+      shader->setUniform("normalMatrix",normalMatrix);
+      shader->setUniform("MV",MV);
+      shader->setUniform("lightPos",lightPos);
+
       drawVAO(m_treeVAOs[m_treeTabNum], shader, "TreeShader_Geom", MVP);
       break;
     }

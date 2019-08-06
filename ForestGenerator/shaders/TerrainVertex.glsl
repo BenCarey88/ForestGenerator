@@ -14,13 +14,14 @@ uniform vec3 lightPos;
 uniform float Kd = 0.9;
 uniform float Ld = 1;
 
-
 out vec3 vertColour;
 out float lightIntensity;
 out vec2 UV;
 
 void main()
 {
+    ///@ref: Jon Macey
+
     // Convert normal and position to eye coords
     vec3 tnorm = normalize( normalMatrix * inNormal);
     vec4 eyeCoords = MV * vec4(inVert,1.0);
@@ -34,10 +35,10 @@ void main()
   //gl_Position = MVP*vec4(inVert,1.0);
 
   float height = inVert[1];
-  vertColour = mix(mix(vec3(0.2, 0.2, 0.05), vec3(0.3, 0.4, 0.1),
+  /*vertColour = mix(mix(vec3(0.2, 0.2, 0.05), vec3(0.3, 0.4, 0.1),
                        smoothstep(-1,0, height/maxHeight)),
                    vec3(0.4f,0.8f,0.2f),
-                   smoothstep(0,1, height/maxHeight));
+                   smoothstep(0,1, height/maxHeight));*/
 
   UV = inUV;
   //vertColour = inNormal;

@@ -80,15 +80,22 @@ void LSystem::createGeometry()
       //move forward
       case 'F':
       {
-        indices->push_back(lastIndex);
-        paramVar = stepSize;
-        parseBrackets(treeString, i, paramVar);
-        lastVertex += paramVar*dir;
-        vertices->push_back(lastVertex);
-        m_rightVectors.push_back(right);
-        lastIndex = GLshort(vertices->size()-1);
-        indices->push_back(lastIndex);
-        break;
+        if(m_makeWireframe==true)
+        {
+          indices->push_back(lastIndex);
+          paramVar = stepSize;
+          parseBrackets(treeString, i, paramVar);
+          lastVertex += paramVar*dir;
+          vertices->push_back(lastVertex);
+          m_rightVectors.push_back(right);
+          lastIndex = GLshort(vertices->size()-1);
+          indices->push_back(lastIndex);
+          break;
+        }
+        else
+        {
+
+        }
       }
 
       //start branch

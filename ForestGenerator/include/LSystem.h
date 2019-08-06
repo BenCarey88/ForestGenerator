@@ -148,6 +148,7 @@ public://-----------------------------------------------------------------------
   std::vector<GLshort> m_indices;
 
   std::vector<ngl::Vec3> m_rightVectors;
+  bool m_makeWireframe = true;
 
   std::vector<ngl::Vec3> m_heroVertices = {};
   std::vector<GLshort> m_heroIndices= {};

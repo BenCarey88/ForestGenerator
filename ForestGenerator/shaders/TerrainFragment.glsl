@@ -13,7 +13,7 @@ void main ()
 {
     //fragColour.rgb = vec3(lightIntensity,lightIntensity,lightIntensity);
 
-    fragColour.rgb = lightIntensity*vertColour;
+    //fragColour.rgb = lightIntensity*vertColour;
 
     fragColour = lightIntensity*texture(myTexture, UV);
 
