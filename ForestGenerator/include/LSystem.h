@@ -147,6 +147,8 @@ public://-----------------------------------------------------------------------
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<GLshort> m_indices;
 
+  std::vector<ngl::Vec3> m_rightVectors;
+
   std::vector<ngl::Vec3> m_heroVertices = {};
   std::vector<GLshort> m_heroIndices= {};
   bool m_forestMode = false;

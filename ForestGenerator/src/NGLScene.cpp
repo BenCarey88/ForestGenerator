@@ -114,6 +114,8 @@ void NGLScene::initializeGL()
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   shader->loadShader("TreeShader", "shaders/TreeVertex.glsl",
                      "shaders/TreeFragment.glsl");
+  shader->loadShader("TreeShader_Geom", "shaders/TreeVertex.glsl",
+                     "shaders/TreeFragment.glsl", "shaders/TreeGeometry.glsl");
   shader->loadShader("GridShader", "shaders/GridVertex.glsl",
                      "shaders/GridFragment.glsl");
   shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
@@ -239,6 +241,21 @@ void NGLScene::paintGL()
              m_currentLSystem->m_vertices,
              m_currentLSystem->m_indices,
              GL_LINES, GL_UNSIGNED_SHORT);
+
+    for(auto &vec : m_currentLSystem->m_rightVectors)
+    {
+      //print(vec);
+    }
+    m_treeVAOs[m_treeTabNum]->bind();
+    glGenBuffers(1, &m_rightBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_rightBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3)*m_currentLSystem->m_rightVectors.size(),
+                 &m_currentLSystem->m_rightVectors[0],
+                 GL_STATIC_DRAW);
+    m_treeVAOs[m_treeTabNum]->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
+    m_treeVAOs[m_treeTabNum]->unbind();
+
     m_buildTreeVAO = false;
   }
 
@@ -266,7 +283,7 @@ void NGLScene::paintGL()
       {
         drawVAO(m_gridVAO, shader, "GridShader", MVP);
       }
-      drawVAO(m_treeVAOs[m_treeTabNum], shader, "TreeShader", MVP);
+      drawVAO(m_treeVAOs[m_treeTabNum], shader, "TreeShader_Geom", MVP);
       break;
     }
 
@@ -296,7 +313,7 @@ void NGLScene::paintGL()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // load and generate the texture
         int width, height, nrChannels;
-        unsigned char *data = stbi_load("groundTexture.jpg", &width, &height, &nrChannels, 0);
+        unsigned char *data = stbi_load("textures/groundTexture.jpg", &width, &height, &nrChannels, 0);
         if (data)
         {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

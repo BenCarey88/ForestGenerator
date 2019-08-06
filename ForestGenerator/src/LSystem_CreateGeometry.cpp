@@ -54,6 +54,7 @@ void LSystem::createGeometry()
   Instance * currentInstance;
   std::vector<Instance *> savedInstance = {};
 
+  m_rightVectors = {right};
   std::vector<ngl::Vec3> * vertices;
   std::vector<GLshort> * indices;
   if(m_forestMode == false)
@@ -84,6 +85,7 @@ void LSystem::createGeometry()
         parseBrackets(treeString, i, paramVar);
         lastVertex += paramVar*dir;
         vertices->push_back(lastVertex);
+        m_rightVectors.push_back(right);
         lastIndex = GLshort(vertices->size()-1);
         indices->push_back(lastIndex);
         break;

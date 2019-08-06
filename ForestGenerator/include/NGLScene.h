@@ -213,6 +213,7 @@ protected:
   std::vector<GLshort> m_pointIndices = {};
   GLuint m_normalBuffer = 0;
   GLuint m_UVBuffer = 0;
+  GLuint m_rightBuffer = 0;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
@@ -313,7 +314,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   float m_tolerance = 0.02f;
 
-  int m_terrainDimension = 513;
+  int m_terrainDimension = 129;
 
   bool m_wireframe = false;
 
