@@ -129,7 +129,8 @@ void LSystem::fillInstanceCache(int _numHeroTrees)
   m_forestMode = true;
   m_heroIndices = {};
   m_heroVertices = {};
-
+  m_heroRightVectors = {};
+  m_heroThicknessValues = {};
 
   for(int i=0; i<_numHeroTrees; i++)
   {

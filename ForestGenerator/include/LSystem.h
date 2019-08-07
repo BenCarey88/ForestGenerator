@@ -161,6 +161,8 @@ public://-----------------------------------------------------------------------
 
   std::vector<ngl::Vec3> m_heroVertices = {};
   std::vector<GLshort> m_heroIndices= {};
+  std::vector<ngl::Vec3> m_heroRightVectors = {};
+  std::vector<float> m_heroThicknessValues= {};
   bool m_forestMode = false;
 
   size_t m_maxInstancePerLevel = 10;

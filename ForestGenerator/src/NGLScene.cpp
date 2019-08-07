@@ -120,6 +120,8 @@ void NGLScene::initializeGL()
                      "shaders/GridFragment.glsl");
   shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
                      "shaders/ForestFragment.glsl");
+  shader->loadShader("ForestShader_Geom", "shaders/ForestVertex.glsl",
+                     "shaders/ForestFragment.glsl", "shaders/ForestGeometry.glsl");
   shader->loadShader("TerrainShader", "shaders/TerrainVertex.glsl",
                      "shaders/TerrainFragment.glsl");
 
@@ -183,6 +185,23 @@ void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LS
                        &_transforms[0]));
   // set number of indices to length of current instance
   _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
+
+  glGenBuffers(1, &m_rightBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, m_rightBuffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               sizeof(ngl::Vec3)*_treeType.m_heroRightVectors.size(),
+               &_treeType.m_heroRightVectors[0].m_x,
+               GL_STATIC_DRAW);
+  _vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
+
+  glGenBuffers(1, &m_thicknessBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, m_thicknessBuffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               sizeof(float)*_treeType.m_heroThicknessValues.size(),
+               &_treeType.m_heroThicknessValues[0],
+               GL_STATIC_DRAW);
+  _vao->setVertexAttributePointer(6,1,GL_FLOAT,4,0);
+
   _vao->unbind();
 }
 
@@ -382,7 +401,7 @@ void NGLScene::paintGL()
         m_terrainVAO->draw();
         m_terrainVAO->unbind();
       }
-      else
+      else if (m_terrainTabNum==1)
       {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         MVP = MVP*m_layoutRotation;
@@ -405,11 +424,79 @@ void NGLScene::paintGL()
 
     case 2:
     {
+      //refineTerrain();
+      //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+      if(m_terrainWireframe == true)
+      {
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+      }
       refineTerrain();
-      drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
+      //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
 
-      (*shader)["ForestShader"]->use();
+      m_terrainVAO->bind();
+      glGenBuffers(1, &m_normalBuffer);
+      glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
+      glBufferData(GL_ARRAY_BUFFER,
+                   sizeof(ngl::Vec3)*m_terrain.m_normalsToBeRendered.size(),
+                   &m_terrain.m_normalsToBeRendered[0],
+                   GL_STATIC_DRAW);
+      m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
+
+      unsigned int texture;
+      glGenTextures(1, &texture);
+      glBindTexture(GL_TEXTURE_2D, texture);
+      // set the texture wrapping/filtering options (on the currently bound texture object)
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      // load and generate the texture
+      int width, height, nrChannels;
+      unsigned char *data = stbi_load("textures/groundTexture.jpg", &width, &height, &nrChannels, 0);
+      if (data)
+      {
+          glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+          glGenerateMipmap(GL_TEXTURE_2D);
+      }
+      else
+      {
+          std::cout << "Failed to load texture" << std::endl;
+      }
+      stbi_image_free(data);
+
+      glGenBuffers(1, &m_UVBuffer);
+      glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
+      glBufferData(GL_ARRAY_BUFFER,
+                   sizeof(ngl::Vec2)*m_terrain.m_UVsToBeRendered.size(),
+                   &m_terrain.m_UVsToBeRendered[0],
+                   GL_STATIC_DRAW);
+      m_terrainVAO->setVertexAttributePointer(2,2,GL_FLOAT,sizeof(ngl::Vec2),0);
+      m_terrainVAO->unbind();
+
+      glBindTexture(GL_TEXTURE_2D, texture);
+
+      /*for(auto UV : m_terrain.m_UVsToBeRendered)
+      {
+        print(UV.m_x, " ", UV.m_y, "\n");
+      }*/
+
+      (*shader)["TerrainShader"]->use();
       shader->setUniform("MVP",MVP);
+      shader->setUniform("normalMatrix",normalMatrix);
+      shader->setUniform("MV",MV);
+      shader->setUniform("lightPosition",lightPos);
+      shader->setUniform("maxHeight",m_forest.m_terrainGen.m_amplitude);
+
+      m_terrainVAO->bind();
+      m_terrainVAO->draw();
+      m_terrainVAO->unbind();
+
+
+      (*shader)["ForestShader_Geom"]->use();
+      shader->setUniform("MVP",MVP);
+      shader->setUniform("normalMatrix",normalMatrix);
+      shader->setUniform("MV",MV);
+      shader->setUniform("lightPos",lightPos);
       for(size_t t=0; t<m_numTreeTabs; t++)
       {
         FOR_EACH_ELEMENT(m_forestVAOs[t],

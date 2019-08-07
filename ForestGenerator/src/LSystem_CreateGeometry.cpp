@@ -56,23 +56,34 @@ void LSystem::createGeometry()
   Instance * currentInstance;
   std::vector<Instance *> savedInstance = {};
 
-  m_thicknessValues = {thickness};
-  m_rightVectors = {right};
   std::vector<ngl::Vec3> * vertices;
   std::vector<GLshort> * indices;
+  std::vector<ngl::Vec3> * rightVectors;
+  std::vector<float> * thicknessValues;
+
   if(m_forestMode == false)
   {
     m_vertices = {lastVertex};
     m_indices = {};
+    m_thicknessValues = {thickness};
+    m_rightVectors = {right};
+
     vertices = &m_vertices;
     indices = &m_indices;
+    rightVectors = &m_rightVectors;
+    thicknessValues = &m_thicknessValues;
   }
   else
   {
     lastIndex = GLshort(m_heroVertices.size());
     m_heroVertices.push_back(lastVertex);
+    m_heroRightVectors.push_back(right);
+    m_heroThicknessValues.push_back(thickness);
+
     vertices = &m_heroVertices;
     indices = &m_heroIndices;
+    rightVectors = &m_heroRightVectors;
+    thicknessValues = &m_heroThicknessValues;
   }
 
   for(size_t i=0; i<treeString.size(); i++)
@@ -87,11 +98,9 @@ void LSystem::createGeometry()
         paramVar = stepSize;
         parseBrackets(treeString, i, paramVar);
         lastVertex += paramVar*dir;
-
         vertices->push_back(lastVertex);
-        m_rightVectors.push_back(right);
-        m_thicknessValues.push_back(thickness);
-
+        rightVectors->push_back(right);
+        thicknessValues->push_back(thickness);
         lastIndex = GLshort(vertices->size()-1);
         indices->push_back(lastIndex);
         break;
@@ -211,6 +220,7 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
+        //get transform from initial coord system to current one:
         ngl::Vec3 k = right.cross(dir);
         ngl::Mat4 transform(right.m_x,      right.m_y,      right.m_z,      0,
                             dir.m_x,        dir.m_y,        dir.m_z,        0,
@@ -250,6 +260,7 @@ void LSystem::createGeometry()
       {
         parseInstanceBrackets(treeString, i, id, age);
 
+        //get transform from initial coord system to current one:
         ngl::Vec3 k = right.cross(dir);
         ngl::Mat4 transform(right.m_x,      right.m_y,      right.m_z,      0,
                             dir.m_x,        dir.m_y,        dir.m_z,        0,
