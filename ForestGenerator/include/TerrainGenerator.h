@@ -54,6 +54,8 @@ public:
 
   std::vector<ngl::Vec3> m_normals;
   std::vector<ngl::Vec2> m_UVs;
+  std::vector<ngl::Vec3> m_tangents;
+  std::vector<ngl::Vec3> m_bitangents;
 
   float m_scale;
 

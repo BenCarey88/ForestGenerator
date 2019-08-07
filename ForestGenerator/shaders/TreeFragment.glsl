@@ -10,7 +10,6 @@ layout (location =0)out vec4 fragColour;
 uniform mat3 normalMatrix;
 uniform mat4 MV;
 uniform mat4 MVP;
-
 uniform vec3 lightPos;
 uniform float Kd = 0.9;
 uniform float Ld = 1;

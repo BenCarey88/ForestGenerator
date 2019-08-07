@@ -64,7 +64,8 @@ public:
     /// @param [in] y, the y coordinate (before transformation)
     /// @param [in] z, the z (height) coordinate taken from m_heightmap (before transformation)
     //------------------------------------------------------------------------------------------------------------------
-    Vertex(int _x, int _y, float _z, int _dimension, float _scale, ngl::Vec3 _normal);
+    Vertex(int _x, int _y, float _z, int _dimension, float _scale,
+           ngl::Vec3 _normal, ngl::Vec3 _tangent, ngl::Vec3 _bitangent);
     //------------------------------------------------------------------------------------------------------------------
     /// @brief the x coordinate of the vertex as it apears in NGL scene
     //------------------------------------------------------------------------------------------------------------------
@@ -111,6 +112,8 @@ public:
     //------------------------------------------------------------------------------------------------------------------
 
     ngl::Vec3 normal;
+    ngl::Vec3 tangent;
+    ngl::Vec3 bitangent;
 
     float distanceTo(Vertex v) const;
   };
@@ -148,9 +151,13 @@ public:
   int m_maxRefinementLevel = int(2*std::log2(m_dimension-1));
 
   std::vector<ngl::Vec3> m_normals = {};
+  std::vector<ngl::Vec3> m_tangents = {};
+  std::vector<ngl::Vec3> m_bitangents = {};
 
   std::vector<ngl::Vec3> m_vertsToBeRendered = {};
   std::vector<ngl::Vec3> m_normalsToBeRendered = {};
+  std::vector<ngl::Vec3> m_tangentsToBeRendered = {};
+  std::vector<ngl::Vec3> m_bitangentsToBeRendered = {};
   std::vector<GLuint> m_indicesToBeRendered = {};
   std::vector<ngl::Vec2> m_UVsToBeRendered = {};
 

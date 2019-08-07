@@ -32,7 +32,11 @@ void TerrainGenerator::generate()
 void TerrainGenerator::computeNormals()
 {
   m_normals = {};
+  m_tangents = {};
+  m_bitangents = {};
   m_normals.resize(m_heightMap.size(),{0,1,0});
+  m_tangents.resize(m_heightMap.size(),{0,1,0});
+  m_bitangents.resize(m_heightMap.size(),{0,1,0});
   for (size_t i=0; i<m_normals.size(); i++)
   {
     int x=getGridX(int(i));
@@ -49,8 +53,14 @@ void TerrainGenerator::computeNormals()
       float R = m_heightMap[getIndex(x+1,z)];
       float B = m_heightMap[getIndex(x,z+1)];
       ngl::Vec3 normal(L-R, 2*m_scale, T-B);
+      ngl::Vec3 tangent(2,R-L,0);
+      ngl::Vec3 bitangent(0,T-B,2);
       normal.normalize();
+      tangent.normalize();
+      bitangent.normalize();
       m_normals[i]=normal;
+      m_tangents[i]=tangent;
+      m_bitangents[i]=bitangent;
     }
   }
 }

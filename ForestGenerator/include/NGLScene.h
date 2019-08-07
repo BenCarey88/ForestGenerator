@@ -219,6 +219,9 @@ protected:
   std::vector<GLshort> m_pointIndices = {};
   GLuint m_normalBuffer = 0;
   GLuint m_UVBuffer = 0;
+  GLuint m_tangentBuffer = 0;
+  GLuint m_bitangentBuffer = 0;
+
   GLuint m_rightBuffer = 0;
   GLuint m_thicknessBuffer = 0;
 

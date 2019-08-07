@@ -10,6 +10,7 @@
 #include <ngl/VAOFactory.h>
 #include <ngl/SimpleIndexVAO.h>
 #include <ngl/SimpleVAO.h>
+#include <ngl/Texture.h>
 
 #include "InstanceCacheVAO.h"
 #include "NGLScene.h"
@@ -245,6 +246,7 @@ void NGLScene::paintGL()
   ngl::Mat4 currentTransform = (*m_currentMouseTransform)*m_initialRotation;
   ngl::Mat4 MVP= m_project*m_view*currentTransform;
   ngl::Mat4 MV = m_view*currentTransform;
+  ngl::Mat4 M = currentTransform;
   ngl::Mat3 normalMatrix= MV.inverse().transpose();
   ngl::Vec3 lightPos = (currentTransform * ngl::Vec4(0,100,100,1)).toVec3();
 
@@ -352,8 +354,26 @@ void NGLScene::paintGL()
                      GL_STATIC_DRAW);
         m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
 
+        ngl::Texture texture("textures/Dirt_and_gravel_pxr128.jpg");
+        texture.setTextureGL();
+        texture.loadImage("textures/Dirt_and_gravel_pxr128_normal.jpg");
+        texture.setMultiTexture(1);
+        texture.setTextureGL();
+
+
+/*        ///@ref https://stackoverflow.com/questions/25252512/how-can-i-pass-multiple-textures-to-a-single-shader
+        // Get the uniform variables location.
+        auto textureMapLocation = glGetUniformLocation(shader->getShaderID("TerrainShaderFragment"), "textureMap");
+        auto normalMapLocation  = glGetUniformLocation(shader->getShaderID("TerrainShaderFragment"), "normalMap");
+
+        glUseProgram(shader->getShaderID("TerrainShaderFragment"));
+        glUniform1i(textureMapLocation, 0);
+        glUniform1i(normalMapLocation,  1);
+
+        // Then bind the uniform samplers to texture units:
         unsigned int texture;
         glGenTextures(1, &texture);
+        glActiveTexture(GL_TEXTURE0 + 0); // Texture unit 0
         glBindTexture(GL_TEXTURE_2D, texture);
         // set the texture wrapping/filtering options (on the currently bound texture object)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -362,7 +382,7 @@ void NGLScene::paintGL()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // load and generate the texture
         int width, height, nrChannels;
-        unsigned char *data = stbi_load("textures/groundTexture.jpg", &width, &height, &nrChannels, 0);
+        unsigned char *data = stbi_load("textures/Dirt_and_gravel_pxr128.jpg", &width, &height, &nrChannels, 0);
         if (data)
         {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -370,9 +390,33 @@ void NGLScene::paintGL()
         }
         else
         {
-            std::cout << "Failed to load texture" << std::endl;
+            //std::cout << "Failed to load texture" << std::endl;
         }
         stbi_image_free(data);
+
+        unsigned int normalMap;
+        glGenTextures(1, &normalMap);
+        glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
+        glBindTexture(GL_TEXTURE_2D, normalMap);
+        // set the texture wrapping/filtering options (on the currently bound texture object)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // load and generate the texture
+        int width2, height2, nrChannels2;
+        unsigned char *data2 = stbi_load("textures/Dirt_and_gravel_pxr128_normal.jpg", &width2, &height2, &nrChannels2, 0);
+        if (data2)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture" << std::endl;
+        }
+        stbi_image_free(data2);*/
+
 
         glGenBuffers(1, &m_UVBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
@@ -381,19 +425,35 @@ void NGLScene::paintGL()
                      &m_terrain.m_UVsToBeRendered[0],
                      GL_STATIC_DRAW);
         m_terrainVAO->setVertexAttributePointer(2,2,GL_FLOAT,sizeof(ngl::Vec2),0);
-        m_terrainVAO->unbind();
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glGenBuffers(1, &m_tangentBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_tangentBuffer);
+        glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(ngl::Vec3)*m_terrain.m_tangentsToBeRendered.size(),
+                     &m_terrain.m_tangentsToBeRendered[0],
+                     GL_STATIC_DRAW);
+        m_terrainVAO->setVertexAttributePointer(3,3,GL_FLOAT,sizeof(ngl::Vec3),0);
+
+        glGenBuffers(1, &m_bitangentBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, m_bitangentBuffer);
+        glBufferData(GL_ARRAY_BUFFER,
+                     sizeof(ngl::Vec3)*m_terrain.m_bitangentsToBeRendered.size(),
+                     &m_terrain.m_bitangentsToBeRendered[0],
+                     GL_STATIC_DRAW);
+        m_terrainVAO->setVertexAttributePointer(4,3,GL_FLOAT,sizeof(ngl::Vec3),0);
 
         /*for(auto UV : m_terrain.m_UVsToBeRendered)
         {
           print(UV.m_x, " ", UV.m_y, "\n");
         }*/
 
+        m_terrainVAO->unbind();
+
         (*shader)["TerrainShader"]->use();
         shader->setUniform("MVP",MVP);
         shader->setUniform("normalMatrix",normalMatrix);
         shader->setUniform("MV",MV);
+        shader->setUniform("M",M);
         shader->setUniform("lightPosition",lightPos);
         shader->setUniform("maxHeight",m_forest.m_terrainGen.m_amplitude);
 
