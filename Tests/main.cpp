@@ -16,7 +16,7 @@ TEST(LSystem, UserCtor)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,4,1,1);
   EXPECT_EQ(L.m_axiom,axiom);
 }
 
@@ -24,7 +24,7 @@ TEST(LSystem, breakDownRules)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,4,1,1);
 
   EXPECT_EQ(L.m_rules.size(),2);
   EXPECT_EQ(L.m_rules[0].m_LHS,"A");
@@ -39,7 +39,7 @@ TEST(LSystem, countBranches)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=[B]///[B]///[B]", "A=B", "B=FF[C/C][C]", "C=FF[FFF]//[A]"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,4,1,1);
 
   L.countBranches();
   EXPECT_EQ(L.m_rules[0].m_numBranches,std::vector<int>({3,0}));
@@ -51,7 +51,7 @@ TEST(LSystem, generateTreeString)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,4);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,4,1,1);
   L.m_generation=0;
   EXPECT_EQ(L.generateTreeString(),"FFFA");
   L.m_generation=1;
@@ -66,7 +66,7 @@ TEST(LSystem, createGeometry)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]////[B]////B", "B=FFFA"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,0);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,0,1,1);
   L.createGeometry();
 
   EXPECT_EQ(L.m_vertices.size(),4);
@@ -88,7 +88,7 @@ TEST(LSystem, addInstancingCommands)
 {
   std::string axiom = "FFFA";
   std::vector<std::string> rules = {"A=![B]//[f]//[C/C]////B:2", "B=FFFA", "A=F//[B]//F:3", "C=F[A]"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,6);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,6,1,1);
   L.m_instancingProb = 0.6f;
 
   L.addInstancingCommands();
@@ -118,7 +118,7 @@ TEST(LSystem, addInstancingCommands_nestedBranches)
 {
   std::string axiom = "FFFAA";
   std::vector<std::string> rules = {"A=[B[B][C[FFF]]]","B=F//&F","C=F[B]"};
-  LSystem L(axiom,rules,2,0.9f,30,0.9f,6);
+  LSystem L(axiom,rules,2,0.9f,30,0.9f,6,1,1);
   L.m_instancingProb = 0.6f;
 
   L.addInstancingCommands();

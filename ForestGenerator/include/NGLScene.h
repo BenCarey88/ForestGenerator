@@ -107,6 +107,10 @@ public slots:
   /// @param[in] angleScale, the double passed from m_angleScale in ui
   //----------------------------------------------------------------------------------------------------------------------
   void setAngleScale(double _angleScale);
+
+  void setThickness(double _thickness);
+  void setThicknessScale(double _thicknessScale);
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the number of generations to generate for this L-System
   /// @param[in] generation, the int passed from m_generation in ui
@@ -135,13 +139,15 @@ public slots:
   /// @brief a slot to toggle wether or not we display the grid
   /// @param[in] _clicked, the int passed from m_grid in ui
   //----------------------------------------------------------------------------------------------------------------------
-  void toggleGrid(int _clicked);
+  void toggleGrid(bool _clicked);
+
+  void toggleTreeSkeletonMode(bool _mode);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to toggle wireframe mode
   /// @param[in] mode, the mode passed from the togglebutton
   //----------------------------------------------------------------------------------------------------------------------
-  void toggleWireframe( bool _mode );
+  void toggleTerrainWireframe( bool _mode );
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the number of octaves for the terrain generation
   /// @param[in] octaves, the int passed from m_octaves in ui
@@ -214,6 +220,7 @@ protected:
   GLuint m_normalBuffer = 0;
   GLuint m_UVBuffer = 0;
   GLuint m_rightBuffer = 0;
+  GLuint m_thicknessBuffer = 0;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
@@ -316,7 +323,7 @@ protected:
 
   int m_terrainDimension = 129;
 
-  bool m_wireframe = false;
+  bool m_terrainWireframe = false;
 
   bool m_rotate = true;
 

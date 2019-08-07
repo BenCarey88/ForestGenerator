@@ -37,6 +37,7 @@ void LSystem::createGeometry()
   GLshort lastIndex = 0;
   float stepSize = m_stepSize;
   float angle = m_angle;
+  float thickness = m_thickness;
 
   //paramVar will store the default value of each command, to be replaced by one
   //parsed from brackets by parseBrackets() if necessary
@@ -49,11 +50,13 @@ void LSystem::createGeometry()
   std::vector<ngl::Vec3> savedRight = {};
   std::vector<float> savedStep = {};
   std::vector<float> savedAngle = {};
+  std::vector<float> savedThickness = {};
 
   Instance instance;
   Instance * currentInstance;
   std::vector<Instance *> savedInstance = {};
 
+  m_thicknessValues = {thickness};
   m_rightVectors = {right};
   std::vector<ngl::Vec3> * vertices;
   std::vector<GLshort> * indices;
@@ -80,22 +83,18 @@ void LSystem::createGeometry()
       //move forward
       case 'F':
       {
-        if(m_makeWireframe==true)
-        {
-          indices->push_back(lastIndex);
-          paramVar = stepSize;
-          parseBrackets(treeString, i, paramVar);
-          lastVertex += paramVar*dir;
-          vertices->push_back(lastVertex);
-          m_rightVectors.push_back(right);
-          lastIndex = GLshort(vertices->size()-1);
-          indices->push_back(lastIndex);
-          break;
-        }
-        else
-        {
+        indices->push_back(lastIndex);
+        paramVar = stepSize;
+        parseBrackets(treeString, i, paramVar);
+        lastVertex += paramVar*dir;
 
-        }
+        vertices->push_back(lastVertex);
+        m_rightVectors.push_back(right);
+        m_thicknessValues.push_back(thickness);
+
+        lastIndex = GLshort(vertices->size()-1);
+        indices->push_back(lastIndex);
+        break;
       }
 
       //start branch
@@ -107,6 +106,7 @@ void LSystem::createGeometry()
         savedRight.push_back(right);
         savedStep.push_back(stepSize);
         savedAngle.push_back(angle);
+        savedThickness.push_back(thickness);
         break;
       }
 
@@ -121,6 +121,7 @@ void LSystem::createGeometry()
           right = savedRight.back();
           stepSize = savedStep.back();
           angle = savedAngle.back();
+          thickness = savedThickness.back();
 
           savedInd.pop_back();
           savedVert.pop_back();
@@ -128,6 +129,7 @@ void LSystem::createGeometry()
           savedRight.pop_back();
           savedStep.pop_back();
           savedAngle.pop_back();
+          savedThickness.pop_back();
         }
         break;
       }
@@ -192,6 +194,15 @@ void LSystem::createGeometry()
         paramVar = m_angleScale;
         parseBrackets(treeString, i, paramVar);
         angle *= paramVar;
+        break;
+      }
+
+      //scale thickness
+      case '!':
+      {
+        paramVar = m_thicknessScale;
+        parseBrackets(treeString, i, paramVar);
+        thickness *= paramVar;
         break;
       }
 

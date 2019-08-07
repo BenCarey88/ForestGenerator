@@ -35,7 +35,10 @@ public://-----------------------------------------------------------------------
   /// @brief user ctor for LSystem class
   //--------------------------------------------------------------------------------------------------------------------
   LSystem(std::string _axiom, std::vector<std::string> _rules,
-          float _stepSize, float _stepScale, float _angle, float _angleScale, int _generation);
+          float _stepSize, float _stepScale,
+          float _angle, float _angleScale,
+          float _thickness, float _thicknessScale,
+          int _generation);
 
   //RULE STRUCT
   //--------------------------------------------------------------------------------------------------------------------
@@ -112,6 +115,10 @@ public://-----------------------------------------------------------------------
   /// @brief the angle scale
   //--------------------------------------------------------------------------------------------------------------------
   float m_angleScale;
+
+  float m_thickness;
+  float m_thicknessScale;
+
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief the number of generations of the LSystem to implement
   //--------------------------------------------------------------------------------------------------------------------
@@ -124,6 +131,8 @@ public://-----------------------------------------------------------------------
   /// @brief toggle to determine if we should use a seed - if not, we seed by time
   //--------------------------------------------------------------------------------------------------------------------
   bool m_useSeed = false;
+
+  bool m_skeletonMode = false;
 
   //the random number generator
   std::default_random_engine m_gen;
@@ -148,7 +157,7 @@ public://-----------------------------------------------------------------------
   std::vector<GLshort> m_indices;
 
   std::vector<ngl::Vec3> m_rightVectors;
-  bool m_makeWireframe = true;
+  std::vector<float> m_thicknessValues;
 
   std::vector<ngl::Vec3> m_heroVertices = {};
   std::vector<GLshort> m_heroIndices= {};

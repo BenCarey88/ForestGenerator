@@ -86,9 +86,15 @@ void NGLScene::resetCamera()
   update();
 }
 
-void NGLScene::toggleGrid(int _clicked)
+void NGLScene::toggleGrid(bool _clicked)
 {
-  m_showGrid[m_treeTabNum] = bool(_clicked);
+  m_showGrid[m_treeTabNum] = _clicked;
+  update();
+}
+
+void NGLScene::toggleTreeSkeletonMode(bool _mode)
+{
+  m_currentLSystem->m_skeletonMode = _mode;
   update();
 }
 
@@ -112,6 +118,16 @@ void NGLScene::setAngle(double _angle)
 void NGLScene::setAngleScale(double _angleScale)
 {
   m_currentLSystem->m_angleScale = float(_angleScale);
+}
+
+void NGLScene::setThickness(double _thickness)
+{
+  m_currentLSystem->m_thickness = float(_thickness);
+}
+
+void NGLScene::setThicknessScale(double _thicknessScale)
+{
+  m_currentLSystem->m_thicknessScale = float(_thicknessScale);
 }
 
 void NGLScene::setGeneration(int _generation)
@@ -215,21 +231,21 @@ void NGLScene::setTolerance(double _tolerance)
   update();
 }
 
-void NGLScene::toggleWireframe(bool _mode	 )
+void NGLScene::toggleTerrainWireframe(bool _mode)
 {
-  m_wireframe=_mode;
+  m_terrainWireframe=_mode;
   update();
 }
 
 void NGLScene::setTerrainSize(double _terrainSize)
 {
-  m_width = _terrainSize;
+  m_width = float(_terrainSize);
   m_forest.m_terrainGen.m_scale = m_width/m_terrainDimension;
 }
 
 void NGLScene::setLOD(int _LOD)
 {
-  m_terrainDimension = std::pow(2,_LOD)+1;
+  m_terrainDimension = int(std::pow(2,_LOD))+1;
   m_forest.m_terrainGen.m_dimension = m_terrainDimension;
   m_forest.m_terrainGen.m_scale = m_width/m_terrainDimension;
 }

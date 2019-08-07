@@ -218,14 +218,8 @@ void NGLScene::paintGL()
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
-  if (m_wireframe == true)
-  {
-      glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-  }
-  else
-  {
-      glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-  }
+  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
 
@@ -253,6 +247,7 @@ void NGLScene::paintGL()
     shader->setUniform("lightPos",lightPos);
 
     m_treeVAOs[m_treeTabNum]->bind();
+
     glGenBuffers(1, &m_rightBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, m_rightBuffer);
     glBufferData(GL_ARRAY_BUFFER,
@@ -260,6 +255,15 @@ void NGLScene::paintGL()
                  &m_currentLSystem->m_rightVectors[0],
                  GL_STATIC_DRAW);
     m_treeVAOs[m_treeTabNum]->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
+
+    glGenBuffers(1, &m_thicknessBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, m_thicknessBuffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 sizeof(ngl::Vec3)*m_currentLSystem->m_thicknessValues.size(),
+                 &m_currentLSystem->m_thicknessValues[0],
+                 GL_STATIC_DRAW);
+    m_treeVAOs[m_treeTabNum]->setVertexAttributePointer(2,1,GL_FLOAT,4,0);
+
     m_treeVAOs[m_treeTabNum]->unbind();
 
     m_buildTreeVAO = false;
@@ -290,13 +294,22 @@ void NGLScene::paintGL()
         drawVAO(m_gridVAO, shader, "GridShader", MVP);
       }
       lightPos = (currentTransform * ngl::Vec4(0,50,0,1)).toVec3();
-      (*shader)["TreeShader_Geom"]->use();
-      shader->setUniform("MVP",MVP);
-      shader->setUniform("normalMatrix",normalMatrix);
-      shader->setUniform("MV",MV);
-      shader->setUniform("lightPos",lightPos);
 
-      drawVAO(m_treeVAOs[m_treeTabNum], shader, "TreeShader_Geom", MVP);
+      if(m_currentLSystem->m_skeletonMode==true)
+      {
+        drawVAO(m_treeVAOs[m_treeTabNum], shader, "TreeShader", MVP);
+      }
+      else
+      {
+        (*shader)["TreeShader_Geom"]->use();
+        shader->setUniform("MVP",MVP);
+        shader->setUniform("normalMatrix",normalMatrix);
+        shader->setUniform("MV",MV);
+        shader->setUniform("lightPos",lightPos);
+
+        drawVAO(m_treeVAOs[m_treeTabNum], shader, "TreeShader_Geom", MVP);
+      }
+
       break;
     }
 
@@ -304,6 +317,10 @@ void NGLScene::paintGL()
     {
       if(m_terrainTabNum==0)
       {
+        if(m_terrainWireframe == true)
+        {
+          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        }
         refineTerrain();
         //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
 
@@ -338,7 +355,6 @@ void NGLScene::paintGL()
         }
         stbi_image_free(data);
 
-        //loadBMP("../groundTexture.bmp");
         glGenBuffers(1, &m_UVBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
         glBufferData(GL_ARRAY_BUFFER,

@@ -20,9 +20,11 @@
 
 LSystem::LSystem(std::string _axiom, std::vector<std::string> _rules,
                  float _stepSize, float _stepScale,
-                 float _angle, float _angleScale, int _generation) :
+                 float _angle, float _angleScale,
+                 float _thickness, float _thicknessScale, int _generation) :
   m_axiom(_axiom), m_stepSize(_stepSize), m_stepScale(_stepScale),
-  m_angle(_angle), m_angleScale(_angleScale), m_generation(_generation)
+  m_angle(_angle), m_angleScale(_angleScale),
+  m_thickness(_thickness), m_thicknessScale(_thicknessScale), m_generation(_generation)
 {
   for(size_t i=0; i<_rules.size() ; i++)
   {

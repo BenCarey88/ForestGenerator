@@ -16,27 +16,41 @@ void NGLScene::initializeLSystems()
   float stepScale;
   float angle;
   float angleScale;
+  float thickness;
+  float thicknessScale;
   int generation;
 
   //LSystem 0:
   axiom = "FFFA";
-  rules = {"A=\"[B]////[B]////B","B=&FFFA"};
+  rules = {"A=!\"[B]////[B]////B","B=&FFFA"};
   stepSize = 2;
   stepScale = 0.9f;
   angle = 30;
   angleScale = 0.9f;
   generation = 4;
-  m_LSystems[0] = LSystem(axiom,rules,stepSize,stepScale,angle,angleScale,generation);
+  thickness = 1;
+  thicknessScale = 0.7f;
+  m_LSystems[0] = LSystem(axiom,rules,
+                          stepSize,stepScale,
+                          angle,angleScale,
+                          thickness,thicknessScale,
+                          generation);
 
   //LSystem 1:
   axiom = "///A";
-  rules = {"A=F&[[A]^A]^F^[^FA]&A","F=FF"};
+  rules = {"A=F&[![A]^!A]^F^[!^FA]&!A","F=FF"};
   stepSize = 1;
   stepScale = 0.9f;
   angle = 25;
   angleScale = 0.9f;
   generation = 6;
-  m_LSystems[1] = LSystem(axiom,rules,stepSize,stepScale,angle,angleScale,generation);
+  thickness = 1;
+  thicknessScale = 0.6f;
+  m_LSystems[1] = LSystem(axiom,rules,
+                          stepSize,stepScale,
+                          angle,angleScale,
+                          thickness,thicknessScale,
+                          generation);
 }
 
 void NGLScene::updateForest()
