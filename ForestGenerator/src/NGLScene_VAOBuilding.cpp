@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------------------------------------------------
-/// @file NGLScene_Slots.cpp
+/// @file NGLScene_VAOBuilding.cpp
 /// @brief implementation file for NGLScene VAO building methods
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -144,7 +144,7 @@ void NGLScene::buildTerrainVAO()
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildForestVAO()
+void NGLScene::buildForestVAOs()
 {
   for(size_t t=0; t<m_forest.m_treeTypes.size(); t++)
   {

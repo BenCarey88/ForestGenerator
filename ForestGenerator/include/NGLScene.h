@@ -361,19 +361,18 @@ protected:
                              LSystem &_treeType, Instance &_instance,
                              std::vector<ngl::Mat4> &_transforms);
 
+  void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData);
   void buildGridVAO();
   void buildTerrainVAO();
   void buildTreeVAO(size_t _treeNum);
-  void buildForestVAO();
-
-  void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO,
-               ngl::ShaderLib *_shader, const std::string &_shaderName, ngl::Mat4 &_MVP);
-  void refineTerrain();
-
-  void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData);
+  void buildForestVAOs();
 
   void loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderName,
                     const char *_textureMapFile, const char *_normalMapFile);
+  void loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &_shaderName);
+
+  void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO);
+  void refineTerrain();
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

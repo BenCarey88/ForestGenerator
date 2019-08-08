@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 /// @file NGLScene_LSystems.cpp
-/// @brief implementation file for NGLScene class initializeLSystems function
+/// @brief implementation file for NGLScene class initializeLSystems function and updateForest function
 //----------------------------------------------------------------------------------------------------------------------
 
 #include "NGLScene.h"
