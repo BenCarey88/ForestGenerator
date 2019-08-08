@@ -225,6 +225,11 @@ protected:
   GLuint m_rightBuffer = 0;
   GLuint m_thicknessBuffer = 0;
 
+  GLuint m_textureBufferTrees = 0;
+  GLuint m_normalMapBufferTrees = 0;
+  GLuint m_textureBufferTerrain = 0;
+  GLuint m_normalMapBufferTerrain = 0;
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
   //----------------------------------------------------------------------------------------------------------------------
@@ -349,15 +354,26 @@ protected:
   /// @brief build an openGL line VAO from lists of vertices and indices (used by paintGL)
   //----------------------------------------------------------------------------------------------------------------------
   template <class dataType>
-  void buildVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
-                std::vector<dataType> &_indices, GLenum _mode, GLenum _indexType);
+  void buildSimpleIndexVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
+                           std::vector<dataType> &_indices, GLenum _mode, GLenum _indexType);
 
   void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
                              LSystem &_treeType, Instance &_instance,
                              std::vector<ngl::Mat4> &_transforms);
+
+  void buildGridVAO();
+  void buildTerrainVAO();
+  void buildTreeVAO(size_t _treeNum);
+  void buildForestVAO();
+
   void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO,
                ngl::ShaderLib *_shader, const std::string &_shaderName, ngl::Mat4 &_MVP);
   void refineTerrain();
+
+  void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData);
+
+  void loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderName,
+                    const char *_textureMapFile, const char *_normalMapFile);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class

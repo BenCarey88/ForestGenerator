@@ -21,7 +21,7 @@
 #include "stb_image.h"
 
 //------------------------------------------------------------------------------------------------------------------------
-///CONSTRUCTORS AND DESTRUCTORS
+///CONSTRUCTOR AND DESTRUCTOR
 //------------------------------------------------------------------------------------------------------------------------
 
 NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
@@ -77,9 +77,6 @@ NGLScene::~NGLScene()
   }
 }
 
-
-//------------------------------------------------------------------------------------------------------------------------
-///OTHER PUBLIC METHODS
 //------------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::resizeGL( int _w, int _h )
@@ -88,8 +85,6 @@ void NGLScene::resizeGL( int _w, int _h )
   m_win.width  = static_cast<int>( _w * devicePixelRatio() );
   m_win.height = static_cast<int>( _h * devicePixelRatio() );
 }
-
-//------------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::initializeGL()
 {
@@ -130,80 +125,78 @@ void NGLScene::initializeGL()
   ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
   ngl::VAOFactory::listCreators();
 
-  //set up LSystem VAOs:
+  //set up initial VAOs:
   for(size_t i=0; i<m_numTreeTabs; i++)
   {
-    buildVAO(m_treeVAOs[i], m_LSystems[i].m_vertices, m_LSystems[i].m_indices, GL_LINES, GL_UNSIGNED_SHORT);
+    buildTreeVAO(i);
   }
-  buildVAO(m_gridVAO, m_grid.m_vertices, m_grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
+  buildGridVAO();
+  //And load intial textures
+  loadTextures(shader, "TreeShader_Geom",
+               "textures/American_oak_pxr128.jpg",
+               "textures/American_oak_pxr128_normal.jpg");
 }
+
 
 //------------------------------------------------------------------------------------------------------------------------
 
-template<class dataType>
-void NGLScene::buildVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
-                        std::vector<dataType> &_indices, GLenum _mode, GLenum _indexType)
+void NGLScene::loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderName,
+                            const char *_textureMapFile, const char *_normalMapFile)
 {
-  // create a vao using _mode
-  _vao=ngl::VAOFactory::createVAO(ngl::simpleIndexVAO,_mode);
-  _vao->bind();
+  ///@ref https://stackoverflow.com/questions/25252512/how-can-i-pass-multiple-textures-to-a-single-shader
 
-  // set our data for the VAO
-  // set our data for the VAO:
-  //    (1) vertexBufferSize, (2) vertexBufferStart,
-  //    (3) indexBufferSize, (4) indexBufferStart,
-  //    (5) type of indices
-  _vao->setData(ngl::SimpleIndexVAO::VertexData(
-                                                  sizeof(ngl::Vec3)*_vertices.size(),
-                                                  _vertices[0].m_x,
-                                                  uint(_indices.size()),
-                                                  &_indices[0],
-                                                  _indexType));
-  // data is 12 bytes apart (=sizeof(Vec3))
-  _vao->setVertexAttributePointer(0,3,GL_FLOAT,12,0);
-  _vao->setNumIndices(_indices.size());
-  _vao->unbind();
-}
+  (*_shader)[_shaderName]->use();
 
-//------------------------------------------------------------------------------------------------------------------------
+  GLint textureMapLocation = glGetUniformLocation((*_shader)[_shaderName]->getID(), "textureMap");
+  GLint normalMapLocation  = glGetUniformLocation((*_shader)[_shaderName]->getID(), "normalMap");
+  glUniform1i(textureMapLocation, 0);
+  glUniform1i(normalMapLocation,  1);
 
-void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LSystem &_treeType,
-                                     Instance &_instance, std::vector<ngl::Mat4> &_transforms)
-{
-  // create a vao using GL_LINES
-  _vao=ngl::VAOFactory::createVAO("instanceCacheVAO",GL_LINES);
-  _vao->bind();
-  // set our data for the VAO:
-  //    (1) vertexBufferSize, (2) vertexBufferStart,
-  //    (3) indexBufferSize, (4) indexBufferStart,
-  //    (5) transformBufferSize, (6) transformBufferStart
-  _vao->setData(ngl::InstanceCacheVAO::VertexData(
-                       sizeof(ngl::Vec3)*_treeType.m_heroVertices.size(),
-                       _treeType.m_heroVertices[0].m_x,
-                       uint(_instance.m_instanceEnd-_instance.m_instanceStart),
-                       &_treeType.m_heroIndices[_instance.m_instanceStart],
-                       uint(_transforms.size()),
-                       &_transforms[0]));
-  // set number of indices to length of current instance
-  _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
+  // Then bind the uniform samplers to texture units:
+  GLuint texture;
+  glGenTextures(1, &texture);
+  glActiveTexture(GL_TEXTURE0 + 0); // Texture unit 0
+  glBindTexture(GL_TEXTURE_2D, texture);
+  // set the texture wrapping/filtering options (on the currently bound texture object)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // load and generate the texture
+  int width, height, nrChannels;
+  unsigned char *data = stbi_load(_textureMapFile, &width, &height, &nrChannels, 0);
+  if (data)
+  {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+      glGenerateMipmap(GL_TEXTURE_2D);
+  }
+  else
+  {
+      std::cout << "Failed to load texture for "<<_shaderName<<"\n";
+  }
+  stbi_image_free(data);
 
-  glGenBuffers(1, &m_rightBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, m_rightBuffer);
-  glBufferData(GL_ARRAY_BUFFER,
-               sizeof(ngl::Vec3)*_treeType.m_heroRightVectors.size(),
-               &_treeType.m_heroRightVectors[0].m_x,
-               GL_STATIC_DRAW);
-  _vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
-
-  glGenBuffers(1, &m_thicknessBuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, m_thicknessBuffer);
-  glBufferData(GL_ARRAY_BUFFER,
-               sizeof(float)*_treeType.m_heroThicknessValues.size(),
-               &_treeType.m_heroThicknessValues[0],
-               GL_STATIC_DRAW);
-  _vao->setVertexAttributePointer(6,1,GL_FLOAT,4,0);
-
-  _vao->unbind();
+  unsigned int normalMap;
+  glGenTextures(1, &normalMap);
+  glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
+  glBindTexture(GL_TEXTURE_2D, normalMap);
+  // set the texture wrapping/filtering options (on the currently bound texture object)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // load and generate the texture
+  data = stbi_load(_normalMapFile, &width, &height, &nrChannels, 0);
+  if (data)
+  {
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+      glGenerateMipmap(GL_TEXTURE_2D);
+  }
+  else
+  {
+      std::cout << "Failed to load normal map for "<<_shaderName<<"\n";
+  }
+  stbi_image_free(data);
 }
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -224,13 +217,11 @@ void NGLScene::refineTerrain()
   ngl::Vec3 from = m_currentCamera->m_from;
   from = m_initialRotation.inverse() * m_currentMouseTransform->inverse() * from;
   m_terrain.meshRefine(from, m_tolerance, 100.0);
-  //note that we need to use GLuints for the terrain because the data can be too large for GLushorts
-  buildVAO(m_terrainVAO,
-           m_terrain.m_vertsToBeRendered,
-           m_terrain.m_indicesToBeRendered,
-           GL_TRIANGLE_STRIP, GL_UNSIGNED_INT);
+  buildTerrainVAO();
 }
 
+//------------------------------------------------------------------------------------------------------------------------
+/// PAINT_GL
 //------------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::paintGL()
@@ -253,57 +244,13 @@ void NGLScene::paintGL()
 
   if(m_buildTreeVAO)
   {
-    buildVAO(m_treeVAOs[m_treeTabNum],
-             m_currentLSystem->m_vertices,
-             m_currentLSystem->m_indices,
-             GL_LINES, GL_UNSIGNED_SHORT);
-
-    /*for(auto &vec : m_currentLSystem->m_rightVectors)
-    {
-      print(vec);
-    }*/
-    (*shader)["TreeShader_Geom"]->use();
-    shader->setUniform("MVP",MVP);
-    shader->setUniform("normalMatrix",normalMatrix);
-    shader->setUniform("MV",MV);
-    shader->setUniform("lightPos",lightPos);
-
-    m_treeVAOs[m_treeTabNum]->bind();
-
-    glGenBuffers(1, &m_rightBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, m_rightBuffer);
-    glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(ngl::Vec3)*m_currentLSystem->m_rightVectors.size(),
-                 &m_currentLSystem->m_rightVectors[0],
-                 GL_STATIC_DRAW);
-    m_treeVAOs[m_treeTabNum]->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
-
-    glGenBuffers(1, &m_thicknessBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, m_thicknessBuffer);
-    glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(ngl::Vec3)*m_currentLSystem->m_thicknessValues.size(),
-                 &m_currentLSystem->m_thicknessValues[0],
-                 GL_STATIC_DRAW);
-    m_treeVAOs[m_treeTabNum]->setVertexAttributePointer(2,1,GL_FLOAT,4,0);
-
-    m_treeVAOs[m_treeTabNum]->unbind();
-
+    buildTreeVAO(m_treeTabNum);
     m_buildTreeVAO = false;
   }
 
   if(m_buildForestVAOs)
   {
-    for(size_t t=0; t<m_forest.m_treeTypes.size(); t++)
-    {
-      LSystem &treeType = m_forest.m_treeTypes[t];
-      CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
-      RESIZE_CACHE_BY_OTHER_CACHE(m_forestVAOs[t], instanceCache)
-      FOR_EACH_ELEMENT(m_forestVAOs[t],
-                       buildInstanceCacheVAO(m_forestVAOs[t][ID][AGE][INDEX],
-                                             treeType,
-                                             instanceCache[ID][AGE][INDEX],
-                                             m_forest.m_transformCache[t][ID][AGE][INDEX]))
-    }
+    buildForestVAO();
     m_buildForestVAOs = false;
   }
 
@@ -315,7 +262,6 @@ void NGLScene::paintGL()
       {
         drawVAO(m_gridVAO, shader, "GridShader", MVP);
       }
-      lightPos = (currentTransform * ngl::Vec4(0,50,0,1)).toVec3();
 
       if(m_currentLSystem->m_skeletonMode==true)
       {
@@ -323,6 +269,10 @@ void NGLScene::paintGL()
       }
       else
       {
+        loadTextures(shader, "TreeShader_Geom",
+                     "textures/American_oak_pxr128.jpg",
+                     "textures/American_oak_pxr128_normal.jpg");
+
         (*shader)["TreeShader_Geom"]->use();
         shader->setUniform("MVP",MVP);
         shader->setUniform("normalMatrix",normalMatrix);
@@ -344,112 +294,10 @@ void NGLScene::paintGL()
           glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         }
         refineTerrain();
-        //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
 
-        m_terrainVAO->bind();
-        glGenBuffers(1, &m_normalBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                     sizeof(ngl::Vec3)*m_terrain.m_normalsToBeRendered.size(),
-                     &m_terrain.m_normalsToBeRendered[0],
-                     GL_STATIC_DRAW);
-        m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
-
-/*        ngl::Texture texture("textures/Dirt_and_gravel_pxr128.jpg");
-        texture.setTextureGL();
-        texture.loadImage("textures/Dirt_and_gravel_pxr128_normal.jpg");
-        texture.setMultiTexture(1);
-        texture.setTextureGL();*/
-
-        (*shader)["TerrainShader"]->use();
-
-        ///@ref https://stackoverflow.com/questions/25252512/how-can-i-pass-multiple-textures-to-a-single-shader
-        // Get the uniform variables location.
-        auto textureMapLocation = glGetUniformLocation((*shader)["TerrainShader"]->getID(), "textureMap");
-        auto normalMapLocation  = glGetUniformLocation((*shader)["TerrainShader"]->getID(), "normalMap");
-
-        glUseProgram(shader->getShaderID("TerrainShaderFragment"));
-        glUniform1i(textureMapLocation, 0);
-        glUniform1i(normalMapLocation,  1);
-
-        // Then bind the uniform samplers to texture units:
-        unsigned int texture;
-        glGenTextures(1, &texture);
-        glActiveTexture(GL_TEXTURE0 + 0); // Texture unit 0
-        glBindTexture(GL_TEXTURE_2D, texture);
-        // set the texture wrapping/filtering options (on the currently bound texture object)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // load and generate the texture
-        int width, height, nrChannels;
-        unsigned char *data = stbi_load("textures/groundTexture.jpg", &width, &height, &nrChannels, 0);
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            //std::cout << "Failed to load texture" << std::endl;
-        }
-        stbi_image_free(data);
-
-        unsigned int normalMap;
-        glGenTextures(1, &normalMap);
-        glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, normalMap);
-        // set the texture wrapping/filtering options (on the currently bound texture object)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // load and generate the texture
-        int width2, height2, nrChannels2;
-        unsigned char *data2 = stbi_load("textures/Dirt_and_gravel_pxr128_normal.jpg", &width2, &height2, &nrChannels2, 0);
-        if (data2)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            std::cout << "Failed to load texture" << std::endl;
-        }
-        stbi_image_free(data2);
-
-
-        glGenBuffers(1, &m_UVBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                     sizeof(ngl::Vec2)*m_terrain.m_UVsToBeRendered.size(),
-                     &m_terrain.m_UVsToBeRendered[0],
-                     GL_STATIC_DRAW);
-        m_terrainVAO->setVertexAttributePointer(2,2,GL_FLOAT,sizeof(ngl::Vec2),0);
-
-        glGenBuffers(1, &m_tangentBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_tangentBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                     sizeof(ngl::Vec3)*m_terrain.m_tangentsToBeRendered.size(),
-                     &m_terrain.m_tangentsToBeRendered[0],
-                     GL_STATIC_DRAW);
-        m_terrainVAO->setVertexAttributePointer(3,3,GL_FLOAT,sizeof(ngl::Vec3),0);
-
-        glGenBuffers(1, &m_bitangentBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_bitangentBuffer);
-        glBufferData(GL_ARRAY_BUFFER,
-                     sizeof(ngl::Vec3)*m_terrain.m_bitangentsToBeRendered.size(),
-                     &m_terrain.m_bitangentsToBeRendered[0],
-                     GL_STATIC_DRAW);
-        m_terrainVAO->setVertexAttributePointer(4,3,GL_FLOAT,sizeof(ngl::Vec3),0);
-
-        /*for(auto UV : m_terrain.m_UVsToBeRendered)
-        {
-          print(UV.m_x, " ", UV.m_y, "\n");
-        }*/
-
-        m_terrainVAO->unbind();
+        loadTextures(shader, "TerrainShader",
+                     "textures/groundTexture.jpg",
+                     "textures/Dirt_and_gravel_pxr128_normal.jpg");
 
         (*shader)["TerrainShader"]->use();
         shader->setUniform("MVP",MVP);
@@ -468,9 +316,8 @@ void NGLScene::paintGL()
       {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
         MVP = MVP*m_layoutRotation;
-        //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
         Grid grid(25,80);
-        buildVAO(m_terrainVAO, grid.m_vertices,  grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
+        buildSimpleIndexVAO(m_terrainVAO, grid.m_vertices,  grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
         drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
       }
 
@@ -478,7 +325,7 @@ void NGLScene::paintGL()
       {
         m_pointIndices.push_back(i);
       }
-      buildVAO(m_terrainVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
+      buildSimpleIndexVAO(m_terrainVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
       glPointSize(20);
       drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
 
@@ -487,73 +334,28 @@ void NGLScene::paintGL()
 
     case 2:
     {
-      //refineTerrain();
-      //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
       if(m_terrainWireframe == true)
       {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
       }
       refineTerrain();
-      //drawVAO(m_terrainVAO, shader, "TerrainShader", MVP);
 
-      m_terrainVAO->bind();
-      glGenBuffers(1, &m_normalBuffer);
-      glBindBuffer(GL_ARRAY_BUFFER, m_normalBuffer);
-      glBufferData(GL_ARRAY_BUFFER,
-                   sizeof(ngl::Vec3)*m_terrain.m_normalsToBeRendered.size(),
-                   &m_terrain.m_normalsToBeRendered[0],
-                   GL_STATIC_DRAW);
-      m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
-
-      unsigned int texture;
-      glGenTextures(1, &texture);
-      glBindTexture(GL_TEXTURE_2D, texture);
-      // set the texture wrapping/filtering options (on the currently bound texture object)
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      // load and generate the texture
-      int width, height, nrChannels;
-      unsigned char *data = stbi_load("textures/groundTexture.jpg", &width, &height, &nrChannels, 0);
-      if (data)
-      {
-          glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-          glGenerateMipmap(GL_TEXTURE_2D);
-      }
-      else
-      {
-          std::cout << "Failed to load texture" << std::endl;
-      }
-      stbi_image_free(data);
-
-      glGenBuffers(1, &m_UVBuffer);
-      glBindBuffer(GL_ARRAY_BUFFER, m_UVBuffer);
-      glBufferData(GL_ARRAY_BUFFER,
-                   sizeof(ngl::Vec2)*m_terrain.m_UVsToBeRendered.size(),
-                   &m_terrain.m_UVsToBeRendered[0],
-                   GL_STATIC_DRAW);
-      m_terrainVAO->setVertexAttributePointer(2,2,GL_FLOAT,sizeof(ngl::Vec2),0);
-      m_terrainVAO->unbind();
-
-      glBindTexture(GL_TEXTURE_2D, texture);
-
-      /*for(auto UV : m_terrain.m_UVsToBeRendered)
-      {
-        print(UV.m_x, " ", UV.m_y, "\n");
-      }*/
+      loadTextures(shader, "TerrainShader",
+                   "textures/groundTexture.jpg",
+                   "textures/Dirt_and_gravel_pxr128_normal.jpg");
 
       (*shader)["TerrainShader"]->use();
       shader->setUniform("MVP",MVP);
       shader->setUniform("normalMatrix",normalMatrix);
+      shader->setUniform("newNormalMatrix",newNormalMatrix);
       shader->setUniform("MV",MV);
+      shader->setUniform("M",M);
       shader->setUniform("lightPosition",lightPos);
       shader->setUniform("maxHeight",m_forest.m_terrainGen.m_amplitude);
 
       m_terrainVAO->bind();
       m_terrainVAO->draw();
       m_terrainVAO->unbind();
-
 
       (*shader)["ForestShader_Geom"]->use();
       shader->setUniform("MVP",MVP);
