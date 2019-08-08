@@ -170,7 +170,7 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief runs the LOD reduction algorithm on the terrain based on the current camera position and the user-specified
   /// tolerance, then fills m_indices according to this data
-  /// @ref this method, and the methods it calls, is based on pseudocode from Lindstrom and Pascucci (2001)
+  /// @ref this method, and the methods it calls, are based on pseudocode from Lindstrom and Pascucci (2001)
   /// @param [in] cameraPos, the position of the camera
   /// @param [in] tolerance, the user-specified error tolerance
   /// @param [in] lambda, this should be set equal to the field of view divided by the number of pixels along the
@@ -253,7 +253,7 @@ public:
   void assignRadius();
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief recursively assigns a delta value to each vertex
-  /// @param [in] DAGGrandParent, index of the current vertex's grand parentin the DAG
+  /// @param [in] DAGGrandParent, index of the current vertex's grandparent in the DAG
   /// @param [in] DAGParent, index of the current vertex's parent in the DAG
   /// @param [in] currentVertex, index of the current vertex being assigned
   //--------------------------------------------------------------------------------------------------------------------

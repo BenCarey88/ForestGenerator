@@ -317,6 +317,8 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   float m_tolerance = 0.02f;
 
+  TerrainGenerator m_terrainGen;
+
   int m_terrainDimension = 129;
 
   bool m_terrainWireframe = false;

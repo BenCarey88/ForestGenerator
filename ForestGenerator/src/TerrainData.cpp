@@ -289,7 +289,7 @@ void TerrainData::assignChildren(size_t _DAGParent, size_t _currentVertex, int _
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-///PUBLIC METHODS: ASSIGN OTHER VERTEX MEMBER VARIABLES
+///PUBLIC METHODS: ASSIGNING OTHER VERTEX MEMBER VARIABLES
 //----------------------------------------------------------------------------------------------------------------------
 
 void TerrainData::assignRadius()

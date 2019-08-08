@@ -57,7 +57,7 @@ void NGLScene::updateForest()
 {
   m_forest = Forest(m_LSystems,
                     m_width, m_terrainDimension,
-                     m_numTrees, m_numHeroTrees);
+                    m_numTrees, m_numHeroTrees);
 
   m_buildForestVAOs = true;
 }

@@ -5,7 +5,7 @@
 /// @date 23/01/19 updated to NCCA coding standards
 /// Revision History :
 /// Initial Version 21/01/19, used for ASE TerrainGeneration project
-/// 01/09/19 added to ForestGeneration masters project
+/// 01/09/19 added to ForestGeneration masters project and slightly updated
 //----------------------------------------------------------------------------------------------------------------------
 
 #ifndef TERRAINGENERATOR_H_
