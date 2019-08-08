@@ -108,15 +108,15 @@ void NGLScene::initializeGL()
   // now to load the shaders
   // grab an instance of shader manager
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+  shader->loadShader("SkeletalTreeShader", "shaders/SkeletalTreeVertex.glsl",
+                     "shaders/SkeletalTreeFragment.glsl");
   shader->loadShader("TreeShader", "shaders/TreeVertex.glsl",
-                     "shaders/TreeFragment.glsl");
-  shader->loadShader("TreeShader_Geom", "shaders/TreeVertex.glsl",
                      "shaders/TreeFragment.glsl", "shaders/TreeGeometry.glsl");
   shader->loadShader("GridShader", "shaders/GridVertex.glsl",
                      "shaders/GridFragment.glsl");
+  shader->loadShader("SkeletalForestShader", "shaders/SkeletalForestVertex.glsl",
+                     "shaders/SkeletalForestFragment.glsl");
   shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
-                     "shaders/ForestFragment.glsl");
-  shader->loadShader("ForestShader_Geom", "shaders/ForestVertex.glsl",
                      "shaders/ForestFragment.glsl", "shaders/ForestGeometry.glsl");
   shader->loadShader("TerrainShader", "shaders/TerrainVertex.glsl",
                      "shaders/TerrainFragment.glsl");
@@ -132,7 +132,7 @@ void NGLScene::initializeGL()
   }
   buildGridVAO();
   //And load intial textures
-  loadTextures(shader, "TreeShader_Geom",
+  loadTextures(shader, "TreeShader",
                "textures/American_oak_pxr128.jpg",
                "textures/American_oak_pxr128_normal.jpg");
 }
@@ -192,12 +192,12 @@ void NGLScene::paintGL()
       }
       if(m_currentLSystem->m_skeletonMode==true)
       {
-        loadUniformsToShader(shader, "TreeShader");
+        loadUniformsToShader(shader, "SkeletalTreeShader");
       }
       else
       {
-        loadUniformsToShader(shader, "TreeShader_Geom");
-        loadTextures(shader, "TreeShader_Geom",
+        loadUniformsToShader(shader, "TreeShader");
+        loadTextures(shader, "TreeShader",
                      "textures/American_oak_pxr128.jpg",
                      "textures/American_oak_pxr128_normal.jpg");
       }
@@ -256,8 +256,8 @@ void NGLScene::paintGL()
                    "textures/Lawn_grass_pxr128_normal.jpg");
       drawVAO(m_terrainVAO);
 
-      loadUniformsToShader(shader, "ForestShader_Geom");
-      loadTextures(shader, "ForestShader_Geom",
+      loadUniformsToShader(shader, "ForestShader");
+      loadTextures(shader, "ForestShader",
                    "textures/American_oak_pxr128.jpg",
                    "textures/American_oak_pxr128_normal.jpg");
       for(size_t t=0; t<m_numTreeTabs; t++)

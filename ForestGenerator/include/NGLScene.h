@@ -217,18 +217,6 @@ protected:
 
   std::vector<ngl::Vec3> m_points = {};
   std::vector<GLshort> m_pointIndices = {};
-  GLuint m_normalBuffer = 0;
-  GLuint m_UVBuffer = 0;
-  GLuint m_tangentBuffer = 0;
-  GLuint m_bitangentBuffer = 0;
-
-  GLuint m_rightBuffer = 0;
-  GLuint m_thicknessBuffer = 0;
-
-  GLuint m_textureBufferTrees = 0;
-  GLuint m_normalMapBufferTrees = 0;
-  GLuint m_textureBufferTerrain = 0;
-  GLuint m_normalMapBufferTerrain = 0;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
