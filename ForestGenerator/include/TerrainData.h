@@ -161,6 +161,8 @@ public:
   std::vector<GLuint> m_indicesToBeRendered = {};
   std::vector<ngl::Vec2> m_UVsToBeRendered = {};
 
+  int m_UVRepeat = 3;
+
   //call this after meshRefine
   void fillVerticesAndIndicesForRendering();
 

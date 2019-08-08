@@ -126,7 +126,11 @@ void TerrainData::fillVerticesAndIndicesForRendering()
     m_normalsToBeRendered.push_back(vert.normal);
     m_tangentsToBeRendered.push_back(vert.tangent);
     m_bitangentsToBeRendered.push_back(vert.bitangent);
-    m_UVsToBeRendered.push_back(ngl::Vec2(float(vert.originalX),float(vert.originalY))/m_dimension);
+
+    int size = m_dimension/m_UVRepeat;
+    float U = float(vert.originalX % size) / size;
+    float V = float(vert.originalY % size) / size;
+    m_UVsToBeRendered.push_back(ngl::Vec2(U,V));
   }
   for(auto ind : m_indices)
   {

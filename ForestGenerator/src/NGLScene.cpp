@@ -248,6 +248,7 @@ void NGLScene::paintGL()
   ngl::Mat4 MV = m_view*currentTransform;
   ngl::Mat4 M = currentTransform;
   ngl::Mat3 normalMatrix= MV.inverse().transpose();
+  ngl::Mat3 newNormalMatrix= m_view.inverse().transpose();
   ngl::Vec3 lightPos = (currentTransform * ngl::Vec4(0,100,100,1)).toVec3();
 
   if(m_buildTreeVAO)
@@ -354,17 +355,18 @@ void NGLScene::paintGL()
                      GL_STATIC_DRAW);
         m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
 
-        ngl::Texture texture("textures/Dirt_and_gravel_pxr128.jpg");
+/*        ngl::Texture texture("textures/Dirt_and_gravel_pxr128.jpg");
         texture.setTextureGL();
         texture.loadImage("textures/Dirt_and_gravel_pxr128_normal.jpg");
         texture.setMultiTexture(1);
-        texture.setTextureGL();
+        texture.setTextureGL();*/
 
+        (*shader)["TerrainShader"]->use();
 
-/*        ///@ref https://stackoverflow.com/questions/25252512/how-can-i-pass-multiple-textures-to-a-single-shader
+        ///@ref https://stackoverflow.com/questions/25252512/how-can-i-pass-multiple-textures-to-a-single-shader
         // Get the uniform variables location.
-        auto textureMapLocation = glGetUniformLocation(shader->getShaderID("TerrainShaderFragment"), "textureMap");
-        auto normalMapLocation  = glGetUniformLocation(shader->getShaderID("TerrainShaderFragment"), "normalMap");
+        auto textureMapLocation = glGetUniformLocation((*shader)["TerrainShader"]->getID(), "textureMap");
+        auto normalMapLocation  = glGetUniformLocation((*shader)["TerrainShader"]->getID(), "normalMap");
 
         glUseProgram(shader->getShaderID("TerrainShaderFragment"));
         glUniform1i(textureMapLocation, 0);
@@ -382,7 +384,7 @@ void NGLScene::paintGL()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // load and generate the texture
         int width, height, nrChannels;
-        unsigned char *data = stbi_load("textures/Dirt_and_gravel_pxr128.jpg", &width, &height, &nrChannels, 0);
+        unsigned char *data = stbi_load("textures/groundTexture.jpg", &width, &height, &nrChannels, 0);
         if (data)
         {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -415,7 +417,7 @@ void NGLScene::paintGL()
         {
             std::cout << "Failed to load texture" << std::endl;
         }
-        stbi_image_free(data2);*/
+        stbi_image_free(data2);
 
 
         glGenBuffers(1, &m_UVBuffer);
@@ -452,6 +454,7 @@ void NGLScene::paintGL()
         (*shader)["TerrainShader"]->use();
         shader->setUniform("MVP",MVP);
         shader->setUniform("normalMatrix",normalMatrix);
+        shader->setUniform("newNormalMatrix",newNormalMatrix);
         shader->setUniform("MV",MV);
         shader->setUniform("M",M);
         shader->setUniform("lightPosition",lightPos);

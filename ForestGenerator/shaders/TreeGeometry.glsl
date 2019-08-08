@@ -10,6 +10,9 @@ in float thickness[2];
 
 out vec3 colour;
 out vec3 normal;
+out vec3 tangent;
+out vec3 bitangent;
+out vec2 UV;
 out vec3 worldPos;
 
 uniform mat4 MVP;
@@ -31,12 +34,18 @@ void main ()
         gl_Position = MVP * vec4(worldSpacePos[0] + 0.5*thickness[0]*compass[i], 1);
         colour = vertCol[0];
         normal = compass[i];
+        tangent = compass[(i+2)%8];
+        bitangent = cross(normal, tangent);
+        UV = vec2(float(i)/9,0);
         worldPos = worldSpacePos[0];
         EmitVertex();
 
         gl_Position = MVP * vec4(worldSpacePos[1] + 0.5*thickness[1]*compass[i], 1);
         colour = vertCol[1];
         normal = compass[i];
+        tangent = compass[(i+2)%8];
+        bitangent = cross(normal, tangent);
+        UV = vec2(float(i)/9,1);
         worldPos = worldSpacePos[0];
         EmitVertex();
     }

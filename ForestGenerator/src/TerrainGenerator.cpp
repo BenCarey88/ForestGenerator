@@ -5,6 +5,7 @@
 
 #include <ngl/Vec2.h>
 #include "TerrainGenerator.h"
+#include "PrintFunctions.h"
 
 TerrainGenerator::TerrainGenerator(int _dimension, float _width) :
   m_dimension(_dimension), m_scale(_width/_dimension) {}
@@ -52,12 +53,17 @@ void TerrainGenerator::computeNormals()
       float L = m_heightMap[getIndex(x-1,z)];
       float R = m_heightMap[getIndex(x+1,z)];
       float B = m_heightMap[getIndex(x,z+1)];
+
       ngl::Vec3 normal(L-R, 2*m_scale, T-B);
-      ngl::Vec3 tangent(2,R-L,0);
-      ngl::Vec3 bitangent(0,T-B,2);
+      ngl::Vec3 tangent(2*m_scale,R-L,0);
+      ngl::Vec3 bitangent = normal.cross(tangent);//(0,B-T,2*m_scale);
+
       normal.normalize();
       tangent.normalize();
       bitangent.normalize();
+
+      //print("heightmap index: ", i, ", bitangent.tangent = ", bitangent.dot(tangent), "\n");
+
       m_normals[i]=normal;
       m_tangents[i]=tangent;
       m_bitangents[i]=bitangent;
