@@ -259,6 +259,7 @@ protected:
   std::vector<std::unique_ptr<ngl::AbstractVAO>> m_treeVAOs;
 
   std::vector<std::unique_ptr<ngl::AbstractVAO>> m_leafVAOs;
+  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_polygonVAOs;
 
   //nested std::vector of VAOs corresponding to instance caches for the forest rendering
   //outer layer separates the instance caches of the differing tree types
@@ -358,6 +359,7 @@ protected:
   void buildTerrainVAO();
   void buildTreeVAO(size_t _treeNum);
   void buildLeafVAO(size_t _treeNum);
+  void buildPolygonVAO(size_t _treeNum);
 
   void buildForestVAOs();
 

@@ -88,7 +88,7 @@ void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LS
 }
 
 //------------------------------------------------------------------------------------------------------------------------
-/// Specific methods for each thing we need to draw: grid, tree, terrain and forest
+/// Specific methods for each thing we need to draw: grid, tree, leaves, LSystem polygons, terrain and forest
 //------------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::buildGridVAO()
@@ -133,6 +133,20 @@ void NGLScene::buildLeafVAO(size_t _treeNum)
                       &m_LSystems[_treeNum].m_leafRightVectors[0]);
   m_leafVAOs[_treeNum]->setVertexAttributePointer(2,3,GL_FLOAT,12,0);
   m_leafVAOs[_treeNum]->unbind();
+}
+//------------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::buildPolygonVAO(size_t _treeNum)
+{
+  buildSimpleIndexVAO(m_polygonVAOs[_treeNum],
+                  m_LSystems[_treeNum].m_polygonVertices,
+                  m_LSystems[_treeNum].m_polygonIndices,
+                  GL_TRIANGLES, GL_UNSIGNED_SHORT);
+  /*for(auto ind : m_LSystems[_treeNum].m_polygonIndices)
+  {
+    print(ind, " ");
+  }
+  newLine();*/
 }
 
 //------------------------------------------------------------------------------------------------------------------------

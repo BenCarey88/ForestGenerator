@@ -94,11 +94,11 @@ TEST(LSystem, addInstancingCommands)
   L.addInstancingCommands();
 
   EXPECT_EQ(L.m_rules[0].m_RHS[0],"!<(1,#)[B]>//[f]//<(2,#)[C/C]>////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!{(1,#)[B]}//[f]//<(2,#)[C/C]>////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!<(1,#)[B]>//[f]//{(2,#)[C/C]}////B");
-  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!{(1,#)[B]}//[f]//{(2,#)[C/C]}////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[1],"!@(1,#)[B]$//[f]//<(2,#)[C/C]>////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[2],"!<(1,#)[B]>//[f]//@(2,#)[C/C]$////B");
+  EXPECT_EQ(L.m_rules[0].m_RHS[3],"!@(1,#)[B]$//[f]//@(2,#)[C/C]$////B");
   EXPECT_EQ(L.m_rules[0].m_RHS[4],"F//<(1,#)[B]>//F");
-  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//{(1,#)[B]}//F");
+  EXPECT_EQ(L.m_rules[0].m_RHS[5],"F//@(1,#)[B]$//F");
 
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[0],0.144);
   EXPECT_FLOAT_EQ(L.m_rules[0].m_prob[1],0.096);
@@ -125,13 +125,13 @@ TEST(LSystem, addInstancingCommands_nestedBranches)
 
   EXPECT_EQ(L.m_rules[0].m_RHS.size(),8);
   EXPECT_EQ(L.m_rules[0].m_RHS[0],"<(1,#)[B<(2,#)[B]><(3,#)[C[FFF]]>]>");
-  EXPECT_EQ(L.m_rules[0].m_RHS[1],"{(1,#)[B<(2,#)[B]><(3,#)[C[FFF]]>]}");
-  EXPECT_EQ(L.m_rules[0].m_RHS[2],"<(1,#)[B{(2,#)[B]}<(3,#)[C[FFF]]>]>");
-  EXPECT_EQ(L.m_rules[0].m_RHS[3],"{(1,#)[B{(2,#)[B]}<(3,#)[C[FFF]]>]}");
-  EXPECT_EQ(L.m_rules[0].m_RHS[4],"<(1,#)[B<(2,#)[B]>{(3,#)[C[FFF]]}]>");
-  EXPECT_EQ(L.m_rules[0].m_RHS[5],"{(1,#)[B<(2,#)[B]>{(3,#)[C[FFF]]}]}");
-  EXPECT_EQ(L.m_rules[0].m_RHS[6],"<(1,#)[B{(2,#)[B]}{(3,#)[C[FFF]]}]>");
-  EXPECT_EQ(L.m_rules[0].m_RHS[7],"{(1,#)[B{(2,#)[B]}{(3,#)[C[FFF]]}]}");
+  EXPECT_EQ(L.m_rules[0].m_RHS[1],"@(1,#)[B<(2,#)[B]><(3,#)[C[FFF]]>]$");
+  EXPECT_EQ(L.m_rules[0].m_RHS[2],"<(1,#)[B@(2,#)[B]$<(3,#)[C[FFF]]>]>");
+  EXPECT_EQ(L.m_rules[0].m_RHS[3],"@(1,#)[B@(2,#)[B]$<(3,#)[C[FFF]]>]$");
+  EXPECT_EQ(L.m_rules[0].m_RHS[4],"<(1,#)[B<(2,#)[B]>@(3,#)[C[FFF]]$]>");
+  EXPECT_EQ(L.m_rules[0].m_RHS[5],"@(1,#)[B<(2,#)[B]>@(3,#)[C[FFF]]$]$");
+  EXPECT_EQ(L.m_rules[0].m_RHS[6],"<(1,#)[B@(2,#)[B]$@(3,#)[C[FFF]]$]>");
+  EXPECT_EQ(L.m_rules[0].m_RHS[7],"@(1,#)[B@(2,#)[B]$@(3,#)[C[FFF]]$]$");
 
   EXPECT_EQ(L.m_branches.size(),4);
   EXPECT_EQ(L.m_branches[0],"FFFAA");

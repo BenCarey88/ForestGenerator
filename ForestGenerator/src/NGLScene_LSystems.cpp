@@ -10,6 +10,7 @@ void NGLScene::initializeLSystems()
   m_LSystems.resize(m_numTreeTabs);
   m_treeVAOs.resize(m_numTreeTabs);
   m_leafVAOs.resize(m_numTreeTabs);
+  m_polygonVAOs.resize(m_numTreeTabs);
 
   std::string axiom;
   std::vector<std::string> rules;

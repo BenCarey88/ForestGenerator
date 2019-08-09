@@ -155,9 +155,13 @@ void LSystem::breakDownRules(std::vector<std::string> _rules)
     {
       std::cerr<<"WARNING: excluding rule because it contains ':' before '=' \n";
     }
-    else if(std::regex_search(ruleString, std::regex("[{}<>]")))
+    else if(std::regex_search(ruleString, std::regex("[@$<>]")))
     {
       std::cerr<<"WARNING: excluding rule because it uses one of the reserved characters '{', '}', '<', or '>' \n";
+    }
+    else if(std::regex_search(ruleString, std::regex("\\{[^}]*\\{")))
+    {
+      std::cerr<<"WARNING: excluding rule because it starts a polygon within another polygon \n";
     }
     else
     {

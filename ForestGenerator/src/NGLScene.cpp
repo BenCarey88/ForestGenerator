@@ -74,6 +74,10 @@ NGLScene::~NGLScene()
   {
     LeafVAO->removeVAO();
   }
+  for(auto &polygonVAO : m_polygonVAOs)
+  {
+    polygonVAO->removeVAO();
+  }
   for(size_t t=0; t<m_numTreeTabs; t++)
   {
     FOR_EACH_ELEMENT(m_forestVAOs[t],
@@ -118,6 +122,8 @@ void NGLScene::initializeGL()
                      "shaders/TreeFragment.glsl", "shaders/TreeGeometry.glsl");
   shader->loadShader("LeafShader", "shaders/LeafVertex.glsl",
                      "shaders/LeafFragment.glsl", "shaders/LeafGeometry.glsl");
+  shader->loadShader("PolygonShader", "shaders/PolygonVertex.glsl",
+                     "shaders/PolygonFragment.glsl");
   shader->loadShader("GridShader", "shaders/GridVertex.glsl",
                      "shaders/GridFragment.glsl");
   shader->loadShader("SkeletalForestShader", "shaders/SkeletalForestVertex.glsl",
@@ -211,12 +217,17 @@ void NGLScene::paintGL()
       }
       drawVAO(m_treeVAOs[m_treeTabNum]);
 
-      glPointSize(20);
       buildLeafVAO(m_treeTabNum);
       loadUniformsToShader(shader, "LeafShader");
+      //NOTE: LOADING TEXTURES IS SLOW!
+      //change this so we only load once at the beginning rather than everytime we draw
       loadTextures(shader, "LeafShader",
                    "textures/leaf2.jpg", "textures/leaf2.jpg");
       drawVAO(m_leafVAOs[m_treeTabNum]);
+
+      buildPolygonVAO(m_treeTabNum);
+      loadUniformsToShader(shader, "PolygonShader");
+      drawVAO(m_polygonVAOs[m_treeTabNum]);
       break;
     }
 

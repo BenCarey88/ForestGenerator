@@ -163,14 +163,20 @@ public://-----------------------------------------------------------------------
   std::vector<GLshort> m_heroIndices= {};
   std::vector<ngl::Vec3> m_heroRightVectors = {};
   std::vector<float> m_heroThicknessValues= {};
-  bool m_forestMode = false;
 
   std::vector<ngl::Vec3> m_leafVertices = {};
   std::vector<GLushort> m_leafIndices = {};
   std::vector<ngl::Vec3> m_leafDirections = {};
   std::vector<ngl::Vec3> m_leafRightVectors = {};
 
+  //polygons will be drawn with gl triangles not triangle strips
+  //to allow for multiple ones in different places
+  std::vector<ngl::Vec3> m_polygonVertices = {};
+  std::vector<GLushort> m_polygonIndices = {};
+  //std::vector<ngl::Vec3> m_polygonRightVectors = {};
+
   size_t m_maxInstancePerLevel = 10;
+  bool m_forestMode = false;
 
   //instance cache is vectors of instances nested 3 deep
   //outer layer separates instances by id

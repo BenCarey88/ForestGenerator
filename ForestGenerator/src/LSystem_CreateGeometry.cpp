@@ -56,10 +56,17 @@ void LSystem::createGeometry()
   Instance * currentInstance;
   std::vector<Instance *> savedInstance = {};
 
+  std::vector<ngl::Vec3> temporaryPolygon = {};
+  bool makingPolygon = false;
+
   m_leafVertices = {};
   m_leafIndices = {};
   m_leafDirections = {};
   m_leafRightVectors = {};
+
+  m_polygonVertices = {};
+  m_polygonIndices = {};
+  //m_polygonRightVectors = {};
 
   std::vector<ngl::Vec3> * vertices;
   std::vector<GLshort> * indices;
@@ -76,7 +83,7 @@ void LSystem::createGeometry()
     vertices = &m_vertices;
     indices = &m_indices;
     rightVectors = &m_rightVectors;
-    thicknessValues = &m_thicknessValues;    
+    thicknessValues = &m_thicknessValues;
   }
   else
   {
@@ -111,6 +118,81 @@ void LSystem::createGeometry()
         break;
       }
 
+      //move forward without adding geometry
+      case 'f':
+      {
+        paramVar = stepSize;
+        parseBrackets(treeString, i, paramVar);
+        lastVertex += paramVar*dir;
+        vertices->push_back(lastVertex);
+        rightVectors->push_back(right);
+        thicknessValues->push_back(thickness);
+        lastIndex = GLshort(vertices->size()-1);
+        break;
+      }
+
+      //start polygon
+      case '{':
+      {
+        makingPolygon = true;
+        break;
+      }
+
+      //end polygon
+      case '}':
+      {
+        if(temporaryPolygon.size()>0)
+        {
+          size_t offset = m_polygonVertices.size();
+          size_t n = temporaryPolygon.size();
+          //we want these indices:    //but we need to reverse every other one for winding to be correct:
+          // 0,1,(n-1)                  0,1,(n-1)
+          // 1,(n-1),2                  (n-1),1,2
+          // (n-1),2,(n-2)              (n-1),2,(n-2)
+          // 2,(n-2),3                  (n-2),2,3
+          // (n-2),3,(n-3)              (n-2),3,(n-3)
+          // 3,(n-3),4                  (n-3),3,4
+          // ...                        ...
+          m_polygonIndices.push_back(GLushort(offset+0));
+          m_polygonIndices.push_back(GLushort(offset+1));
+          m_polygonIndices.push_back(GLushort(offset+n-1));
+          for(size_t i=1; i<1+temporaryPolygon.size()/2; i++)
+          {
+            m_polygonIndices.push_back(GLushort(offset+n-i));
+            m_polygonIndices.push_back(GLushort(offset+i));
+            m_polygonIndices.push_back(GLushort(offset+i+1));
+
+            m_polygonIndices.push_back(GLushort(offset+n-i));
+            m_polygonIndices.push_back(GLushort(offset+i+1));
+            m_polygonIndices.push_back(GLushort(offset+n-i-1));
+          }
+          m_polygonVertices.insert(m_polygonVertices.end(),
+                                   temporaryPolygon.begin(),
+                                   temporaryPolygon.end());
+        }
+        break;
+      }
+
+      //add point to polygon
+      case '.':
+      {
+        if(makingPolygon)
+        {
+          temporaryPolygon.push_back(lastVertex);
+        }
+        break;
+      }
+
+      //add default leaf
+      case 'J':
+      {
+        m_leafVertices.push_back(lastVertex);
+        m_leafIndices.push_back(GLushort(m_leafVertices.size()-1));
+        m_leafDirections.push_back(dir);
+        m_leafRightVectors.push_back(right);
+        break;
+      }
+
       //start branch
       case '[':
       {
@@ -129,11 +211,6 @@ void LSystem::createGeometry()
       {
         if(savedInd.size()>0)
         {
-          m_leafVertices.push_back(lastVertex);
-          m_leafIndices.push_back(GLushort(m_leafVertices.size()-1));
-          m_leafDirections.push_back(dir);
-          m_leafRightVectors.push_back(right);
-
           lastIndex = savedInd.back();
           lastVertex = savedVert.back();
           dir = savedDir.back();
@@ -190,11 +267,36 @@ void LSystem::createGeometry()
       case '^':
       {
         paramVar = angle;
-
         parseBrackets(treeString, i, paramVar);
         r4.euler(-paramVar, right.m_x, right.m_y, right.m_z);
         r3 = r4;
         dir = r3*dir;
+        break;
+      }
+
+      //turn left
+      case '-':
+      {
+        paramVar = angle;
+        parseBrackets(treeString, i, paramVar);
+        ngl::Vec3 k = right.cross(dir);
+        r4.euler(paramVar, k.m_x, k.m_y, k.m_z);
+        r3 = r4;
+        dir = r3*dir;
+        right = r3*right;
+        break;
+      }
+
+      //turn right
+      case '+':
+      {
+        paramVar = angle;
+        parseBrackets(treeString, i, paramVar);
+        ngl::Vec3 k = right.cross(dir);
+        r4.euler(-paramVar, k.m_x, k.m_y, k.m_z);
+        r3 = r4;
+        dir = r3*dir;
+        right = r3*right;
         break;
       }
 
@@ -226,7 +328,7 @@ void LSystem::createGeometry()
       }
 
       //startInstance
-      case '{':
+      case '@':
       {
         parseInstanceBrackets(treeString, i, id, age);
 
@@ -254,7 +356,7 @@ void LSystem::createGeometry()
       }
 
       //stopInstance
-      case '}':
+      case '$':
       {
         currentInstance->m_instanceEnd = indices->size();
         savedInstance.pop_back();
@@ -265,7 +367,7 @@ void LSystem::createGeometry()
         break;
       }
 
-      //getInstance
+      //getInstance (and start instance if none currently here)
       case '<':
       {
         parseInstanceBrackets(treeString, i, id, age);
@@ -299,6 +401,7 @@ void LSystem::createGeometry()
         break;
       }
 
+      //end instance started by <
       case '>':
       {
         //note that assuming > doesn't appear in any rules, we will only reach this

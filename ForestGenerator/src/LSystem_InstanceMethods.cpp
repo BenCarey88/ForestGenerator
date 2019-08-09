@@ -22,7 +22,7 @@ void LSystem::addInstancingCommands()
 {
   //put m_axiom as the first branch, since we'll instance the base of each tree
   //in the same way we instance the branches
-  m_axiom = "{(0,0)"+m_axiom+"}";
+  m_axiom = "@(0,0)"+m_axiom+"$";
   for(auto &rule : m_rules)
   {
     std::vector<std::string> tmpRHS = {};
@@ -103,7 +103,7 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         }
         else
         {
-          replacement = "{(" + std::to_string(id) + ",#)[" + branch + "]}";
+          replacement = "@(" + std::to_string(id) + ",#)[" + branch + "]$";
           nonInstanceCount++;
           //add to skipAmount to make sure we don't get caught in an endless loop with the same [
           skipAmount = 5+std::to_string(id).size();
