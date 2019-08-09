@@ -169,6 +169,7 @@ void LSystem::createGeometry()
           m_polygonVertices.insert(m_polygonVertices.end(),
                                    temporaryPolygon.begin(),
                                    temporaryPolygon.end());
+          temporaryPolygon = {};
         }
         break;
       }

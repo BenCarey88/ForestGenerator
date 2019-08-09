@@ -142,11 +142,6 @@ void NGLScene::buildPolygonVAO(size_t _treeNum)
                   m_LSystems[_treeNum].m_polygonVertices,
                   m_LSystems[_treeNum].m_polygonIndices,
                   GL_TRIANGLES, GL_UNSIGNED_SHORT);
-  /*for(auto ind : m_LSystems[_treeNum].m_polygonIndices)
-  {
-    print(ind, " ");
-  }
-  newLine();*/
 }
 
 //------------------------------------------------------------------------------------------------------------------------
