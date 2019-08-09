@@ -258,6 +258,8 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   std::vector<std::unique_ptr<ngl::AbstractVAO>> m_treeVAOs;
 
+  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_leafVAOs;
+
   //nested std::vector of VAOs corresponding to instance caches for the forest rendering
   //outer layer separates the instance caches of the differing tree types
   //second layer separates within a cache by id
@@ -355,6 +357,8 @@ protected:
   void buildGridVAO();
   void buildTerrainVAO();
   void buildTreeVAO(size_t _treeNum);
+  void buildLeafVAO(size_t _treeNum);
+
   void buildForestVAOs();
 
   void loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderName,

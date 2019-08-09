@@ -118,6 +118,25 @@ void NGLScene::buildTreeVAO(size_t _treeNum)
 
 //------------------------------------------------------------------------------------------------------------------------
 
+void NGLScene::buildLeafVAO(size_t _treeNum)
+{
+  buildSimpleIndexVAO(m_leafVAOs[_treeNum],
+                  m_LSystems[_treeNum].m_leafVertices,
+                  m_LSystems[_treeNum].m_leafIndices,
+                  GL_POINTS, GL_UNSIGNED_SHORT);
+
+  m_leafVAOs[_treeNum]->bind();
+  addBufferToBoundVAO(sizeof(ngl::Vec3)*m_LSystems[_treeNum].m_leafDirections.size(),
+                      &m_LSystems[_treeNum].m_leafDirections[0]);
+  m_leafVAOs[_treeNum]->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
+  addBufferToBoundVAO(sizeof(ngl::Vec3)*m_LSystems[_treeNum].m_leafRightVectors.size(),
+                      &m_LSystems[_treeNum].m_leafRightVectors[0]);
+  m_leafVAOs[_treeNum]->setVertexAttributePointer(2,3,GL_FLOAT,12,0);
+  m_leafVAOs[_treeNum]->unbind();
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::buildTerrainVAO()
 {
   //note that we need to use GLuints for the terrain because the data can be too large for GLushorts

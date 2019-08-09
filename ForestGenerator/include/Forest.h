@@ -34,9 +34,8 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief user ctor for Forest class
   //--------------------------------------------------------------------------------------------------------------------
-  Forest(const std::vector<LSystem> &_treeTypes,
-         float _width, int _terrainDimension,
-         size_t _numTrees, int _numHeroTrees);
+  Forest(const std::vector<LSystem> &_treeTypes, float _width,
+         size_t _numTrees, int _numHeroTrees, TerrainGenerator _terrainGen);
 
   //TREE STRUCT
   //--------------------------------------------------------------------------------------------------------------------

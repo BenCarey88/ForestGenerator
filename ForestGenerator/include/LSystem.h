@@ -165,6 +165,11 @@ public://-----------------------------------------------------------------------
   std::vector<float> m_heroThicknessValues= {};
   bool m_forestMode = false;
 
+  std::vector<ngl::Vec3> m_leafVertices = {};
+  std::vector<GLushort> m_leafIndices = {};
+  std::vector<ngl::Vec3> m_leafDirections = {};
+  std::vector<ngl::Vec3> m_leafRightVectors = {};
+
   size_t m_maxInstancePerLevel = 10;
 
   //instance cache is vectors of instances nested 3 deep

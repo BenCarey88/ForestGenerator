@@ -46,6 +46,7 @@ void main ()
 
 //    fragColour = vec4(normal,1);
     fragColour = lightIntensity * texture(textureMap, UV);
+    fragColour.a = step(0.0000001, fragColour.r+fragColour.g+fragColour.b);
 
     //fragColour = vec4(normal,1);
     //fragColour = vec4(vertColour,1);

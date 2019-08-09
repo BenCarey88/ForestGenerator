@@ -56,6 +56,11 @@ void LSystem::createGeometry()
   Instance * currentInstance;
   std::vector<Instance *> savedInstance = {};
 
+  m_leafVertices = {};
+  m_leafIndices = {};
+  m_leafDirections = {};
+  m_leafRightVectors = {};
+
   std::vector<ngl::Vec3> * vertices;
   std::vector<GLshort> * indices;
   std::vector<ngl::Vec3> * rightVectors;
@@ -71,7 +76,7 @@ void LSystem::createGeometry()
     vertices = &m_vertices;
     indices = &m_indices;
     rightVectors = &m_rightVectors;
-    thicknessValues = &m_thicknessValues;
+    thicknessValues = &m_thicknessValues;    
   }
   else
   {
@@ -124,6 +129,11 @@ void LSystem::createGeometry()
       {
         if(savedInd.size()>0)
         {
+          m_leafVertices.push_back(lastVertex);
+          m_leafIndices.push_back(GLushort(m_leafVertices.size()-1));
+          m_leafDirections.push_back(dir);
+          m_leafRightVectors.push_back(right);
+
           lastIndex = savedInd.back();
           lastVertex = savedVert.back();
           dir = savedDir.back();

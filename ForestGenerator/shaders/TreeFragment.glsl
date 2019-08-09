@@ -36,4 +36,5 @@ void main ()
     //fragColour.rgb = lightIntensity * colour;
 
     fragColour = lightIntensity * texture(textureMap, UV);
+    fragColour.a = 1;
 }

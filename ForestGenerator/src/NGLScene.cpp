@@ -46,12 +46,12 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_mouseTransforms[2].resize(1);
 
   initializeLSystems();
-  m_forest = Forest(m_LSystems,
-                    m_width, m_terrainDimension,
-                    m_numTrees, m_numHeroTrees);
+  m_terrainGen = TerrainGenerator(m_terrainDimension, m_width);
+  m_forest = Forest(m_LSystems, m_width,
+                    m_numTrees, m_numHeroTrees, m_terrainGen);
   m_forestVAOs.resize(m_numTreeTabs);
-  m_forest.m_terrainGen.generate();
-  m_terrain = TerrainData(m_forest.m_terrainGen);
+  m_terrainGen.generate();
+  m_terrain = TerrainData(m_terrainGen);
 
   m_currentCamera = &m_cameras[0][0];
   m_currentMouseTransform = &m_mouseTransforms[0][0];
@@ -69,6 +69,10 @@ NGLScene::~NGLScene()
   for(auto &LSystemVAO : m_treeVAOs)
   {
     LSystemVAO->removeVAO();
+  }
+  for(auto &LeafVAO : m_leafVAOs)
+  {
+    LeafVAO->removeVAO();
   }
   for(size_t t=0; t<m_numTreeTabs; t++)
   {
@@ -112,6 +116,8 @@ void NGLScene::initializeGL()
                      "shaders/SkeletalTreeFragment.glsl");
   shader->loadShader("TreeShader", "shaders/TreeVertex.glsl",
                      "shaders/TreeFragment.glsl", "shaders/TreeGeometry.glsl");
+  shader->loadShader("LeafShader", "shaders/LeafVertex.glsl",
+                     "shaders/LeafFragment.glsl", "shaders/LeafGeometry.glsl");
   shader->loadShader("GridShader", "shaders/GridVertex.glsl",
                      "shaders/GridFragment.glsl");
   shader->loadShader("SkeletalForestShader", "shaders/SkeletalForestVertex.glsl",
@@ -166,6 +172,8 @@ void NGLScene::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
@@ -202,6 +210,13 @@ void NGLScene::paintGL()
                      "textures/American_oak_pxr128_normal.jpg");
       }
       drawVAO(m_treeVAOs[m_treeTabNum]);
+
+      glPointSize(20);
+      buildLeafVAO(m_treeTabNum);
+      loadUniformsToShader(shader, "LeafShader");
+      loadTextures(shader, "LeafShader",
+                   "textures/leaf2.jpg", "textures/leaf2.jpg");
+      drawVAO(m_leafVAOs[m_treeTabNum]);
       break;
     }
 
@@ -216,7 +231,7 @@ void NGLScene::paintGL()
         refineTerrain();
         loadUniformsToShader(shader, "TerrainShader");
         loadTextures(shader, "TerrainShader",
-                     "textures/Lawn_grass_pxr128.jpg",
+                     "textures/leaf2.jpg",
                      "textures/Lawn_grass_pxr128_normal.jpg");
         drawVAO(m_terrainVAO);
       }

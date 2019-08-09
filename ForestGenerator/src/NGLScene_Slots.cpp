@@ -190,38 +190,38 @@ void NGLScene::setRule7(QString _rule)
 
 void NGLScene::setOctaves(int _octaves)
 {
-  m_forest.m_terrainGen.m_octaves = _octaves;
+  m_terrainGen.m_octaves = _octaves;
 }
 
 void NGLScene::setFrequency(double _frequency)
 {
-  m_forest.m_terrainGen.m_frequency = _frequency*0.05;
+  m_terrainGen.m_frequency = _frequency*0.05;
 }
 
 void NGLScene::setLacunarity(double _lacunarity)
 {
-  m_forest.m_terrainGen.m_lacunarity = _lacunarity;
+  m_terrainGen.m_lacunarity = _lacunarity;
 }
 
 void NGLScene::setPersistence(double _persistence)
 {
-  m_forest.m_terrainGen.m_persistence = _persistence;
+  m_terrainGen.m_persistence = _persistence;
 }
 
 void NGLScene::setAmplitude(double _amplitude)
 {
-  m_forest.m_terrainGen.m_amplitude = float(_amplitude);
+  m_terrainGen.m_amplitude = float(_amplitude);
 }
 
 void NGLScene::setTerrainSeed(double _seed)
 {
-  m_forest.m_terrainGen.m_seed = _seed*50;
+  m_terrainGen.m_seed = _seed*50;
 }
 
 void NGLScene::updateTerrain()
 {
-  m_forest.m_terrainGen.generate();
-  m_terrain = TerrainData(m_forest.m_terrainGen);
+  m_terrainGen.generate();
+  m_terrain = TerrainData(m_terrainGen);
   update();
 }
 
@@ -240,12 +240,12 @@ void NGLScene::toggleTerrainWireframe(bool _mode)
 void NGLScene::setTerrainSize(double _terrainSize)
 {
   m_width = float(_terrainSize);
-  m_forest.m_terrainGen.m_scale = m_width/m_terrainDimension;
+  m_terrainGen.m_scale = m_width/m_terrainDimension;
 }
 
 void NGLScene::setLOD(int _LOD)
 {
   m_terrainDimension = int(std::pow(2,_LOD))+1;
-  m_forest.m_terrainGen.m_dimension = m_terrainDimension;
-  m_forest.m_terrainGen.m_scale = m_width/m_terrainDimension;
+  m_terrainGen.m_dimension = m_terrainDimension;
+  m_terrainGen.m_scale = m_width/m_terrainDimension;
 }

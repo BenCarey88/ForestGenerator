@@ -8,14 +8,12 @@
 #include "Forest.h"
 #include "noiseutils.h"
 
-Forest::Forest(const std::vector<LSystem> &_treeTypes,
-               float _width, int _terrainDimension,
-               size_t _numTrees, int _numHeroTrees) :
+Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width,
+               size_t _numTrees, int _numHeroTrees, TerrainGenerator _terrainGen) :
   m_treeTypes(_treeTypes), m_width(_width),
-  m_numTrees(_numTrees), m_numHeroTrees(_numHeroTrees)
+  m_numTrees(_numTrees), m_numHeroTrees(_numHeroTrees),
+  m_terrainGen(_terrainGen)
 {
-  m_terrainGen = TerrainGenerator(_terrainDimension, _width);
-
   scatterForest();
 
   for(auto &treeType : m_treeTypes)
