@@ -159,21 +159,29 @@ public://-----------------------------------------------------------------------
   std::vector<ngl::Vec3> m_rightVectors;
   std::vector<float> m_thicknessValues;
 
-  std::vector<ngl::Vec3> m_heroVertices = {};
-  std::vector<GLshort> m_heroIndices= {};
-  std::vector<ngl::Vec3> m_heroRightVectors = {};
-  std::vector<float> m_heroThicknessValues= {};
-
   std::vector<ngl::Vec3> m_leafVertices = {};
-  std::vector<GLushort> m_leafIndices = {};
+  std::vector<GLshort> m_leafIndices = {};
   std::vector<ngl::Vec3> m_leafDirections = {};
   std::vector<ngl::Vec3> m_leafRightVectors = {};
 
   //polygons will be drawn with gl triangles not triangle strips
   //to allow for multiple ones in different places
   std::vector<ngl::Vec3> m_polygonVertices = {};
-  std::vector<GLushort> m_polygonIndices = {};
+  std::vector<GLshort> m_polygonIndices = {};
   //std::vector<ngl::Vec3> m_polygonRightVectors = {};
+
+  std::vector<ngl::Vec3> m_heroVertices = {};
+  std::vector<GLshort> m_heroIndices= {};
+  std::vector<ngl::Vec3> m_heroRightVectors = {};
+  std::vector<float> m_heroThicknessValues= {};
+
+  std::vector<ngl::Vec3> m_heroLeafVertices = {};
+  std::vector<GLshort> m_heroLeafIndices = {};
+  std::vector<ngl::Vec3> m_heroLeafDirections = {};
+  std::vector<ngl::Vec3> m_heroLeafRightVectors = {};
+
+  std::vector<ngl::Vec3> m_heroPolygonVertices = {};
+  std::vector<GLshort> m_heroPolygonIndices = {};
 
   size_t m_maxInstancePerLevel = 10;
   bool m_forestMode = false;

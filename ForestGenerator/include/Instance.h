@@ -34,6 +34,12 @@ struct Instance
   size_t m_instanceEnd;
   //std::vector<GLshort> m_indices;
 
+  size_t m_instanceLeafStart;
+  size_t m_instanceLeafEnd;
+
+  size_t m_instancePolygonStart;
+  size_t m_instancePolygonEnd;
+
   struct ExitPoint
   {
     ExitPoint(size_t _exitId, size_t _exitAge, ngl::Mat4 _transform);

@@ -66,22 +66,18 @@ NGLScene::~NGLScene()
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
   m_gridVAO->removeVAO();
   m_terrainVAO->removeVAO();
-  for(auto &LSystemVAO : m_treeVAOs)
+  for(size_t i=0; i<m_numTreeTabs; i++)
   {
-    LSystemVAO->removeVAO();
-  }
-  for(auto &LeafVAO : m_leafVAOs)
-  {
-    LeafVAO->removeVAO();
-  }
-  for(auto &polygonVAO : m_polygonVAOs)
-  {
-    polygonVAO->removeVAO();
+    m_treeVAOs[i]->removeVAO();
+    m_leafVAOs[i]->removeVAO();
+    m_polygonVAOs[i]->removeVAO();
   }
   for(size_t t=0; t<m_numTreeTabs; t++)
   {
     FOR_EACH_ELEMENT(m_forestVAOs[t],
-                     m_forestVAOs[t][ID][AGE][INDEX]->removeVAO())
+                     m_forestVAOs[t][ID][AGE][INDEX]->removeVAO();
+                     m_forestLeafVAOs[t][ID][AGE][INDEX]->removeVAO();
+                     m_forestPolygonVAOs[t][ID][AGE][INDEX]->removeVAO())
   }
 }
 
@@ -116,6 +112,7 @@ void NGLScene::initializeGL()
   // now to load the shaders
   // grab an instance of shader manager
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+
   shader->loadShader("SkeletalTreeShader", "shaders/SkeletalTreeVertex.glsl",
                      "shaders/SkeletalTreeFragment.glsl");
   shader->loadShader("TreeShader", "shaders/TreeVertex.glsl",
@@ -124,12 +121,18 @@ void NGLScene::initializeGL()
                      "shaders/LeafFragment.glsl", "shaders/LeafGeometry.glsl");
   shader->loadShader("PolygonShader", "shaders/PolygonVertex.glsl",
                      "shaders/PolygonFragment.glsl");
-  shader->loadShader("GridShader", "shaders/GridVertex.glsl",
-                     "shaders/GridFragment.glsl");
+
   shader->loadShader("SkeletalForestShader", "shaders/SkeletalForestVertex.glsl",
                      "shaders/SkeletalForestFragment.glsl");
   shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
                      "shaders/ForestFragment.glsl", "shaders/ForestGeometry.glsl");
+  shader->loadShader("ForestLeafShader", "shaders/ForestLeafVertex.glsl",
+                     "shaders/ForestLeafFragment.glsl", "shaders/ForestLeafGeometry.glsl");
+  shader->loadShader("ForestPolygonShader", "shaders/ForestPolygonVertex.glsl",
+                     "shaders/ForestPolygonFragment.glsl");
+
+  shader->loadShader("GridShader", "shaders/GridVertex.glsl",
+                     "shaders/GridFragment.glsl");
   shader->loadShader("TerrainShader", "shaders/TerrainVertex.glsl",
                      "shaders/TerrainFragment.glsl");
 
@@ -242,7 +245,7 @@ void NGLScene::paintGL()
         refineTerrain();
         loadUniformsToShader(shader, "TerrainShader");
         loadTextures(shader, "TerrainShader",
-                     "textures/leaf2.jpg",
+                     "textures/Lawn_grass_pxr128.jpg",
                      "textures/Lawn_grass_pxr128_normal.jpg");
         drawVAO(m_terrainVAO);
       }
@@ -289,7 +292,20 @@ void NGLScene::paintGL()
       for(size_t t=0; t<m_numTreeTabs; t++)
       {
         FOR_EACH_ELEMENT(m_forestVAOs[t],
-                         drawVAO(m_forestVAOs[t][ID][AGE][INDEX]))
+
+                         loadUniformsToShader(shader, "ForestShader");
+                         loadTextures(shader, "ForestShader",
+                                      "textures/American_oak_pxr128.jpg",
+                                      "textures/American_oak_pxr128_normal.jpg");
+                         drawVAO(m_forestVAOs[t][ID][AGE][INDEX]);
+
+                         loadUniformsToShader(shader, "ForestLeafShader");
+                         loadTextures(shader, "LeafShader",
+                                      "textures/leaf2.jpg", "textures/leaf2.jpg");
+                         drawVAO(m_forestLeafVAOs[t][ID][AGE][INDEX]);
+
+                         loadUniformsToShader(shader, "ForestPolygonShader");
+                         drawVAO(m_forestPolygonVAOs[t][ID][AGE][INDEX]))
       }
       break;
     }

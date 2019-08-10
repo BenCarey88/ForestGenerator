@@ -59,31 +59,43 @@ void LSystem::createGeometry()
   std::vector<ngl::Vec3> temporaryPolygon = {};
   bool makingPolygon = false;
 
-  m_leafVertices = {};
-  m_leafIndices = {};
-  m_leafDirections = {};
-  m_leafRightVectors = {};
-
-  m_polygonVertices = {};
-  m_polygonIndices = {};
-  //m_polygonRightVectors = {};
-
+  //set up pointers to buffers
   std::vector<ngl::Vec3> * vertices;
   std::vector<GLshort> * indices;
   std::vector<ngl::Vec3> * rightVectors;
   std::vector<float> * thicknessValues;
+  std::vector<ngl::Vec3> * leafVertices;
+  std::vector<GLshort> * leafIndices;
+  std::vector<ngl::Vec3> * leafDirections;
+  std::vector<ngl::Vec3> * leafRightVectors;
+  std::vector<ngl::Vec3> * polygonVertices;
+  std::vector<GLshort> * polygonIndices;
 
+  //switch pointers to either hero buffers or regular buffers
+  //depending on whether we're building a single tree or a forest
   if(m_forestMode == false)
   {
     m_vertices = {lastVertex};
     m_indices = {};
     m_thicknessValues = {thickness};
     m_rightVectors = {right};
+    m_leafVertices = {};
+    m_leafIndices = {};
+    m_leafDirections = {};
+    m_leafRightVectors = {};
+    m_polygonVertices = {};
+    m_polygonIndices = {};
 
     vertices = &m_vertices;
     indices = &m_indices;
     rightVectors = &m_rightVectors;
     thicknessValues = &m_thicknessValues;
+    leafVertices = &m_leafVertices;
+    leafIndices = &m_leafIndices;
+    leafDirections = &m_leafDirections;
+    leafRightVectors = &m_leafRightVectors;
+    polygonVertices = &m_polygonVertices;
+    polygonIndices = &m_polygonIndices;
   }
   else
   {
@@ -96,6 +108,12 @@ void LSystem::createGeometry()
     indices = &m_heroIndices;
     rightVectors = &m_heroRightVectors;
     thicknessValues = &m_heroThicknessValues;
+    leafVertices = &m_heroLeafVertices;
+    leafIndices = &m_heroLeafIndices;
+    leafDirections = &m_heroLeafDirections;
+    leafRightVectors = &m_heroLeafRightVectors;
+    polygonVertices = &m_heroPolygonVertices;
+    polygonIndices = &m_heroPolygonIndices;
   }
 
   for(size_t i=0; i<treeString.size(); i++)
@@ -138,42 +156,6 @@ void LSystem::createGeometry()
         break;
       }
 
-      //end polygon
-      case '}':
-      {
-        if(temporaryPolygon.size()>0)
-        {
-          size_t offset = m_polygonVertices.size();
-          size_t n = temporaryPolygon.size();
-          //we want these indices:    //but we need to reverse every other one for winding to be correct:
-          // 0,1,(n-1)                  0,1,(n-1)
-          // 1,(n-1),2                  (n-1),1,2
-          // (n-1),2,(n-2)              (n-1),2,(n-2)
-          // 2,(n-2),3                  (n-2),2,3
-          // (n-2),3,(n-3)              (n-2),3,(n-3)
-          // 3,(n-3),4                  (n-3),3,4
-          // ...                        ...
-          m_polygonIndices.push_back(GLushort(offset+0));
-          m_polygonIndices.push_back(GLushort(offset+1));
-          m_polygonIndices.push_back(GLushort(offset+n-1));
-          for(size_t i=1; i<1+temporaryPolygon.size()/2; i++)
-          {
-            m_polygonIndices.push_back(GLushort(offset+n-i));
-            m_polygonIndices.push_back(GLushort(offset+i));
-            m_polygonIndices.push_back(GLushort(offset+i+1));
-
-            m_polygonIndices.push_back(GLushort(offset+n-i));
-            m_polygonIndices.push_back(GLushort(offset+i+1));
-            m_polygonIndices.push_back(GLushort(offset+n-i-1));
-          }
-          m_polygonVertices.insert(m_polygonVertices.end(),
-                                   temporaryPolygon.begin(),
-                                   temporaryPolygon.end());
-          temporaryPolygon = {};
-        }
-        break;
-      }
-
       //add point to polygon
       case '.':
       {
@@ -184,13 +166,49 @@ void LSystem::createGeometry()
         break;
       }
 
+      //end polygon
+      case '}':
+      {
+        if(temporaryPolygon.size()>0)
+        {
+          size_t offset = polygonVertices->size();
+          size_t n = temporaryPolygon.size();
+          //we want these indices:    //but reverse every other one for correct winding:
+          // 0,1,(n-1)                  0,1,(n-1)
+          // 1,(n-1),2                  (n-1),1,2
+          // (n-1),2,(n-2)              (n-1),2,(n-2)
+          // 2,(n-2),3                  (n-2),2,3
+          // (n-2),3,(n-3)              (n-2),3,(n-3)
+          // 3,(n-3),4                  (n-3),3,4
+          // ...                        ...
+          polygonIndices->push_back(GLushort(offset+0));
+          polygonIndices->push_back(GLushort(offset+1));
+          polygonIndices->push_back(GLushort(offset+n-1));
+          for(size_t i=1; i<1+temporaryPolygon.size()/2; i++)
+          {
+            polygonIndices->push_back(GLushort(offset+n-i));
+            polygonIndices->push_back(GLushort(offset+i));
+            polygonIndices->push_back(GLushort(offset+i+1));
+
+            polygonIndices->push_back(GLushort(offset+n-i));
+            polygonIndices->push_back(GLushort(offset+i+1));
+            polygonIndices->push_back(GLushort(offset+n-i-1));
+          }
+          polygonVertices->insert(polygonVertices->end(),
+                                  temporaryPolygon.begin(),
+                                  temporaryPolygon.end());
+          temporaryPolygon = {};
+        }
+        break;
+      }
+
       //add default leaf
       case 'J':
       {
-        m_leafVertices.push_back(lastVertex);
-        m_leafIndices.push_back(GLushort(m_leafVertices.size()-1));
-        m_leafDirections.push_back(dir);
-        m_leafRightVectors.push_back(right);
+        leafVertices->push_back(lastVertex);
+        leafIndices->push_back(GLushort(leafVertices->size()-1));
+        leafDirections->push_back(dir);
+        leafRightVectors->push_back(right);
         break;
       }
 
@@ -342,6 +360,9 @@ void LSystem::createGeometry()
 
         instance = Instance(transform);
         instance.m_instanceStart = indices->size();
+        instance.m_instanceLeafStart = leafIndices->size();
+        instance.m_instancePolygonStart = polygonIndices->size();
+        //if instance cache isn't already too full at this id, add this instance to it
         if(m_instanceCache[id][age].size()<=size_t(m_maxInstancePerLevel/(age+1)))
         {
           m_instanceCache[id][age].push_back(instance);
@@ -360,6 +381,8 @@ void LSystem::createGeometry()
       case '$':
       {
         currentInstance->m_instanceEnd = indices->size();
+        currentInstance->m_instanceLeafEnd = leafIndices->size();
+        currentInstance->m_instancePolygonEnd = polygonIndices->size();
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -385,11 +408,13 @@ void LSystem::createGeometry()
           instance->m_exitPoints.push_back(Instance::ExitPoint(id, age, instance->m_transform.inverse()*transform));
         }
 
-        //if the instance cachec currently has no entries for this (id,age) pair, add a new instance to it
+        //if the instance cache currently has no entries for this (id,age) pair, add a new instance to it
         if(m_instanceCache[id][age].size()==0)
         {
           instance = Instance(transform);
           instance.m_instanceStart = indices->size();
+          instance.m_instanceLeafStart = leafIndices->size();
+          instance.m_instancePolygonStart = polygonIndices->size();
           m_instanceCache[id][age].push_back(instance);
           currentInstance = &m_instanceCache[id][age].back();
           savedInstance.push_back(currentInstance);
@@ -408,6 +433,8 @@ void LSystem::createGeometry()
         //note that assuming > doesn't appear in any rules, we will only reach this
         //case if we are using the corresponding < to make an instance
         currentInstance->m_instanceEnd = indices->size();
+        currentInstance->m_instanceLeafEnd = leafIndices->size();
+        currentInstance->m_instancePolygonEnd = polygonIndices->size();
         savedInstance.pop_back();
         if(savedInstance.size()>0)
         {
@@ -467,7 +494,7 @@ void LSystem::parseBrackets(const std::string &_treeString, size_t &_i, float &_
 
 void LSystem::parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age)
 {
-  //don't need the outer if clause that parseBrackets() has because <, { are guaranteed to be followed by (
+  //don't need the outer if clause that parseBrackets() has because <, @ are guaranteed to be followed by (
   size_t j=_i+2;
   for( ; j<_treeString.size(); j++)
   {

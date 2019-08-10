@@ -127,10 +127,17 @@ void LSystem::fillInstanceCache(int _numHeroTrees)
   RESIZE_CACHE_BY_VALUES(m_instanceCache, m_branches.size(), size_t(m_generation)+1)
 
   m_forestMode = true;
+
   m_heroIndices = {};
   m_heroVertices = {};
   m_heroRightVectors = {};
   m_heroThicknessValues = {};
+  m_heroLeafVertices = {};
+  m_heroLeafIndices = {};
+  m_heroLeafDirections = {};
+  m_heroLeafRightVectors = {};
+  m_heroPolygonVertices = {};
+  m_heroPolygonIndices = {};
 
   for(int i=0; i<_numHeroTrees; i++)
   {

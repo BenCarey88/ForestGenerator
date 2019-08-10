@@ -267,6 +267,8 @@ protected:
   //third layer separates by age
   //inner index corresponds to different instances of a given age and id
   std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestLeafVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestPolygonVAOs;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief bool to tell paintGL whether or not we need to rebuild the current LSystem VAO
@@ -350,9 +352,12 @@ protected:
   void buildSimpleIndexVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
                            std::vector<dataType> &_indices, GLenum _mode, GLenum _indexType);
 
-  void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
+/*  void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
                              LSystem &_treeType, Instance &_instance,
-                             std::vector<ngl::Mat4> &_transforms);
+                             std::vector<ngl::Mat4> &_transforms);*/
+  void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
+                                       std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
+                                       Instance &_instance, GLenum _mode);
 
   void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData);
   void buildGridVAO();
@@ -361,6 +366,9 @@ protected:
   void buildLeafVAO(size_t _treeNum);
   void buildPolygonVAO(size_t _treeNum);
 
+  void buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index);
+  void buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index);
+  void buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index);
   void buildForestVAOs();
 
   void loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderName,

@@ -57,7 +57,7 @@ void NGLScene::buildSimpleIndexVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std:
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LSystem &_treeType,
+/*void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LSystem &_treeType,
                                      Instance &_instance, std::vector<ngl::Mat4> &_transforms)
 {
   // create a vao using GL_LINES
@@ -76,19 +76,34 @@ void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LS
                        &_transforms[0]));
   // set number of indices to length of current instance
   _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
+  _vao->unbind();
+}*/
 
-  addBufferToBoundVAO(sizeof(ngl::Vec3)*_treeType.m_heroRightVectors.size(),
-                      &_treeType.m_heroRightVectors[0].m_x);
-  _vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
-  addBufferToBoundVAO(sizeof(ngl::Vec3)*_treeType.m_heroThicknessValues.size(),
-                      &_treeType.m_heroThicknessValues[0]);
-  _vao->setVertexAttributePointer(6,1,GL_FLOAT,4,0);
-
+void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
+                                     std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
+                                     Instance &_instance, GLenum _mode)
+{
+  // create a vao using _mode
+  _vao=ngl::VAOFactory::createVAO("instanceCacheVAO",_mode);
+  _vao->bind();
+  // set our data for the VAO:
+  //    (1) vertexBufferSize, (2) vertexBufferStart,
+  //    (3) indexBufferSize, (4) indexBufferStart,
+  //    (5) transformBufferSize, (6) transformBufferStart
+  _vao->setData(ngl::InstanceCacheVAO::VertexData(
+                       sizeof(ngl::Vec3)*_vertices.size(),
+                       _vertices[0].m_x,
+                       uint(_instance.m_instanceEnd-_instance.m_instanceStart),
+                       &_indices[_instance.m_instanceStart],
+                       uint(_transforms.size()),
+                       &_transforms[0]));
+  // set number of indices to length of current instance
+  _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
   _vao->unbind();
 }
 
 //------------------------------------------------------------------------------------------------------------------------
-/// Specific methods for each thing we need to draw: grid, tree, leaves, LSystem polygons, terrain and forest
+/// Specific methods for each thing we need to draw: grid, tree, leaves, polygons, terrain and forest
 //------------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::buildGridVAO()
@@ -172,6 +187,71 @@ void NGLScene::buildTerrainVAO()
 
 //------------------------------------------------------------------------------------------------------------------------
 
+void NGLScene::buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index)
+{
+  LSystem &treeType = m_forest.m_treeTypes[_treeNum];
+  CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
+  std::unique_ptr<ngl::AbstractVAO> &vao = m_forestVAOs[_treeNum][_id][_age][_index];
+
+  buildInstanceCacheVAO(vao,
+                        treeType.m_heroVertices,
+                        treeType.m_heroIndices,
+                        m_forest.m_transformCache[_treeNum][_id][_age][_index],
+                        instanceCache[_id][_age][_index],
+                        GL_LINES);
+
+  m_forestVAOs[_treeNum][_id][_age][_index]->bind();
+  addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroRightVectors.size(),
+                      &treeType.m_heroRightVectors[0].m_x);
+  vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
+  addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroThicknessValues.size(),
+                      &treeType.m_heroThicknessValues[0]);
+  vao->setVertexAttributePointer(6,1,GL_FLOAT,4,0);
+  m_forestVAOs[_treeNum][_id][_age][_index]->unbind();
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index)
+{
+  LSystem &treeType = m_forest.m_treeTypes[_treeNum];
+  CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
+  std::unique_ptr<ngl::AbstractVAO> &vao = m_forestVAOs[_treeNum][_id][_age][_index];
+
+  buildInstanceCacheVAO(vao,
+                        treeType.m_heroLeafVertices,
+                        treeType.m_heroLeafIndices,
+                        m_forest.m_transformCache[_treeNum][_id][_age][_index],
+                        instanceCache[_id][_age][_index],
+                        GL_POINTS);
+
+  m_forestVAOs[_treeNum][_id][_age][_index]->bind();
+  addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafDirections.size(),
+                      &treeType.m_heroLeafRightVectors[0].m_x);
+  vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
+  addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafRightVectors.size(),
+                      &treeType.m_heroLeafRightVectors[0]);
+  vao->setVertexAttributePointer(6,3,GL_FLOAT,12,0);
+  m_forestVAOs[_treeNum][_id][_age][_index]->unbind();
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index)
+{
+  LSystem &treeType = m_forest.m_treeTypes[_treeNum];
+  CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
+
+  buildInstanceCacheVAO(m_forestVAOs[_treeNum][_id][_age][_index],
+                        treeType.m_heroPolygonVertices,
+                        treeType.m_heroPolygonIndices,
+                        m_forest.m_transformCache[_treeNum][_id][_age][_index],
+                        instanceCache[_id][_age][_index],
+                        GL_TRIANGLES);
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::buildForestVAOs()
 {
   for(size_t t=0; t<m_forest.m_treeTypes.size(); t++)
@@ -179,10 +259,13 @@ void NGLScene::buildForestVAOs()
     LSystem &treeType = m_forest.m_treeTypes[t];
     CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestVAOs[t], instanceCache)
+    RESIZE_CACHE_BY_OTHER_CACHE(m_forestLeafVAOs[t], instanceCache)
+    RESIZE_CACHE_BY_OTHER_CACHE(m_forestPolygonVAOs[t], instanceCache)
+
     FOR_EACH_ELEMENT(m_forestVAOs[t],
-                     buildInstanceCacheVAO(m_forestVAOs[t][ID][AGE][INDEX],
-                                           treeType,
-                                           instanceCache[ID][AGE][INDEX],
-                                           m_forest.m_transformCache[t][ID][AGE][INDEX]))
+                     buildForestVAO(t,ID,AGE,INDEX);
+                     buildForestLeafVAO(t,ID,AGE,INDEX);
+                     buildForestPolygonVAO(t,ID,AGE,INDEX))
+
   }
 }

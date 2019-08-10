@@ -19,8 +19,8 @@
 /// of variable, I have created the following macros to reduce repetition and improve readability of the code
 ///
 /// (I initially tried to do this with a templated class, but ran into issues when I tried to pass a unique
-/// pointer as the template argument, since some of the methods would have required calling the copy constructor
-/// of the unique pointer)
+/// pointer as the template argument (for the VAOs in the NGLScene class) since some of the methods would have
+/// required calling the deleted copy constructor of the unique pointer)
 //----------------------------------------------------------------------------------------------------------------------
 
 #define CACHE_STRUCTURE(_class) std::vector<std::vector<std::vector<_class>>>
