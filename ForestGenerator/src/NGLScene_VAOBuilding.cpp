@@ -165,7 +165,7 @@ void NGLScene::buildPolygonVAO(size_t _treeNum)
 
 void NGLScene::buildTerrainVAO()
 {
-  //note that we need to use GLuints for the terrain because the data can be too large for GLushorts
+  //note that we need to use GLuints for the terrain because the data can get too large for GLushorts
   buildSimpleIndexVAO(m_terrainVAO,
                   m_terrain.m_vertsToBeRendered,
                   m_terrain.m_indicesToBeRendered,
@@ -233,12 +233,25 @@ void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size
 
   vao->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafDirections.size(),
-                      &treeType.m_heroLeafRightVectors[0].m_x);
+                      &treeType.m_heroLeafDirections[0].m_x);
   vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafRightVectors.size(),
                       &treeType.m_heroLeafRightVectors[0].m_x);
   vao->setVertexAttributePointer(6,3,GL_FLOAT,12,0);
   vao->unbind();
+
+  print("LEAF ", _treeNum, " ", _id, " ", _age, " ");
+  print(_index, " ", treeType.m_heroLeafDirections.size(), "\n");
+  for(size_t i=instanceCache[_id][_age][_index].m_instanceLeafStart;
+      i<instanceCache[_id][_age][_index].m_instanceLeafEnd;
+      i++)
+  {
+    print("direction: ");
+    print(treeType.m_heroLeafDirections[i]);
+    print("right: ");
+    print(treeType.m_heroLeafRightVectors[i]);
+    newLine();
+  }
 }
 
 //------------------------------------------------------------------------------------------------------------------------

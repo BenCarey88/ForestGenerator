@@ -91,7 +91,7 @@ void Forest::scatterForest()
                                              double(zPos),
                                              m_terrainGen.m_seed));
     yPos *= m_terrainGen.m_amplitude;
-    position.translate(xPos,yPos,zPos);
+    position.translate(xPos,yPos,zPos);    
     orientation.rotateY(distRotate(m_gen));
     ngl::Mat4 scale(s, 0, 0, 0,
                     0, s, 0, 0,

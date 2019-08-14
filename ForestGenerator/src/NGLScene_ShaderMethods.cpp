@@ -55,6 +55,8 @@ void NGLScene::compileShaders()
                      "shaders/TerrainFragment.glsl");
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::loadShaderTextures()
 {
   loadTextureToShader("TreeShader", "textureMap", "textures/American_oak_pxr128.jpg", TreeTexLoc);
@@ -62,8 +64,8 @@ void NGLScene::loadShaderTextures()
   loadTextureToShader("ForestShader", "textureMap", "textures/American_oak_pxr128.jpg", TreeTexLoc);
   loadTextureToShader("ForestShader", "normalMap", "textures/American_oak_pxr128_normal.jpg", TreeNormalLoc);
 
-  loadTextureToShader("LeafShader", "textureMap", "textures/test.jpg", LeafTexLoc);
-  loadTextureToShader("ForestLeafShader", "textureMap", "textures/test.jpg", LeafTexLoc);
+  loadTextureToShader("LeafShader", "textureMap", "textures/leaf2.jpg", LeafTexLoc);
+  loadTextureToShader("ForestLeafShader", "textureMap", "textures/leaf2.jpg", LeafTexLoc);
 
   loadTextureToShader("TerrainShader", "textureMap", "textures/Lawn_grass_pxr128.jpg", TerrainTexLoc);
   loadTextureToShader("TerrainShader", "normalMap", "textures/Lawn_grass_pxr128_normal.jpg", TerrainNormalLoc);

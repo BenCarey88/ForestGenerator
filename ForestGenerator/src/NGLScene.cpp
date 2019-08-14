@@ -111,6 +111,7 @@ void NGLScene::initializeGL()
   // The final two are near and far clipping planesm_vao->bind();
   m_project=ngl::perspective(fieldOfView ,720.0f/576.0f,nearFrame,farFrame);
 
+  //load shaders and textures
   compileShaders();
   loadShaderTextures();
 
