@@ -13,19 +13,19 @@ out vec2 UV;
 void main ()
 {
     gl_Position = gl_in[0].gl_Position + 0.5*right[0];
-    UV = vec2(1,0);
-    EmitVertex();
-
-    gl_Position = gl_in[0].gl_Position + 0.5*right[0] + dir[0];
     UV = vec2(1,1);
     EmitVertex();
 
+    gl_Position = gl_in[0].gl_Position + 0.5*right[0] + dir[0];
+    UV = vec2(1,0);
+    EmitVertex();
+
     gl_Position = gl_in[0].gl_Position - 0.5*right[0];
-    UV = vec2(0,0);
+    UV = vec2(0,1);
     EmitVertex();
 
     gl_Position = gl_in[0].gl_Position - 0.5*right[0] + dir[0];
-    UV = vec2(0,1);
+    UV = vec2(0,0);
     EmitVertex();
 
     EndPrimitive();

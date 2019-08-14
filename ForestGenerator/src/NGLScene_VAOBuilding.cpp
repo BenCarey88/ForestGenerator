@@ -240,18 +240,6 @@ void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size
   vao->setVertexAttributePointer(6,3,GL_FLOAT,12,0);
   vao->unbind();
 
-  print("LEAF ", _treeNum, " ", _id, " ", _age, " ");
-  print(_index, " ", treeType.m_heroLeafDirections.size(), "\n");
-  for(size_t i=instanceCache[_id][_age][_index].m_instanceLeafStart;
-      i<instanceCache[_id][_age][_index].m_instanceLeafEnd;
-      i++)
-  {
-    print("direction: ");
-    print(treeType.m_heroLeafDirections[i]);
-    print("right: ");
-    print(treeType.m_heroLeafRightVectors[i]);
-    newLine();
-  }
 }
 
 //------------------------------------------------------------------------------------------------------------------------

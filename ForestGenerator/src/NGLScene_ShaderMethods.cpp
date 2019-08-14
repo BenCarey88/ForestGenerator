@@ -9,6 +9,7 @@
 #include <ngl/SimpleVAO.h>
 #include <ngl/Texture.h>
 #include <ngl/ShaderLib.h>
+#include <ngl/Image.h>
 
 #include "InstanceCacheVAO.h"
 #include "NGLScene.h"
@@ -64,8 +65,8 @@ void NGLScene::loadShaderTextures()
   loadTextureToShader("ForestShader", "textureMap", "textures/American_oak_pxr128.jpg", TreeTexLoc);
   loadTextureToShader("ForestShader", "normalMap", "textures/American_oak_pxr128_normal.jpg", TreeNormalLoc);
 
-  loadTextureToShader("LeafShader", "textureMap", "textures/leaf2.jpg", LeafTexLoc);
-  loadTextureToShader("ForestLeafShader", "textureMap", "textures/leaf2.jpg", LeafTexLoc);
+  loadTextureToShader("LeafShader", "textureMap", "textures/leaf.png", LeafTexLoc);
+  loadTextureToShader("ForestLeafShader", "textureMap", "textures/leaf.png", LeafTexLoc);
 
   loadTextureToShader("TerrainShader", "textureMap", "textures/Lawn_grass_pxr128.jpg", TerrainTexLoc);
   loadTextureToShader("TerrainShader", "normalMap", "textures/Lawn_grass_pxr128_normal.jpg", TerrainNormalLoc);
@@ -94,19 +95,33 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // load and generate the texture
-  int width, height, nrChannels;
-  unsigned char *data = stbi_load(_textureMapFile, &width, &height, &nrChannels, 0);
-  if (data)
+
+  QImage image;
+  bool loaded=image.load(_textureMapFile);
+  if(loaded == true)
   {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-      glGenerateMipmap(GL_TEXTURE_2D);
+    int width=image.width();
+    int height=image.height();
+
+    std::unique_ptr<unsigned char []> data ( new unsigned char[ width*height*4]);
+    size_t index=0;
+    QRgb colour;
+    for( int y=0; y<height; ++y)
+    {
+      for( int x=0; x<width; ++x)
+      {
+        colour=image.pixel(x,y);
+
+        data[index++]=qRed(colour);
+        data[index++]=qGreen(colour);
+        data[index++]=qBlue(colour);
+        data[index++]=qAlpha(colour);
+      }
+    }
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data.get());
+
+    glGenerateMipmap(GL_TEXTURE_2D); //  Allocate the mipmaps
   }
-  else
-  {
-      std::cout << "Failed to load "<< _textureMapName <<" for "<<_shaderName<<"\n";
-  }
-  stbi_image_free(data);
 }
 
 //------------------------------------------------------------------------------------------------------------------------

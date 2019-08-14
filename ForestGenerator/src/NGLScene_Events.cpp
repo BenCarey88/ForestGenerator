@@ -75,33 +75,6 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
     m_win.translate = true;
   }
 
-  /*std::cout<<"("<<_event->x()<<", "<<_event->y()<<")\n";
-
-  float gridSize = 25*80;
-  float screenSize;
-  float disparity;
-  float xVal;
-  float zVal;
-
-  if(m_win.height>m_win.width)
-  {
-    screenSize = m_win.width;
-    disparity = m_win.height - m_win.width;
-    xVal = _event->x()*gridSize/screenSize - gridSize/2;
-    zVal = gridSize/2 - (_event->y()-disparity/2)*gridSize/screenSize;
-  }
-  else
-  {
-    screenSize = m_win.height;
-    disparity = m_win.width - m_win.height;
-    xVal = (_event->x()-disparity/2)*gridSize/screenSize - gridSize/2;
-    zVal = gridSize/2 - _event->y()*gridSize/screenSize;
-  }
-
-  std::cout<<"("<<xVal<<", "<<zVal<<")\n\n";
-
-  m_points.push_back({xVal,0,zVal});*/
-
   update();
 }
 

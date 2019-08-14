@@ -11,5 +11,5 @@ layout (location =0)out vec4 fragColour;
 void main ()
 {
     fragColour = texture(textureMap, UV);
-    fragColour.a = step(0.0000000000001, fragColour.r+fragColour.g+fragColour.b);
+    //fragColour.a = step(0.0000000000001, fragColour.r+fragColour.g+fragColour.b);
 }

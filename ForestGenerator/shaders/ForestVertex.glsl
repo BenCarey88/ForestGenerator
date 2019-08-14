@@ -21,6 +21,6 @@ void main()
   vertCol = vec3(inVert[0]/10,inVert[1]/10,0);
 
   worldSpacePos = vec3(inTransform * vec4(inVert,1));
-  rightVector = inRightVector;
+  rightVector = vec3(inTransform * vec4(inRightVector,0));
   thickness = inThicknessValues;
 }
