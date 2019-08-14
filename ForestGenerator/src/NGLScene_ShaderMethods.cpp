@@ -8,6 +8,7 @@
 #include <ngl/SimpleIndexVAO.h>
 #include <ngl/SimpleVAO.h>
 #include <ngl/Texture.h>
+#include <ngl/ShaderLib.h>
 
 #include "InstanceCacheVAO.h"
 #include "NGLScene.h"
@@ -17,24 +18,74 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define TreeTexLoc 0
+#define TreeNormalLoc 1
+#define LeafTexLoc 2
+#define LeafNormalLoc 3
+#define TerrainTexLoc 4
+#define TerrainNormalLoc 5
+
 //----------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderName,
-                            const char *_textureMapFile, const char *_normalMapFile)
+void NGLScene::compileShaders()
+{
+  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+
+  shader->loadShader("SkeletalTreeShader", "shaders/SkeletalTreeVertex.glsl",
+                     "shaders/SkeletalTreeFragment.glsl");
+  shader->loadShader("TreeShader", "shaders/TreeVertex.glsl",
+                     "shaders/TreeFragment.glsl", "shaders/TreeGeometry.glsl");
+  shader->loadShader("LeafShader", "shaders/LeafVertex.glsl",
+                     "shaders/LeafFragment.glsl", "shaders/LeafGeometry.glsl");
+  shader->loadShader("PolygonShader", "shaders/PolygonVertex.glsl",
+                     "shaders/PolygonFragment.glsl");
+
+  shader->loadShader("SkeletalForestShader", "shaders/SkeletalForestVertex.glsl",
+                     "shaders/SkeletalForestFragment.glsl");
+  shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
+                     "shaders/ForestFragment.glsl", "shaders/ForestGeometry.glsl");
+  shader->loadShader("ForestLeafShader", "shaders/ForestLeafVertex.glsl",
+                     "shaders/ForestLeafFragment.glsl", "shaders/ForestLeafGeometry.glsl");
+  shader->loadShader("ForestPolygonShader", "shaders/ForestPolygonVertex.glsl",
+                     "shaders/ForestPolygonFragment.glsl");
+
+  shader->loadShader("GridShader", "shaders/GridVertex.glsl",
+                     "shaders/GridFragment.glsl");
+  shader->loadShader("TerrainShader", "shaders/TerrainVertex.glsl",
+                     "shaders/TerrainFragment.glsl");
+}
+
+void NGLScene::loadShaderTextures()
+{
+  loadTextureToShader("TreeShader", "textureMap", "textures/American_oak_pxr128.jpg", TreeTexLoc);
+  loadTextureToShader("TreeShader", "normalMap", "textures/American_oak_pxr128_normal.jpg", TreeNormalLoc);
+  loadTextureToShader("ForestShader", "textureMap", "textures/American_oak_pxr128.jpg", TreeTexLoc);
+  loadTextureToShader("ForestShader", "normalMap", "textures/American_oak_pxr128_normal.jpg", TreeNormalLoc);
+
+  loadTextureToShader("LeafShader", "textureMap", "textures/test.jpg", LeafTexLoc);
+  loadTextureToShader("ForestLeafShader", "textureMap", "textures/test.jpg", LeafTexLoc);
+
+  loadTextureToShader("TerrainShader", "textureMap", "textures/Lawn_grass_pxr128.jpg", TerrainTexLoc);
+  loadTextureToShader("TerrainShader", "normalMap", "textures/Lawn_grass_pxr128_normal.jpg", TerrainNormalLoc);
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_textureMapName,
+                                   const char *_textureMapFile, GLuint _storageLocation)
 {
   ///@ref https://stackoverflow.com/questions/25252512/how-can-i-pass-multiple-textures-to-a-single-shader
 
-  (*_shader)[_shaderName]->use();
+  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+  (*shader)[_shaderName]->use();
 
-  GLint textureMapLocation = glGetUniformLocation((*_shader)[_shaderName]->getID(), "textureMap");
-  GLint normalMapLocation  = glGetUniformLocation((*_shader)[_shaderName]->getID(), "normalMap");
-  glUniform1i(textureMapLocation, 0);
-  glUniform1i(normalMapLocation,  1);
+  GLint textureMapLocation = glGetUniformLocation((*shader)[_shaderName]->getID(), _textureMapName);
+  glUniform1i(textureMapLocation, _storageLocation);
 
   // Then bind the uniform samplers to texture units:
   GLuint texture;
   glGenTextures(1, &texture);
-  glActiveTexture(GL_TEXTURE0 + 0); // Texture unit 0
+  glActiveTexture(GL_TEXTURE0 + _storageLocation); // Texture unit 0
   glBindTexture(GL_TEXTURE_2D, texture);
   // set the texture wrapping/filtering options (on the currently bound texture object)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -51,29 +102,7 @@ void NGLScene::loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderN
   }
   else
   {
-      std::cout << "Failed to load texture for "<<_shaderName<<"\n";
-  }
-  stbi_image_free(data);
-
-  unsigned int normalMap;
-  glGenTextures(1, &normalMap);
-  glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
-  glBindTexture(GL_TEXTURE_2D, normalMap);
-  // set the texture wrapping/filtering options (on the currently bound texture object)
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // load and generate the texture
-  data = stbi_load(_normalMapFile, &width, &height, &nrChannels, 0);
-  if (data)
-  {
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-      glGenerateMipmap(GL_TEXTURE_2D);
-  }
-  else
-  {
-      std::cout << "Failed to load normal map for "<<_shaderName<<"\n";
+      std::cout << "Failed to load "<< _textureMapName <<" for "<<_shaderName<<"\n";
   }
   stbi_image_free(data);
 }

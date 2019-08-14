@@ -3,6 +3,7 @@
 in vec2 UV;
 
 uniform sampler2D textureMap;
+//uniform sampler2D normalMap;
 
 /// @brief our output fragment colour
 layout (location =0)out vec4 fragColour;

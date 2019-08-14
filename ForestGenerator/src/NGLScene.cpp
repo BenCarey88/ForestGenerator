@@ -50,6 +50,8 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_forest = Forest(m_LSystems, m_width,
                     m_numTrees, m_numHeroTrees, m_terrainGen);
   m_forestVAOs.resize(m_numTreeTabs);
+  m_forestLeafVAOs.resize(m_numTreeTabs);
+  m_forestPolygonVAOs.resize(m_numTreeTabs);
   m_terrainGen.generate();
   m_terrain = TerrainData(m_terrainGen);
 
@@ -109,32 +111,8 @@ void NGLScene::initializeGL()
   // The final two are near and far clipping planesm_vao->bind();
   m_project=ngl::perspective(fieldOfView ,720.0f/576.0f,nearFrame,farFrame);
 
-  // now to load the shaders
-  // grab an instance of shader manager
-  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
-
-  shader->loadShader("SkeletalTreeShader", "shaders/SkeletalTreeVertex.glsl",
-                     "shaders/SkeletalTreeFragment.glsl");
-  shader->loadShader("TreeShader", "shaders/TreeVertex.glsl",
-                     "shaders/TreeFragment.glsl", "shaders/TreeGeometry.glsl");
-  shader->loadShader("LeafShader", "shaders/LeafVertex.glsl",
-                     "shaders/LeafFragment.glsl", "shaders/LeafGeometry.glsl");
-  shader->loadShader("PolygonShader", "shaders/PolygonVertex.glsl",
-                     "shaders/PolygonFragment.glsl");
-
-  shader->loadShader("SkeletalForestShader", "shaders/SkeletalForestVertex.glsl",
-                     "shaders/SkeletalForestFragment.glsl");
-  shader->loadShader("ForestShader", "shaders/ForestVertex.glsl",
-                     "shaders/ForestFragment.glsl", "shaders/ForestGeometry.glsl");
-  shader->loadShader("ForestLeafShader", "shaders/ForestLeafVertex.glsl",
-                     "shaders/ForestLeafFragment.glsl", "shaders/ForestLeafGeometry.glsl");
-  shader->loadShader("ForestPolygonShader", "shaders/ForestPolygonVertex.glsl",
-                     "shaders/ForestPolygonFragment.glsl");
-
-  shader->loadShader("GridShader", "shaders/GridVertex.glsl",
-                     "shaders/GridFragment.glsl");
-  shader->loadShader("TerrainShader", "shaders/TerrainVertex.glsl",
-                     "shaders/TerrainFragment.glsl");
+  compileShaders();
+  loadShaderTextures();
 
   //register the new VAO class created to take care of the instancing
   ngl::VAOFactory::registerVAOCreator("instanceCacheVAO",ngl::InstanceCacheVAO::create);
@@ -144,12 +122,14 @@ void NGLScene::initializeGL()
   for(size_t i=0; i<m_numTreeTabs; i++)
   {
     buildTreeVAO(i);
+    buildLeafVAO(i);
+    buildPolygonVAO(i);
   }
   buildGridVAO();
   //And load intial textures
-  loadTextures(shader, "TreeShader",
-               "textures/American_oak_pxr128.jpg",
-               "textures/American_oak_pxr128_normal.jpg");
+//  loadTextures(shader, "TreeShader",
+//               "textures/American_oak_pxr128.jpg",
+//               "textures/American_oak_pxr128_normal.jpg");
 }
 
 
@@ -190,6 +170,8 @@ void NGLScene::paintGL()
   if(m_buildTreeVAO==true)
   {
     buildTreeVAO(m_treeTabNum);
+    buildLeafVAO(m_treeTabNum);
+    buildPolygonVAO(m_treeTabNum);
     m_buildTreeVAO = false;
   }
   if(m_buildForestVAOs==true)
@@ -214,23 +196,15 @@ void NGLScene::paintGL()
       else
       {
         loadUniformsToShader(shader, "TreeShader");
-        loadTextures(shader, "TreeShader",
-                     "textures/American_oak_pxr128.jpg",
-                     "textures/American_oak_pxr128_normal.jpg");
       }
       drawVAO(m_treeVAOs[m_treeTabNum]);
 
-      buildLeafVAO(m_treeTabNum);
       loadUniformsToShader(shader, "LeafShader");
-      //NOTE: LOADING TEXTURES IS SLOW!
-      //change this so we only load once at the beginning rather than everytime we draw
-      loadTextures(shader, "LeafShader",
-                   "textures/leaf2.jpg", "textures/leaf2.jpg");
       drawVAO(m_leafVAOs[m_treeTabNum]);
 
-      buildPolygonVAO(m_treeTabNum);
       loadUniformsToShader(shader, "PolygonShader");
       drawVAO(m_polygonVAOs[m_treeTabNum]);
+
       break;
     }
 
@@ -244,9 +218,6 @@ void NGLScene::paintGL()
         }
         refineTerrain();
         loadUniformsToShader(shader, "TerrainShader");
-        loadTextures(shader, "TerrainShader",
-                     "textures/Lawn_grass_pxr128.jpg",
-                     "textures/Lawn_grass_pxr128_normal.jpg");
         drawVAO(m_terrainVAO);
       }
       else if (m_terrainTabNum==1)
@@ -280,31 +251,19 @@ void NGLScene::paintGL()
       }
       refineTerrain();
       loadUniformsToShader(shader, "TerrainShader");
-      loadTextures(shader, "TerrainShader",
-                   "textures/Lawn_grass_pxr128.jpg",
-                   "textures/Lawn_grass_pxr128_normal.jpg");
-      drawVAO(m_terrainVAO);
+      drawVAO(m_terrainVAO);    
 
       loadUniformsToShader(shader, "ForestShader");
-      loadTextures(shader, "ForestShader",
-                   "textures/American_oak_pxr128.jpg",
-                   "textures/American_oak_pxr128_normal.jpg");
+      loadUniformsToShader(shader, "ForestLeafShader");
+      loadUniformsToShader(shader, "ForestPolygonShader");
       for(size_t t=0; t<m_numTreeTabs; t++)
       {
         FOR_EACH_ELEMENT(m_forestVAOs[t],
-
-                         loadUniformsToShader(shader, "ForestShader");
-                         loadTextures(shader, "ForestShader",
-                                      "textures/American_oak_pxr128.jpg",
-                                      "textures/American_oak_pxr128_normal.jpg");
+                         (*shader)["ForestShader"]->use();
                          drawVAO(m_forestVAOs[t][ID][AGE][INDEX]);
-
-                         loadUniformsToShader(shader, "ForestLeafShader");
-                         loadTextures(shader, "LeafShader",
-                                      "textures/leaf2.jpg", "textures/leaf2.jpg");
+                         (*shader)["ForestLeafShader"]->use();
                          drawVAO(m_forestLeafVAOs[t][ID][AGE][INDEX]);
-
-                         loadUniformsToShader(shader, "ForestPolygonShader");
+                         (*shader)["ForestPolygonShader"]->use();
                          drawVAO(m_forestPolygonVAOs[t][ID][AGE][INDEX]))
       }
       break;

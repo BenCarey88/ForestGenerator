@@ -356,8 +356,8 @@ protected:
                              LSystem &_treeType, Instance &_instance,
                              std::vector<ngl::Mat4> &_transforms);*/
   void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
-                                       std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
-                                       Instance &_instance, GLenum _mode);
+                             std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
+                             size_t _instanceStart, size_t _instanceEnd, GLenum _mode);
 
   void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData);
   void buildGridVAO();
@@ -371,8 +371,11 @@ protected:
   void buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index);
   void buildForestVAOs();
 
-  void loadTextures(ngl::ShaderLib *_shader, const std::string &_shaderName,
-                    const char *_textureMapFile, const char *_normalMapFile);
+  void compileShaders();
+  void loadShaderTextures();
+  void loadTextureToShader(const std::string &_shaderName,
+                           const char * _textureMapName, const char *_textureMapFile,
+                           GLuint _storageLocation);
   void loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &_shaderName);
 
   void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO);
