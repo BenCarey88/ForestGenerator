@@ -126,10 +126,6 @@ void NGLScene::initializeGL()
     buildPolygonVAO(i);
   }
   buildGridVAO();
-  //And load intial textures
-//  loadTextures(shader, "TreeShader",
-//               "textures/American_oak_pxr128.jpg",
-//               "textures/American_oak_pxr128_normal.jpg");
 }
 
 

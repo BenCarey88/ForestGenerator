@@ -71,7 +71,7 @@ void Forest::scatterForest()
   std::uniform_real_distribution<float> distX(-m_width*0.5f, m_width*0.5f);
   std::uniform_real_distribution<float> distZ(-m_width*0.5f, m_width*0.5f);
   std::uniform_real_distribution<float> distRotate(0,360);
-  std::uniform_real_distribution<float> distScale(0.6f,0.8f);
+  std::uniform_real_distribution<float> distScale(2,3);
   std::uniform_int_distribution<size_t> distTreeType(0,m_treeTypes.size()-1);
 
   noise::module::Perlin perlinModule;
@@ -84,7 +84,7 @@ void Forest::scatterForest()
   {
     ngl::Mat4 position;
     ngl::Mat4 orientation;
-    ngl::Mat4 scale;
+    float s = distScale(m_gen);
     float xPos = distX(m_gen);
     float zPos = distZ(m_gen);
     float yPos = float(perlinModule.GetValue(double(xPos),
@@ -93,8 +93,11 @@ void Forest::scatterForest()
     yPos *= m_terrainGen.m_amplitude;
     position.translate(xPos,yPos,zPos);
     orientation.rotateY(distRotate(m_gen));
-    scale = distScale(m_gen)*scale;
-    m_treeData.push_back(Tree(distTreeType(m_gen), position*orientation*scale));
+    ngl::Mat4 scale(s, 0, 0, 0,
+                    0, s, 0, 0,
+                    0, 0, s, 0,
+                    0, 0, 0, 1);
+    m_treeData.push_back(Tree(distTreeType(m_gen), position*orientation));//*scale));
   }
 }
 
