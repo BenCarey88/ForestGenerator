@@ -84,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   delete m_ui;
+  delete m_gl;
 }
 
 void MainWindow::on_m_seedToggle_1_stateChanged(int _clicked)

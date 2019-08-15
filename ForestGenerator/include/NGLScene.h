@@ -411,6 +411,10 @@ protected:
 
   //EVENTS
   //----------------------------------------------------------------------------------------------------------------------
+  /// @brief this method is called everytime the mouse button is moved
+  /// inherited from QObject and overridden here.
+  /// @param _event the Qt Event structure
+  //----------------------------------------------------------------------------------------------------------------------
   void mouseMoveEvent (QMouseEvent * _event ) override;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief this method is called everytime the mouse button is pressed
