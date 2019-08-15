@@ -8,6 +8,34 @@
 #include <ngl/Vec4.h>
 #include "NGLScene.h"
 
+
+ngl::Vec3 NGLScene::getProjectedPointOnPlane(float _screenX, float _screenY)
+{
+  ///@ref http://antongerdelan.net/opengl/raycasting.html
+  m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
+  ngl::Mat4 currentTransform = (*m_currentMouseTransform);
+  ngl::Mat4 MVP= m_project*m_view*currentTransform;
+  ngl::Mat4 MVPinverse = MVP.inverse();
+
+  float projDevX = 2*_screenX/m_win.width-1;
+  float projDevY = 1-2*_screenY/m_win.height;
+
+  ngl::Vec4 rayClip = ngl::Vec4(projDevX,projDevY, -1.0, 1.0);
+  ngl::Vec4 rayEye = m_project.inverse() * rayClip;
+  rayEye = {rayEye.m_x, rayEye.m_y, -1, 0};
+  ngl::Vec4 rayWorldDirection = currentTransform.inverse() * m_view.inverse() * rayEye;
+  ngl::Vec3 rayDir = ngl::Vec3(rayWorldDirection.m_x, rayWorldDirection.m_y, rayWorldDirection.m_z);
+  rayDir.normalize();
+
+  ngl::Vec4 rayStart4 = MVPinverse * ngl::Vec4(projDevX,projDevY,0.9f,1);
+  ngl::Vec3 rayStart = ngl::Vec3(rayStart4.m_x, rayStart4.m_y, rayStart4.m_z);
+
+  float n = -rayStart.m_y/rayDir.m_y;
+  ngl::Vec3 rayEnd = rayStart + n*rayDir;
+
+  return rayEnd;
+}
+
 //------------------------------------------------------------------------------------------------------------------------
 ///MOUSE EVENTS
 //------------------------------------------------------------------------------------------------------------------------
@@ -55,37 +83,42 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
 
   }
 
-  m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
-  ngl::Mat4 currentTransform = (*m_currentMouseTransform);//*m_initialRotation;
-  ngl::Mat4 MVP= m_project*m_view*currentTransform;
-  ngl::Mat4 MVPinverse = MVP.inverse();
+  if(m_drawingLine)
+  {
+    ngl::Vec3 point = getProjectedPointOnPlane(_event->x(), _event->y());
+    m_paintLineVertices.push_back(point);
+    m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
+    m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
+    m_buildPaintLineVAO = true;
+    update();
 
-  float projDevX = (2*float(_event->x())/m_win.width)-1;
-  float projDevY = 1-2*(float(_event->y())/m_win.height);
+    m_points.push_back(point);
+    m_pointIndices.push_back(GLshort(m_points.size()-1));
+  }
 
-  ngl::Vec4 ray_clip = ngl::Vec4(projDevX,projDevY, -1.0, 1.0);
-  ngl::Vec4 ray_eye = m_project.inverse() * ray_clip;
-  ray_eye = {ray_eye.m_x, ray_eye.m_y, -1, 0};
-
-  ngl::Vec4 ray_world = m_view.inverse() * ray_eye;
-
-  ngl::Vec4 ray_wor = currentTransform.inverse() * ray_eye;
-
-  ngl::Vec3 ray = ngl::Vec3(ray_wor.m_x, ray_wor.m_y, ray_wor.m_z);
-
-  // don't forget to normalise the vector at some point
-  ray.normalize();
-
-  print(ray);
 }
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void NGLScene::mousePressEvent( QMouseEvent* _event )
 {
+  if(m_treePaintMode)
+  {
+    ngl::Vec3 point = getProjectedPointOnPlane(_event->x(), _event->y());
+
+    m_paintLineVertices.push_back(point);
+    m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
+
+    m_points.push_back(point);
+    m_pointIndices.push_back(GLshort(m_points.size()-1));
+
+    m_buildPaintLineVAO = true;
+    m_drawingLine = true;
+  }
+
   // that method is called when the mouse button is pressed in this case we
   // store the value where the maouse was clicked (x,y) and set the Rotate flag to true
-  if (m_rotate==true && _event->button() == Qt::LeftButton )
+  else if (m_rotate==true && _event->button() == Qt::LeftButton )
   {
     m_win.origX  = _event->x();
     m_win.origY  = _event->y();
@@ -99,76 +132,18 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
     m_win.translate = true;
   }
 
-//  if(m_addRay)
-//  {
-//    m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
-//    ngl::Mat4 currentTransform = (*m_currentMouseTransform);//*m_initialRotation;
-//    ngl::Mat4 MVP= m_project*m_view*currentTransform;
-//    ngl::Mat4 MVPinverse = MVP.inverse();
-
-
-
-
-//    float projDevX = (2*float(_event->x())/m_win.width)-1;
-//    float projDevY = 1-2*(float(_event->y())/m_win.height);
-
-//    ngl::Vec4 ray_clip = ngl::Vec4(projDevX,projDevY, -1.0, 1.0);
-//    ngl::Vec4 ray_eye = m_project.inverse() * ray_clip;
-//    ray_eye = {ray_eye.m_x, ray_eye.m_y, -1, 0};
-
-//    ngl::Vec4 ray_world = m_view.inverse() * ray_eye;
-//    ngl::Vec3 ray_wor = ngl::Vec3(ray_world.m_x, ray_world.m_y, ray_world.m_z);
-//    // don't forget to normalise the vector at some point
-//    ray_wor.normalize();
-
-
-
-
-//    ngl::Vec4 rayStart4 = MVPinverse * ngl::Vec4(projDevX,projDevY,0.9,1);
-//    ngl::Vec4 rayEnd4 = MVPinverse * ngl::Vec4(projDevX,projDevY,1,1);
-
-//    ngl::Vec3 rayStart = ngl::Vec3(rayStart4.m_x, rayStart4.m_y, rayStart4.m_z);
-//    ngl::Vec3 rayEnd = ngl::Vec3(rayEnd4.m_x, rayEnd4.m_y, rayEnd4.m_z);
-//    //ngl::Vec3 rayEnd = rayStart + 10*ray_wor;
-
-////    m_projDevRays.push_back({projDevX, projDevY, -1});
-////    m_projDevRays.push_back({projDevX, projDevY, 1});
-
-////    print("\n");
-////    print(rayStart);
-////    print(rayEnd);
-
-//    m_worldSpaceRays.push_back(rayStart);
-//    m_rayIndices.push_back(GLshort(m_worldSpaceRays.size()-1));
-//    m_worldSpaceRays.push_back(rayEnd);
-//    m_rayIndices.push_back(GLshort(m_worldSpaceRays.size()-1));
-
-//    m_buildRayVAO = true;
-//    m_addRay = false;
-//  }
-
-  if ( _event->button() == Qt::RightButton )
-  {
-    m_addRay = true;
-  }
-
-//  for(size_t i=0; i<m_worldSpaceRays.size(); i+=2)
-//  {
-//    print("\nRAY START: ");
-//    print(m_worldSpaceRays[i]);
-//    print("RAY END: ");
-//    print(m_worldSpaceRays[i+1]);
-//  }
-
-
-
-
   update();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 void NGLScene::mouseReleaseEvent( QMouseEvent* _event )
 {
+  if(m_drawingLine)
+  {
+    m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
+    m_drawingLine = false;
+  }
+
   // this event is called when the mouse button is released
   // we then set rotate to false
   if ( _event->button() == Qt::LeftButton )

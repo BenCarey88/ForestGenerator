@@ -191,6 +191,8 @@ public slots:
   void setTerrainSize(double _terrainSize);
   void setLOD(int _LOD);
 
+  void toggleTreePaintMode( bool _mode );
+
 protected:
 
   //PROTECTED MEMBER VARIABLES
@@ -203,7 +205,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   const size_t m_numSuperTabs = 3;
   const size_t m_numTreeTabs = 2;
-  const size_t m_numTerrainTabs = 2;
+  const size_t m_numTerrainTabs = 3;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the current superTab number
   //----------------------------------------------------------------------------------------------------------------------
@@ -218,11 +220,17 @@ protected:
   std::vector<ngl::Vec3> m_points = {};
   std::vector<GLshort> m_pointIndices = {};
 
-  bool m_addRay = true;
-  bool m_buildRayVAO = true;
-  std::vector<ngl::Vec3> m_projDevRays = {};
-  std::vector<ngl::Vec3> m_worldSpaceRays = {};
-  std::vector<GLshort> m_rayIndices = {};
+  bool m_treePaintMode = false;
+  bool m_savedTreePaintMode = false;
+  bool m_drawingLine = false;
+
+  std::unique_ptr<ngl::AbstractVAO> m_pointVAO;
+  std::unique_ptr<ngl::AbstractVAO> m_paintLineVAO;
+
+  bool m_buildPaintLineVAO = true;
+  //std::vector<ngl::Vec3> m_projDevRays = {};
+  std::vector<ngl::Vec3> m_paintLineVertices = {};
+  std::vector<GLshort> m_paintLineIndices = {};
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
@@ -336,6 +344,7 @@ protected:
 
   bool m_rotate = true;
 
+  ngl::Vec3 getProjectedPointOnPlane(float _screenX, float _screenY);
 
   //PROTECTED MEMBER FUNCTIONS
   //----------------------------------------------------------------------------------------------------------------------

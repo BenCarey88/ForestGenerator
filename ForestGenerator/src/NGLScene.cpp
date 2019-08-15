@@ -166,14 +166,14 @@ void NGLScene::paintGL()
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
 
-  glPointSize(20);
-  if(m_buildRayVAO)
-  {
-    buildSimpleIndexVAO(m_terrainVAO, m_worldSpaceRays, m_rayIndices, GL_LINES, GL_UNSIGNED_SHORT);
-    m_buildRayVAO = false;
-  }
-  loadUniformsToShader(shader, "GridShader");
-  drawVAO(m_terrainVAO);
+//  glPointSize(20);
+//  if(m_buildPaintLineVAO)
+//  {
+//    buildSimpleIndexVAO(m_terrainVAO, m_paintLineVertices, m_paintLineIndices, GL_POINTS, GL_UNSIGNED_SHORT);
+//    m_buildPaintLineVAO = false;
+//  }
+//  loadUniformsToShader(shader, "GridShader");
+//  drawVAO(m_terrainVAO);
 
 //  std::vector<ngl::Vec3> verts = {{-0.5,0.5,0},{-0.5,0.5,-0.5}};
 //  std::vector<GLshort> inds = {0,1};
@@ -247,13 +247,30 @@ void NGLScene::paintGL()
         drawVAO(m_terrainVAO);
       }
 
-      for(GLshort i=0; size_t(i)<m_points.size(); i++)
+//      for(GLshort i=0; size_t(i)<m_points.size(); i++)
+//      {
+//        m_pointIndices.push_back(i);
+//      }
+//      buildSimpleIndexVAO(m_terrainVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
+//      glPointSize(20);
+//      drawVAO(m_terrainVAO);
+
+      else if (m_terrainTabNum==2)
       {
-        m_pointIndices.push_back(i);
+        loadUniformsToShader(shader, "GridShader");
+        drawVAO(m_gridVAO);
+
+        glPointSize(20);
+        if(m_buildPaintLineVAO)
+        {
+          buildSimpleIndexVAO(m_paintLineVAO, m_paintLineVertices, m_paintLineIndices, GL_LINES, GL_UNSIGNED_SHORT);
+          buildSimpleIndexVAO(m_pointVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
+          m_buildPaintLineVAO = false;
+        }
+        loadUniformsToShader(shader, "GridShader");
+        drawVAO(m_paintLineVAO);
+        drawVAO(m_pointVAO);
       }
-      buildSimpleIndexVAO(m_terrainVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
-      glPointSize(20);
-      drawVAO(m_terrainVAO);
 
       break;
     }

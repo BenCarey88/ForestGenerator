@@ -1279,6 +1279,24 @@
            </property>
           </widget>
          </widget>
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
+           <string>Page</string>
+          </attribute>
+          <widget class="QCheckBox" name="m_paintMode">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>40</y>
+             <width>111</width>
+             <height>26</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Paint Mode</string>
+           </property>
+          </widget>
+         </widget>
         </widget>
        </widget>
        <widget class="QWidget" name="renderTab">

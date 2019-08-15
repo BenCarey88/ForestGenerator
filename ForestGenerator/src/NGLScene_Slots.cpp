@@ -19,15 +19,18 @@ void NGLScene::changeSuperTab(int _superTabNum)
   {
     i=m_treeTabNum;
     m_rotate=true;
+    m_treePaintMode=false;
   }
   else if(_superTabNum==1)
   {
-    m_rotate = bool(1-m_terrainTabNum);
     i=m_terrainTabNum;
+    m_rotate = (m_terrainTabNum==1) ? false : true;
+    m_treePaintMode = (m_terrainTabNum==2) ? m_savedTreePaintMode : false;
   }
   else if(_superTabNum==2)
   {
     m_rotate=true;
+    m_treePaintMode=false;
     updateForest();
   }
 
@@ -55,7 +58,8 @@ void NGLScene::changeTerrainTab(int _terrainTabNum)
   m_currentCamera = &m_cameras[1][m_terrainTabNum];
   m_currentMouseTransform = &m_mouseTransforms[1][m_terrainTabNum];
 
-  m_rotate = bool(1-m_terrainTabNum);
+  m_rotate = (m_terrainTabNum==1) ? false : true;
+  m_treePaintMode = (m_terrainTabNum==2) ? m_savedTreePaintMode : false;
 
   update();
 }
@@ -248,4 +252,10 @@ void NGLScene::setLOD(int _LOD)
   m_terrainDimension = int(std::pow(2,_LOD))+1;
   m_terrainGen.m_dimension = m_terrainDimension;
   m_terrainGen.m_scale = m_width/m_terrainDimension;
+}
+
+void NGLScene::toggleTreePaintMode(bool _mode)
+{
+  m_savedTreePaintMode = _mode;
+  m_treePaintMode = _mode;
 }
