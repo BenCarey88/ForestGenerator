@@ -218,6 +218,12 @@ protected:
   std::vector<ngl::Vec3> m_points = {};
   std::vector<GLshort> m_pointIndices = {};
 
+  bool m_addRay = true;
+  bool m_buildRayVAO = true;
+  std::vector<ngl::Vec3> m_projDevRays = {};
+  std::vector<ngl::Vec3> m_worldSpaceRays = {};
+  std::vector<GLshort> m_rayIndices = {};
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
   //----------------------------------------------------------------------------------------------------------------------

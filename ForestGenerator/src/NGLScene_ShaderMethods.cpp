@@ -128,7 +128,7 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
 
 void NGLScene::loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &_shaderName)
 {
-  ngl::Mat4 currentTransform = (*m_currentMouseTransform)*m_initialRotation;
+  ngl::Mat4 currentTransform = (*m_currentMouseTransform);//*m_initialRotation;
   ngl::Mat4 MVP= m_project*m_view*currentTransform;
   ngl::Mat4 MV = m_view*currentTransform;
   ngl::Mat4 M = currentTransform;
@@ -144,4 +144,5 @@ void NGLScene::loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &
   _shader->setUniform("M",M);
   _shader->setUniform("lightPosition",lightPos);
   _shader->setUniform("maxHeight",m_forest.m_terrainGen.m_amplitude);
+
 }

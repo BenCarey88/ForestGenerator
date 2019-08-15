@@ -41,9 +41,9 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_cameras[2][0]=m_cameras[1][0];
 
   m_mouseTransforms.resize(m_numSuperTabs);
-  m_mouseTransforms[0].resize(m_numTreeTabs);
-  m_mouseTransforms[1].resize(m_numTerrainTabs);
-  m_mouseTransforms[2].resize(1);
+  m_mouseTransforms[0].resize(m_numTreeTabs, m_initialRotation);
+  m_mouseTransforms[1].resize(m_numTerrainTabs, m_initialRotation);
+  m_mouseTransforms[2].resize(1, m_initialRotation);
 
   initializeLSystems();
   m_terrainGen = TerrainGenerator(m_terrainDimension, m_width);
@@ -166,6 +166,22 @@ void NGLScene::paintGL()
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
 
+  glPointSize(20);
+  if(m_buildRayVAO)
+  {
+    buildSimpleIndexVAO(m_terrainVAO, m_worldSpaceRays, m_rayIndices, GL_LINES, GL_UNSIGNED_SHORT);
+    m_buildRayVAO = false;
+  }
+  loadUniformsToShader(shader, "GridShader");
+  drawVAO(m_terrainVAO);
+
+//  std::vector<ngl::Vec3> verts = {{-0.5,0.5,0},{-0.5,0.5,-0.5}};
+//  std::vector<GLshort> inds = {0,1};
+//  glPointSize(20);
+//  buildSimpleIndexVAO(m_terrainVAO, verts, inds, GL_POINTS, GL_UNSIGNED_SHORT);
+//  (*shader)["GridShader"]->use();
+//  drawVAO(m_terrainVAO);
+
   if(m_buildTreeVAO==true)
   {
     buildTreeVAO(m_treeTabNum);
@@ -222,7 +238,7 @@ void NGLScene::paintGL()
       else if (m_terrainTabNum==1)
       {
         glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        ngl::Mat4 currentTransform = (*m_currentMouseTransform)*m_initialRotation;
+        ngl::Mat4 currentTransform = (*m_currentMouseTransform);//*m_initialRotation;
         ngl::Mat4 MVP= m_project*m_view*currentTransform*m_layoutRotation;
         Grid grid(25,80);
         buildSimpleIndexVAO(m_terrainVAO, grid.m_vertices,  grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
