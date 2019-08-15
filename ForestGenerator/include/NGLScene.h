@@ -226,7 +226,7 @@ protected:
 
   std::unique_ptr<ngl::AbstractVAO> m_pointVAO;
   std::unique_ptr<ngl::AbstractVAO> m_paintLineVAO;
-  float m_minTreeDist = 50;
+  float m_minTreeDist = 20;
 
   Forest m_paintedForest;
 
@@ -348,6 +348,7 @@ protected:
   bool m_rotate = true;
 
   ngl::Vec3 getProjectedPointOnPlane(float _screenX, float _screenY);
+  void addPointToPaintedForest(ngl::Vec3 &_point);
 
   //PROTECTED MEMBER FUNCTIONS
   //----------------------------------------------------------------------------------------------------------------------

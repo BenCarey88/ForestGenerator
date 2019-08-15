@@ -37,6 +37,29 @@ ngl::Vec3 NGLScene::getProjectedPointOnPlane(float _screenX, float _screenY)
 }
 
 //------------------------------------------------------------------------------------------------------------------------
+
+
+void NGLScene::addPointToPaintedForest(ngl::Vec3 &_point)
+{
+  bool pointIsViable=true;
+  for(auto &p : m_points)
+  {
+    if((_point-p).length()<m_minTreeDist)
+    {
+      pointIsViable=false;
+      break;
+    }
+  }
+
+  if(pointIsViable)
+  {
+    m_points.push_back(_point);
+    m_pointIndices.push_back(GLshort(m_points.size()-1));
+    m_paintedForest.addTreeToForest(_point, 0);
+  }
+}
+
+//------------------------------------------------------------------------------------------------------------------------
 ///MOUSE EVENTS
 //------------------------------------------------------------------------------------------------------------------------
 
@@ -90,24 +113,10 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
     m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
     m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
     m_buildPaintLineVAO = true;
+
+    addPointToPaintedForest(point);
+
     update();
-
-    bool pointIsViable=true;
-    for(auto p : m_points)
-    {
-      if((point-p).length()<m_minTreeDist)
-      {
-        pointIsViable=false;
-        break;
-      }
-    }
-
-    if(pointIsViable)
-    {
-      m_points.push_back(point);
-      m_pointIndices.push_back(GLshort(m_points.size()-1));
-      m_paintedForest.addTreeToForest(point, 0);
-    }
   }
 
 }
@@ -123,9 +132,7 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
     m_paintLineVertices.push_back(point);
     m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
 
-    m_points.push_back(point);
-    m_pointIndices.push_back(GLshort(m_points.size()-1));
-    m_paintedForest.addTreeToForest(point, 0);
+    addPointToPaintedForest(point);
 
     m_buildPaintLineVAO = true;
     m_drawingLine = true;

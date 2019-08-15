@@ -124,6 +124,7 @@ void Forest::createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size
     Instance * instance = getInstance(treeType, _id, _age, innerIndex);
     ngl::Mat4 T = _transform * instance->m_transform.inverse();
     m_transformCache.at(_treeType).at(_id).at(_age).at(innerIndex).push_back(T);
+    m_adjustedCacheIndexes.push_back(CacheIndex(_treeType,_id,_age,innerIndex));
 
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
     {

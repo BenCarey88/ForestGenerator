@@ -277,7 +277,14 @@ void NGLScene::paintGL()
         loadUniformsToShader(shader, "ForestLeafShader");
         loadUniformsToShader(shader, "ForestPolygonShader");
 
-          buildForestVAOs(m_paintedForest);
+//        for(auto &i : m_paintedForest.m_adjustedCacheIndexes)
+//        {
+//          buildForestVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
+//          buildForestLeafVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
+//          buildForestPolygonVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
+//          m_paintedForest.m_adjustedCacheIndexes.clear();
+//        }
+        buildForestVAOs(m_paintedForest);
 
         FOR_EACH_ELEMENT(m_forestVAOs[0],
                          (*shader)["ForestShader"]->use();

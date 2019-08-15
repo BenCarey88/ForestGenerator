@@ -64,6 +64,7 @@ void NGLScene::changeTerrainTab(int _terrainTabNum)
   if(m_terrainTabNum==2)
   {
      m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
+     buildForestVAOs(m_paintedForest);
   }
 
   update();

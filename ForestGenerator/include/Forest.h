@@ -74,6 +74,18 @@ public:
     size_t m_treeType, m_id, m_age, m_innerIndex;
   };
 
+  struct CacheIndex
+  {
+    CacheIndex(size_t _treeNum, size_t _id, size_t _age, size_t _innerIndex) :
+      m_treeNum(_treeNum), m_id(_id), m_age(_age), m_innerIndex(_innerIndex) {}
+
+    size_t m_treeNum;
+    size_t m_id;
+    size_t m_age;
+    size_t m_innerIndex;
+  };
+  std::vector<CacheIndex> m_adjustedCacheIndexes;
+
   //PUBLIC MEMBER VARIABLES
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief base tree types for the forest
