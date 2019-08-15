@@ -37,6 +37,8 @@ public:
   Forest(const std::vector<LSystem> &_treeTypes, float _width,
          size_t _numTrees, int _numHeroTrees, TerrainGenerator _terrainGen);
 
+  Forest(const std::vector<LSystem> &_treeTypes, int _numHeroTrees);
+
   //TREE STRUCT
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief simple struct for grouping together an LSystem type, position and rotation
@@ -129,6 +131,8 @@ public:
   void resizeTransformCache();
 
   void seedRandomEngine();
+
+  void addTreeToForest(ngl::Vec3 &_point, size_t _treeType);
 
 };
 

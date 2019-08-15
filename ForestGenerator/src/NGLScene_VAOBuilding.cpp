@@ -189,17 +189,17 @@ void NGLScene::buildTerrainVAO()
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index)
+void NGLScene::buildForestVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index)
 {
 
-  LSystem &treeType = m_forest.m_treeTypes[_treeNum];
+  LSystem &treeType = _forest.m_treeTypes[_treeNum];
   CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
   std::unique_ptr<ngl::AbstractVAO> &vao = m_forestVAOs[_treeNum][_id][_age][_index];
 
   buildInstanceCacheVAO(vao,
                         treeType.m_heroVertices,
                         treeType.m_heroIndices,
-                        m_forest.m_transformCache[_treeNum][_id][_age][_index],
+                        _forest.m_transformCache[_treeNum][_id][_age][_index],
                         instanceCache[_id][_age][_index].m_instanceStart,
                         instanceCache[_id][_age][_index].m_instanceEnd,
                         GL_LINES);
@@ -217,16 +217,16 @@ void NGLScene::buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index)
+void NGLScene::buildForestLeafVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index)
 {
-  LSystem &treeType = m_forest.m_treeTypes[_treeNum];
+  LSystem &treeType = _forest.m_treeTypes[_treeNum];
   CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
   std::unique_ptr<ngl::AbstractVAO> &vao = m_forestLeafVAOs[_treeNum][_id][_age][_index];
 
   buildInstanceCacheVAO(vao,
                         treeType.m_heroLeafVertices,
                         treeType.m_heroLeafIndices,
-                        m_forest.m_transformCache[_treeNum][_id][_age][_index],
+                        _forest.m_transformCache[_treeNum][_id][_age][_index],
                         instanceCache[_id][_age][_index].m_instanceLeafStart,
                         instanceCache[_id][_age][_index].m_instanceLeafEnd,
                         GL_POINTS);
@@ -244,15 +244,15 @@ void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index)
+void NGLScene::buildForestPolygonVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index)
 {
-  LSystem &treeType = m_forest.m_treeTypes[_treeNum];
+  LSystem &treeType = _forest.m_treeTypes[_treeNum];
   CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
 
   buildInstanceCacheVAO(m_forestPolygonVAOs[_treeNum][_id][_age][_index],
                         treeType.m_heroPolygonVertices,
                         treeType.m_heroPolygonIndices,
-                        m_forest.m_transformCache[_treeNum][_id][_age][_index],
+                        _forest.m_transformCache[_treeNum][_id][_age][_index],
                         instanceCache[_id][_age][_index].m_instancePolygonStart,
                         instanceCache[_id][_age][_index].m_instancePolygonEnd,
                         GL_TRIANGLES);
@@ -260,20 +260,20 @@ void NGLScene::buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, s
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildForestVAOs()
+void NGLScene::buildForestVAOs(Forest &_forest)
 {
-  for(size_t t=0; t<m_forest.m_treeTypes.size(); t++)
+  for(size_t t=0; t<_forest.m_treeTypes.size(); t++)
   {
-    LSystem &treeType = m_forest.m_treeTypes[t];
+    LSystem &treeType = _forest.m_treeTypes[t];
     CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestVAOs[t], instanceCache)
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestLeafVAOs[t], instanceCache)
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestPolygonVAOs[t], instanceCache)
 
     FOR_EACH_ELEMENT(m_forestVAOs[t],
-                     buildForestVAO(t,ID,AGE,INDEX);
-                     buildForestLeafVAO(t,ID,AGE,INDEX);
-                     buildForestPolygonVAO(t,ID,AGE,INDEX))
+                     buildForestVAO(_forest,t,ID,AGE,INDEX);
+                     buildForestLeafVAO(_forest,t,ID,AGE,INDEX);
+                     buildForestPolygonVAO(_forest,t,ID,AGE,INDEX))
 
   }
 }

@@ -92,8 +92,22 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
     m_buildPaintLineVAO = true;
     update();
 
-    m_points.push_back(point);
-    m_pointIndices.push_back(GLshort(m_points.size()-1));
+    bool pointIsViable=true;
+    for(auto p : m_points)
+    {
+      if((point-p).length()<m_minTreeDist)
+      {
+        pointIsViable=false;
+        break;
+      }
+    }
+
+    if(pointIsViable)
+    {
+      m_points.push_back(point);
+      m_pointIndices.push_back(GLshort(m_points.size()-1));
+      m_paintedForest.addTreeToForest(point, 0);
+    }
   }
 
 }
@@ -111,6 +125,7 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
 
     m_points.push_back(point);
     m_pointIndices.push_back(GLshort(m_points.size()-1));
+    m_paintedForest.addTreeToForest(point, 0);
 
     m_buildPaintLineVAO = true;
     m_drawingLine = true;
@@ -140,8 +155,12 @@ void NGLScene::mouseReleaseEvent( QMouseEvent* _event )
 {
   if(m_drawingLine)
   {
-    m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
+    //m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
+    m_paintLineVertices.clear();
+    m_paintLineIndices.clear();
+    m_buildPaintLineVAO = true;
     m_drawingLine = false;
+    update();
   }
 
   // this event is called when the mouse button is released

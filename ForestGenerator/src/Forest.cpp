@@ -24,6 +24,16 @@ Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width,
   createForest();
 }
 
+Forest::Forest(const std::vector<LSystem> &_treeTypes, int _numHeroTrees) :
+  m_treeTypes(_treeTypes), m_numHeroTrees(_numHeroTrees)
+{
+  for(auto &treeType : m_treeTypes)
+  {
+    treeType.fillInstanceCache(m_numHeroTrees);
+  }
+  resizeTransformCache();
+}
+
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -60,6 +70,7 @@ void Forest::seedRandomEngine()
   }
   m_gen.seed(seed);
 }
+
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -144,5 +155,14 @@ void Forest::createForest()
   seedRandomEngine();
   resizeTransformCache();
   for(auto &tree : m_treeData)
+  {
     createTree(tree.m_type,tree.m_transform,0,0);
+  }
+}
+
+void Forest::addTreeToForest(ngl::Vec3 &_point, size_t _treeType)
+{
+  ngl::Mat4 position;
+  position.translate(_point.m_x, 0, _point.m_z);
+  createTree(_treeType,position,0,0);
 }

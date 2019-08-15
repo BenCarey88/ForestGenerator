@@ -226,6 +226,9 @@ protected:
 
   std::unique_ptr<ngl::AbstractVAO> m_pointVAO;
   std::unique_ptr<ngl::AbstractVAO> m_paintLineVAO;
+  float m_minTreeDist = 50;
+
+  Forest m_paintedForest;
 
   bool m_buildPaintLineVAO = true;
   //std::vector<ngl::Vec3> m_projDevRays = {};
@@ -381,10 +384,10 @@ protected:
   void buildLeafVAO(size_t _treeNum);
   void buildPolygonVAO(size_t _treeNum);
 
-  void buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index);
-  void buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index);
-  void buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index);
-  void buildForestVAOs();
+  void buildForestVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index);
+  void buildForestLeafVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index);
+  void buildForestPolygonVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index);
+  void buildForestVAOs(Forest &_forest);
 
   void compileShaders();
   void loadShaderTextures();

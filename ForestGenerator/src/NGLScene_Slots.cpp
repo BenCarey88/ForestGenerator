@@ -61,6 +61,11 @@ void NGLScene::changeTerrainTab(int _terrainTabNum)
   m_rotate = (m_terrainTabNum==1) ? false : true;
   m_treePaintMode = (m_terrainTabNum==2) ? m_savedTreePaintMode : false;
 
+  if(m_terrainTabNum==2)
+  {
+     m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
+  }
+
   update();
 }
 
