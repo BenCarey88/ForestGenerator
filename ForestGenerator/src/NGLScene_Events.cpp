@@ -140,7 +140,7 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
 
   // that method is called when the mouse button is pressed in this case we
   // store the value where the maouse was clicked (x,y) and set the Rotate flag to true
-  else if (m_rotate==true && _event->button() == Qt::LeftButton )
+  else if (_event->button() == Qt::LeftButton )
   {
     m_win.origX  = _event->x();
     m_win.origY  = _event->y();

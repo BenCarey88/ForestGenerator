@@ -68,7 +68,7 @@ public slots:
   //----------------------------------------------------------------------------------------------------------------------
   void changeTreeTab(int _treeTabNum);
 
-  void changeTerrainTab(int _terrainTabNum);
+  void changeForestTab(int _forestTabNum);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the axiom for the L-System
@@ -86,6 +86,16 @@ public slots:
   void setRule5(QString _rule);
   void setRule6(QString _rule);
   void setRule7(QString _rule);
+  void setRule8(QString _rule);
+  void setRule9(QString _rule);
+  void setRule10(QString _rule);
+  void setRule11(QString _rule);
+  void setRule12(QString _rule);
+  void setRule13(QString _rule);
+  void setRule14(QString _rule);
+  void setRule15(QString _rule);
+  void setRule16(QString _rule);
+  void setRule17(QString _rule);
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the size of steps in the L-system
@@ -201,21 +211,17 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   WinParams m_win;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief the number of superTabs and treeTabs
+  /// @brief the number of tabs of each type
   //----------------------------------------------------------------------------------------------------------------------
   const size_t m_numSuperTabs = 3;
-  const size_t m_numTreeTabs = 2;
-  const size_t m_numTerrainTabs = 3;
+  const size_t m_numTreeTabs = 3;
+  const size_t m_numForestTabs = 2;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief the current superTab number
+  /// @brief the current tab numbers
   //----------------------------------------------------------------------------------------------------------------------
   size_t m_superTabNum = 0;
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief the current treeTab number
-  //----------------------------------------------------------------------------------------------------------------------
   size_t m_treeTabNum = 0;
-
-  size_t m_terrainTabNum = 0;
+  size_t m_forestTabNum = 0;
 
   std::vector<ngl::Vec3> m_points = {};
   std::vector<GLshort> m_pointIndices = {};
@@ -231,7 +237,6 @@ protected:
   Forest m_paintedForest;
 
   bool m_buildPaintLineVAO = true;
-  //std::vector<ngl::Vec3> m_projDevRays = {};
   std::vector<ngl::Vec3> m_paintLineVertices = {};
   std::vector<GLshort> m_paintLineIndices = {};
 
@@ -344,8 +349,6 @@ protected:
   int m_terrainDimension = 129;
 
   bool m_terrainWireframe = false;
-
-  bool m_rotate = true;
 
   GLuint m_terrainNormalBuffer = 0;
   GLuint m_terrainTangentBuffer = 0;

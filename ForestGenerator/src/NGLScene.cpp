@@ -33,16 +33,17 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
 
   m_cameras.resize(m_numSuperTabs);
   m_cameras[0].resize(m_numTreeTabs);
-  m_cameras[1].resize(m_numTerrainTabs);
+  m_cameras[1].resize(m_numForestTabs);
   m_cameras[2].resize(1);
 
   m_cameras[1][0]=Camera({0,200,1000},{0,0,0});
-  m_cameras[1][1]=Camera({0,0,2500},{0,0,0});
+  m_cameras[1][1]=m_cameras[1][0];
+//  m_cameras[1][1]=Camera({0,0,2500},{0,0,0});
   m_cameras[2][0]=m_cameras[1][0];
 
   m_mouseTransforms.resize(m_numSuperTabs);
   m_mouseTransforms[0].resize(m_numTreeTabs, m_initialRotation);
-  m_mouseTransforms[1].resize(m_numTerrainTabs, m_initialRotation);
+  m_mouseTransforms[1].resize(m_numForestTabs, m_initialRotation);
   m_mouseTransforms[2].resize(1, m_initialRotation);
 
   initializeLSystems();
@@ -228,22 +229,7 @@ void NGLScene::paintGL()
 
     case 1:
     {
-      if(m_terrainTabNum==0)
-      {
-        if(m_terrainWireframe == true)
-        {
-          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        }
-        refineTerrain();
-        loadUniformsToShader(shader, "TerrainShader");
-        drawVAO(m_terrainVAO);
-      }
-      else if (m_terrainTabNum==1)
-      {
-
-      }
-
-      else if (m_terrainTabNum==2)
+      if (m_forestTabNum==0)
       {
         print("GRID ERROR? ", glGetError(), "\n");
         loadUniformsToShader(shader, "GridShader");
@@ -291,7 +277,18 @@ void NGLScene::paintGL()
                          print("Polygon shader ",glGetError(), "\n");
                          drawVAO(m_forestPolygonVAOs[0][ID][AGE][INDEX]);
                          print("draw polygons ",glGetError(), "\n");
-                         newLine();)
+                         newLine())
+      }
+
+      else if(m_forestTabNum==1)
+      {
+        if(m_terrainWireframe == true)
+        {
+          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        }
+        refineTerrain();
+        loadUniformsToShader(shader, "TerrainShader");
+        drawVAO(m_terrainVAO);
       }
 
       break;

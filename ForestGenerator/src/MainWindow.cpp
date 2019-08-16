@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
   //-----------------------------------------------------------------------------------
   connect(m_ui->m_superTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeSuperTab(int)));
   connect(m_ui->m_treeTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeTreeTab(int)));
-  connect(m_ui->m_terraintTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeTerrainTab(int)));
+  connect(m_ui->m_forestTab, SIGNAL(currentChanged(int)), m_gl, SLOT(changeForestTab(int)));
 
   //TREE TAB
   //------------------------------------------------------------------------------------

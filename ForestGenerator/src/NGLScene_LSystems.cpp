@@ -53,6 +53,22 @@ void NGLScene::initializeLSystems()
                           angle,angleScale,
                           thickness,thicknessScale,
                           generation);
+
+  //LSystem 3:
+  axiom = "FFFA";
+  rules = {"A=!\"[B]////[B]////B","B=&FFFA"};
+  stepSize = 2;
+  stepScale = 0.9f;
+  angle = 30;
+  angleScale = 0.9f;
+  generation = 4;
+  thickness = 1;
+  thicknessScale = 0.7f;
+  m_LSystems[2] = LSystem(axiom,rules,
+                          stepSize,stepScale,
+                          angle,angleScale,
+                          thickness,thicknessScale,
+                          generation);
 }
 
 void NGLScene::updateForest()

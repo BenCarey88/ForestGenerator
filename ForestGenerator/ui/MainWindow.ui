@@ -57,7 +57,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="LSystemsTab">
         <attribute name="title">
@@ -85,7 +85,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="treeTab1">
           <attribute name="title">
@@ -101,7 +101,7 @@
             </rect>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="rulesTab_1">
             <attribute name="title">
@@ -544,7 +544,7 @@
             </rect>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="rulesTab_2">
             <attribute name="title">
@@ -987,7 +987,7 @@
             </rect>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="rulesTab_3">
             <attribute name="title">
@@ -1435,7 +1435,7 @@
           <enum>QTabWidget::North</enum>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="paintToolTab">
           <attribute name="title">
@@ -1781,7 +1781,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer_3">
+               <spacer name="spacer_4">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>

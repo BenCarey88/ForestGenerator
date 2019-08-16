@@ -18,18 +18,15 @@ void NGLScene::changeSuperTab(int _superTabNum)
   if(_superTabNum==0)
   {
     i=m_treeTabNum;
-    m_rotate=true;
     m_treePaintMode=false;
   }
   else if(_superTabNum==1)
   {
-    i=m_terrainTabNum;
-    m_rotate = (m_terrainTabNum==1) ? false : true;
-    m_treePaintMode = (m_terrainTabNum==2) ? m_savedTreePaintMode : false;
+    i=m_forestTabNum;
+    m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
   }
   else if(_superTabNum==2)
   {
-    m_rotate=true;
     m_treePaintMode=false;
     updateForest();
   }
@@ -51,17 +48,16 @@ void NGLScene::changeTreeTab(int _treeTabNum)
   update();
 }
 
-void NGLScene::changeTerrainTab(int _terrainTabNum)
+void NGLScene::changeForestTab(int _forestTabNum)
 {
-  m_terrainTabNum = size_t(_terrainTabNum);
+  m_forestTabNum = size_t(_forestTabNum);
 
-  m_currentCamera = &m_cameras[1][m_terrainTabNum];
-  m_currentMouseTransform = &m_mouseTransforms[1][m_terrainTabNum];
+  m_currentCamera = &m_cameras[1][m_forestTabNum];
+  m_currentMouseTransform = &m_mouseTransforms[1][m_forestTabNum];
 
-  m_rotate = (m_terrainTabNum==1) ? false : true;
-  m_treePaintMode = (m_terrainTabNum==2) ? m_savedTreePaintMode : false;
+  m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
 
-  if(m_terrainTabNum==2)
+  if(m_forestTabNum==0)
   {
      m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
      buildForestVAOs(m_paintedForest);
@@ -161,6 +157,12 @@ void NGLScene::setAxiom(QString _axiom)
 {
   m_currentLSystem->m_axiom = _axiom.toStdString();
 }
+
+#define SET_RULE(NUM)                                       \
+  void NGLScene::setRule##NUM(QString _rule)                \
+  {                                                         \
+    m_currentLSystem->m_ruleArray[NUM]=_rule.toStdString(); \
+  }
 
 void NGLScene::setRule1(QString _rule)
 {
