@@ -57,7 +57,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="LSystemsTab">
         <attribute name="title">
@@ -91,7 +91,7 @@
           <attribute name="title">
            <string>Tree 1</string>
           </attribute>
-          <widget class="QTabWidget" name="tabWidget">
+          <widget class="QTabWidget" name="m_treeControlsTab_1">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -101,7 +101,7 @@
             </rect>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="rulesTab_1">
             <attribute name="title">
@@ -268,7 +268,7 @@
              </layout>
             </widget>
            </widget>
-           <widget class="QWidget" name="tab_3">
+           <widget class="QWidget" name="parametersTab_1">
             <attribute name="title">
              <string>Parameters</string>
             </attribute>
@@ -278,10 +278,10 @@
                <x>10</x>
                <y>10</y>
                <width>231</width>
-               <height>281</height>
+               <height>303</height>
               </rect>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
+             <layout class="QVBoxLayout" name="parameterLayout_1">
               <item>
                <layout class="QHBoxLayout" name="stepSizeBox_1">
                 <item>
@@ -418,7 +418,7 @@
                </layout>
               </item>
               <item>
-               <spacer name="verticalSpacer">
+               <spacer name="spacer_1">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -473,7 +473,7 @@
             </widget>
            </widget>
           </widget>
-          <widget class="QWidget" name="verticalLayoutWidget_4">
+          <widget class="QWidget" name="verticalLayoutWidget_3">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -482,7 +482,7 @@
              <height>91</height>
             </rect>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <layout class="QVBoxLayout" name="buttonsLayout_1">
             <item>
              <widget class="QPushButton" name="m_resetCamera_1">
               <property name="text">
@@ -498,7 +498,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
+             <layout class="QHBoxLayout" name="togglesLayout_1">
               <property name="bottomMargin">
                <number>6</number>
               </property>
@@ -534,7 +534,7 @@
           <attribute name="title">
            <string>Tree 2</string>
           </attribute>
-          <widget class="QTabWidget" name="tabWidget_3">
+          <widget class="QTabWidget" name="m_treeControlsTab_2">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -544,7 +544,7 @@
             </rect>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="rulesTab_2">
             <attribute name="title">
@@ -711,7 +711,7 @@
              </layout>
             </widget>
            </widget>
-           <widget class="QWidget" name="tab_7">
+           <widget class="QWidget" name="parameterTab_2">
             <attribute name="title">
              <string>Parameters</string>
             </attribute>
@@ -721,10 +721,10 @@
                <x>10</x>
                <y>10</y>
                <width>231</width>
-               <height>281</height>
+               <height>303</height>
               </rect>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
+             <layout class="QVBoxLayout" name="parameterLayout_2">
               <item>
                <layout class="QHBoxLayout" name="stepSizeBox_2">
                 <item>
@@ -861,7 +861,7 @@
                </layout>
               </item>
               <item>
-               <spacer name="verticalSpacer_2">
+               <spacer name="spacer_2">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -925,7 +925,7 @@
              <height>91</height>
             </rect>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="buttonsLayout_2">
             <item>
              <widget class="QPushButton" name="m_resetCamera_2">
               <property name="text">
@@ -941,7 +941,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="togglesLayout_2">
               <property name="bottomMargin">
                <number>6</number>
               </property>
@@ -973,67 +973,11 @@
            </layout>
           </widget>
          </widget>
-         <widget class="QWidget" name="tab_5">
+         <widget class="QWidget" name="treeTab3">
           <attribute name="title">
            <string>Tree 3</string>
           </attribute>
-          <widget class="QWidget" name="verticalLayoutWidget_13">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
-             <y>720</y>
-             <width>251</width>
-             <height>103</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_14">
-            <item>
-             <widget class="QPushButton" name="m_resetCamera_4">
-              <property name="text">
-               <string>Reset Camera</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="m_generate_4">
-              <property name="text">
-               <string>Generate</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <property name="bottomMargin">
-               <number>6</number>
-              </property>
-              <item>
-               <widget class="QCheckBox" name="m_skeleton_4">
-                <property name="layoutDirection">
-                 <enum>Qt::RightToLeft</enum>
-                </property>
-                <property name="text">
-                 <string>Skeleton Mode</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="m_grid_4">
-                <property name="layoutDirection">
-                 <enum>Qt::RightToLeft</enum>
-                </property>
-                <property name="text">
-                 <string>Show Grid</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QTabWidget" name="tabWidget_4">
+          <widget class="QTabWidget" name="m_treeControlsTab_3">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -1043,7 +987,7 @@
             </rect>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="rulesTab_3">
             <attribute name="title">
@@ -1060,7 +1004,7 @@
              </property>
              <layout class="QVBoxLayout" name="rulesLayout_3">
               <item>
-               <widget class="QLabel" name="axiomLabel_4">
+               <widget class="QLabel" name="axiomLabel_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1073,7 +1017,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_axiom_4">
+               <widget class="QLineEdit" name="m_axiom_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1089,7 +1033,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="rulesLabel_4">
+               <widget class="QLabel" name="rulesLabel_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1102,7 +1046,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule1_4">
+               <widget class="QLineEdit" name="m_rule1_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1115,7 +1059,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule2_4">
+               <widget class="QLineEdit" name="m_rule2_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1128,7 +1072,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule3_4">
+               <widget class="QLineEdit" name="m_rule3_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1138,7 +1082,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule4_4">
+               <widget class="QLineEdit" name="m_rule4_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1148,7 +1092,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule5_4">
+               <widget class="QLineEdit" name="m_rule5_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1158,7 +1102,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule6_4">
+               <widget class="QLineEdit" name="m_rule6_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1168,7 +1112,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule7_4">
+               <widget class="QLineEdit" name="m_rule7_3">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1210,7 +1154,7 @@
              </layout>
             </widget>
            </widget>
-           <widget class="QWidget" name="tab_8">
+           <widget class="QWidget" name="parametersTab_3">
             <attribute name="title">
              <string>Parameters</string>
             </attribute>
@@ -1220,21 +1164,21 @@
                <x>10</x>
                <y>10</y>
                <width>231</width>
-               <height>281</height>
+               <height>303</height>
               </rect>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout_8">
+             <layout class="QVBoxLayout" name="parametersLayout_3">
               <item>
-               <layout class="QHBoxLayout" name="stepSizeBox_4">
+               <layout class="QHBoxLayout" name="stepSizeBox_3">
                 <item>
-                 <widget class="QLabel" name="stepSizeLabel_4">
+                 <widget class="QLabel" name="stepSizeLabel_3">
                   <property name="text">
                    <string>Step Size</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QDoubleSpinBox" name="m_stepSize_4">
+                 <widget class="QDoubleSpinBox" name="m_stepSize_3">
                   <property name="decimals">
                    <number>1</number>
                   </property>
@@ -1249,16 +1193,16 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="stepScaleBox_4">
+               <layout class="QHBoxLayout" name="stepScaleBox_3">
                 <item>
-                 <widget class="QLabel" name="stepScaleLabel_4">
+                 <widget class="QLabel" name="stepScaleLabel_3">
                   <property name="text">
                    <string>Step Scale</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QDoubleSpinBox" name="m_stepScale_4">
+                 <widget class="QDoubleSpinBox" name="m_stepScale_3">
                   <property name="singleStep">
                    <double>0.010000000000000</double>
                   </property>
@@ -1270,16 +1214,16 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="angleBox_4">
+               <layout class="QHBoxLayout" name="angleBox_3">
                 <item>
-                 <widget class="QLabel" name="angleLabel_4">
+                 <widget class="QLabel" name="angleLabel_3">
                   <property name="text">
                    <string>Angle</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QDoubleSpinBox" name="m_angle_4">
+                 <widget class="QDoubleSpinBox" name="m_angle_3">
                   <property name="decimals">
                    <number>1</number>
                   </property>
@@ -1291,16 +1235,16 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="angleScaleBox_4">
+               <layout class="QHBoxLayout" name="angleScaleBox_3">
                 <item>
-                 <widget class="QLabel" name="angleScaleLabel_4">
+                 <widget class="QLabel" name="angleScaleLabel_3">
                   <property name="text">
                    <string>Angle Scale</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QDoubleSpinBox" name="m_angleScale_4">
+                 <widget class="QDoubleSpinBox" name="m_angleScale_3">
                   <property name="singleStep">
                    <double>0.010000000000000</double>
                   </property>
@@ -1312,19 +1256,19 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="thicknessBox_4">
+               <layout class="QHBoxLayout" name="thicknessBox_3">
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="thicknessLabel_4">
+                 <widget class="QLabel" name="thicknessLabel_3">
                   <property name="text">
                    <string>Thickness</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QDoubleSpinBox" name="m_thickness_4">
+                 <widget class="QDoubleSpinBox" name="m_thickness_3">
                   <property name="singleStep">
                    <double>0.100000000000000</double>
                   </property>
@@ -1336,19 +1280,19 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="thicknessScaleBox_4">
+               <layout class="QHBoxLayout" name="thicknessScaleBox_3">
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="thicknessScaleLabel_4">
+                 <widget class="QLabel" name="thicknessScaleLabel_3">
                   <property name="text">
                    <string>Thickness Scale</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QDoubleSpinBox" name="m_thicknessScale_4">
+                 <widget class="QDoubleSpinBox" name="m_thicknessScale_3">
                   <property name="singleStep">
                    <double>0.010000000000000</double>
                   </property>
@@ -1360,7 +1304,7 @@
                </layout>
               </item>
               <item>
-               <spacer name="verticalSpacer_5">
+               <spacer name="spacer_3">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -1376,16 +1320,16 @@
                </spacer>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="generationsBox_4">
+               <layout class="QHBoxLayout" name="generationsBox_3">
                 <item>
-                 <widget class="QLabel" name="generationsLabel_4">
+                 <widget class="QLabel" name="generationsLabel_3">
                   <property name="text">
                    <string>Generations</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="m_generation_4">
+                 <widget class="QSpinBox" name="m_generation_3">
                   <property name="value">
                    <number>4</number>
                   </property>
@@ -1394,16 +1338,16 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="seedBox_4">
+               <layout class="QHBoxLayout" name="seedBox_3">
                 <item>
-                 <widget class="QCheckBox" name="m_seedToggle_4">
+                 <widget class="QCheckBox" name="m_seedToggle_3">
                   <property name="text">
                    <string>Seed</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSpinBox" name="m_seed_4">
+                 <widget class="QSpinBox" name="m_seed_3">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
@@ -1424,28 +1368,28 @@
              <height>91</height>
             </rect>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_12">
+           <layout class="QVBoxLayout" name="buttonsLayout_3">
             <item>
-             <widget class="QPushButton" name="m_resetCamera_5">
+             <widget class="QPushButton" name="m_resetCamera_3">
               <property name="text">
                <string>Reset Camera</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="m_generate_5">
+             <widget class="QPushButton" name="m_generate_3">
               <property name="text">
                <string>Generate</string>
               </property>
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <layout class="QHBoxLayout" name="togglesLayout_3">
               <property name="bottomMargin">
                <number>6</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="m_skeleton_5">
+               <widget class="QCheckBox" name="m_skeleton_3">
                 <property name="layoutDirection">
                  <enum>Qt::RightToLeft</enum>
                 </property>
@@ -1455,7 +1399,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="m_grid_5">
+               <widget class="QCheckBox" name="m_grid_3">
                 <property name="layoutDirection">
                  <enum>Qt::RightToLeft</enum>
                 </property>
@@ -1474,11 +1418,11 @@
          </widget>
         </widget>
        </widget>
-       <widget class="QWidget" name="terrainTab">
+       <widget class="QWidget" name="forestTab">
         <attribute name="title">
          <string>Forest</string>
         </attribute>
-        <widget class="QTabWidget" name="m_terraintTab">
+        <widget class="QTabWidget" name="m_forestTab">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -1493,7 +1437,7 @@
          <property name="currentIndex">
           <number>1</number>
          </property>
-         <widget class="QWidget" name="tab">
+         <widget class="QWidget" name="paintToolTab">
           <attribute name="title">
            <string>Paint Tool</string>
           </attribute>
@@ -1511,11 +1455,11 @@
            </property>
           </widget>
          </widget>
-         <widget class="QWidget" name="terrainGenTab">
+         <widget class="QWidget" name="renderTab">
           <attribute name="title">
            <string>Render</string>
           </attribute>
-          <widget class="QTabWidget" name="tabWidget_2">
+          <widget class="QTabWidget" name="m_renderTab">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -1527,7 +1471,7 @@
            <property name="currentIndex">
             <number>0</number>
            </property>
-           <widget class="QWidget" name="tab_4">
+           <widget class="QWidget" name="terrainTab">
             <attribute name="title">
              <string>Terrain</string>
             </attribute>
@@ -1560,7 +1504,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1599,7 +1543,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1635,7 +1579,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1665,7 +1609,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1704,7 +1648,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1746,7 +1690,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1782,7 +1726,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1815,7 +1759,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1871,7 +1815,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>150</width>
+                    <width>130</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1912,7 +1856,7 @@
              <height>71</height>
             </rect>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <layout class="QVBoxLayout" name="forestButtonsLayout">
             <item>
              <widget class="QPushButton" name="m_resetCamera_terrain">
               <property name="text">
@@ -1935,16 +1879,16 @@
          </widget>
         </widget>
        </widget>
-       <widget class="QWidget" name="renderTab">
+       <widget class="QWidget" name="renderTab2">
         <attribute name="title">
          <string>Render</string>
         </attribute>
         <widget class="QPushButton" name="m_resetCamera_render">
          <property name="geometry">
           <rect>
-           <x>30</x>
+           <x>20</x>
            <y>20</y>
-           <width>257</width>
+           <width>251</width>
            <height>25</height>
           </rect>
          </property>
