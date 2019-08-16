@@ -36,8 +36,9 @@ namespace ngl
     {
         glDeleteBuffers(1,&m_buffer);
         glDeleteBuffers(1,&m_idxBuffer);
+        glDeleteBuffers(1,&m_transformBuffer);
     }
-    glDeleteVertexArrays(1,&m_id);
+    //glDeleteVertexArrays(1,&m_id);
     m_allocated=false;
     }
 
@@ -52,6 +53,8 @@ namespace ngl
     if( m_allocated ==true)
     {
         glDeleteBuffers(1,&m_buffer);
+        glDeleteBuffers(1,&m_idxBuffer);
+        glDeleteBuffers(1,&m_transformBuffer);
     }
 
     // GLuint vboID;

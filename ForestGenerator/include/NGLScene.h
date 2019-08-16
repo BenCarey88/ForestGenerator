@@ -347,6 +347,19 @@ protected:
 
   bool m_rotate = true;
 
+  GLuint m_terrainNormalBuffer = 0;
+  GLuint m_terrainTangentBuffer = 0;
+  GLuint m_terrainBitangentBuffer = 0;
+  GLuint m_terrainUVBuffer = 0;
+  std::vector<GLuint> m_treeRightBuffers = {0,0,0};
+  std::vector<GLuint> m_treeThicknessBuffers = {0,0,0};
+  std::vector<GLuint> m_treeLeafDirectionBuffers = {0,0,0};
+  std::vector<GLuint> m_treeLeafRightBuffers = {0,0,0};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_forestRightBuffers = {{},{},{}};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_forestThicknessBuffers = {{},{},{}};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_forestLeafDirectionBuffers = {{},{},{}};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_forestLeafRightBuffers = {{},{},{}};
+
   ngl::Vec3 getProjectedPointOnPlane(float _screenX, float _screenY);
   void addPointToPaintedForest(ngl::Vec3 &_point);
 
@@ -378,7 +391,7 @@ protected:
                              std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
                              size_t _instanceStart, size_t _instanceEnd, GLenum _mode);
 
-  void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData);
+  void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData, GLuint &_bufferID);
   void buildGridVAO();
   void buildTerrainVAO();
   void buildTreeVAO(size_t _treeNum);

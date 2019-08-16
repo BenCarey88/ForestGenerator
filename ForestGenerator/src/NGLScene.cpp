@@ -137,8 +137,11 @@ void NGLScene::initializeGL()
 void NGLScene::drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO)
 {
   _VAO->bind();
+  print("bind ",glGetError(), "\n");
   _VAO->draw();
+  print("draw ",glGetError(), "\n");
   _VAO->unbind();
+  print("unbind ",glGetError(), "\n");
 }
 
 void NGLScene::refineTerrain()
@@ -237,28 +240,18 @@ void NGLScene::paintGL()
       }
       else if (m_terrainTabNum==1)
       {
-        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        ngl::Mat4 currentTransform = (*m_currentMouseTransform);//*m_initialRotation;
-        ngl::Mat4 MVP= m_project*m_view*currentTransform*m_layoutRotation;
-        Grid grid(25,80);
-        buildSimpleIndexVAO(m_terrainVAO, grid.m_vertices,  grid.m_indices, GL_LINES, GL_UNSIGNED_SHORT);
-        (*shader)["TerrainShader"]->use();
-        shader->setUniform("MVP",MVP);
-        drawVAO(m_terrainVAO);
-      }
 
-//      for(GLshort i=0; size_t(i)<m_points.size(); i++)
-//      {
-//        m_pointIndices.push_back(i);
-//      }
-//      buildSimpleIndexVAO(m_terrainVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
-//      glPointSize(20);
-//      drawVAO(m_terrainVAO);
+      }
 
       else if (m_terrainTabNum==2)
       {
+        print("GRID ERROR? ", glGetError(), "\n");
         loadUniformsToShader(shader, "GridShader");
+        print("GRID ERROR? ", glGetError(), "\n");
+        //buildGridVAO();
+        print("GRID ERROR? ", glGetError(), "\n");
         drawVAO(m_gridVAO);
+        print("GRID ERROR? ", glGetError(), "\n");
 
         glPointSize(20);
         if(m_buildPaintLineVAO)
@@ -267,6 +260,7 @@ void NGLScene::paintGL()
           //buildSimpleIndexVAO(m_pointVAO, m_points, m_pointIndices, GL_POINTS, GL_UNSIGNED_SHORT);
           m_buildPaintLineVAO = false;
         }
+
         loadUniformsToShader(shader, "GridShader");
         drawVAO(m_paintLineVAO);
         //drawVAO(m_pointVAO);
@@ -275,22 +269,29 @@ void NGLScene::paintGL()
         loadUniformsToShader(shader, "ForestLeafShader");
         loadUniformsToShader(shader, "ForestPolygonShader");
 
-//        for(auto &i : m_paintedForest.m_adjustedCacheIndexes)
-//        {
-//          buildForestVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
-//          buildForestLeafVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
-//          buildForestPolygonVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
-//          m_paintedForest.m_adjustedCacheIndexes.clear();
-//        }
-        buildForestVAOs(m_paintedForest);
+        for(auto &i : m_paintedForest.m_adjustedCacheIndexes)
+        {
+          buildForestVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
+          buildForestLeafVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
+          buildForestPolygonVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
+          m_paintedForest.m_adjustedCacheIndexes.clear();
+        }
+        //buildForestVAOs(m_paintedForest);
 
         FOR_EACH_ELEMENT(m_forestVAOs[0],
                          (*shader)["ForestShader"]->use();
+                         print("tree shader ",glGetError(), "\n");
                          drawVAO(m_forestVAOs[0][ID][AGE][INDEX]);
+                         print("draw trees ",glGetError(), "\n");
                          (*shader)["ForestLeafShader"]->use();
+                         print("leaf shader ",glGetError(), "\n");
                          drawVAO(m_forestLeafVAOs[0][ID][AGE][INDEX]);
+                         print("draw leaves ",glGetError(), "\n");
                          (*shader)["ForestPolygonShader"]->use();
-                         drawVAO(m_forestPolygonVAOs[0][ID][AGE][INDEX]))
+                         print("Polygon shader ",glGetError(), "\n");
+                         drawVAO(m_forestPolygonVAOs[0][ID][AGE][INDEX]);
+                         print("draw polygons ",glGetError(), "\n");
+                         newLine();)
       }
 
       break;
@@ -317,6 +318,7 @@ void NGLScene::paintGL()
                          (*shader)["ForestLeafShader"]->use();
                          drawVAO(m_forestLeafVAOs[t][ID][AGE][INDEX]);
                          (*shader)["ForestPolygonShader"]->use();
+                         print("FOREST ERROR? ", glGetError(), "\n");
                          drawVAO(m_forestPolygonVAOs[t][ID][AGE][INDEX]))
       }
       break;

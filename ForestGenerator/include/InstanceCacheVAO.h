@@ -105,6 +105,7 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
     GLuint m_buffer=0;
     GLuint m_idxBuffer=0;
     GLuint m_transformBuffer=0;
+
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief data type of the index data (e.g. GL_UNSIGNED_INT)
     //----------------------------------------------------------------------------------------------------------------------

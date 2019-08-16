@@ -15,11 +15,12 @@
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData)
+void NGLScene::addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData, GLuint &_bufferID)
 {
-  GLuint bufferID=0;
-  glGenBuffers(1, &bufferID);
-  glBindBuffer(GL_ARRAY_BUFFER, bufferID);
+  glDeleteBuffers(1, &_bufferID);
+
+  glGenBuffers(1, &_bufferID);
+  glBindBuffer(GL_ARRAY_BUFFER, _bufferID);
   glBufferData(GL_ARRAY_BUFFER,
                _bufferSize,
                _bufferData,
@@ -125,10 +126,12 @@ void NGLScene::buildTreeVAO(size_t _treeNum)
 
   m_treeVAOs[_treeNum]->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*m_LSystems[_treeNum].m_rightVectors.size(),
-                      &m_LSystems[_treeNum].m_rightVectors[0].m_x);
+                      &m_LSystems[_treeNum].m_rightVectors[0].m_x,
+                      m_treeRightBuffers[_treeNum]);
   m_treeVAOs[_treeNum]->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(float)*m_LSystems[_treeNum].m_thicknessValues.size(),
-                      &m_LSystems[_treeNum].m_thicknessValues[0]);
+                      &m_LSystems[_treeNum].m_thicknessValues[0],
+                      m_treeThicknessBuffers[_treeNum]);
   m_treeVAOs[_treeNum]->setVertexAttributePointer(2,1,GL_FLOAT,4,0);
   m_treeVAOs[_treeNum]->unbind();
 }
@@ -144,10 +147,12 @@ void NGLScene::buildLeafVAO(size_t _treeNum)
 
   m_leafVAOs[_treeNum]->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*m_LSystems[_treeNum].m_leafDirections.size(),
-                      &m_LSystems[_treeNum].m_leafDirections[0].m_x);
+                      &m_LSystems[_treeNum].m_leafDirections[0].m_x,
+                      m_treeLeafDirectionBuffers[_treeNum]);
   m_leafVAOs[_treeNum]->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec3)*m_LSystems[_treeNum].m_leafRightVectors.size(),
-                      &m_LSystems[_treeNum].m_leafRightVectors[0].m_x);
+                      &m_LSystems[_treeNum].m_leafRightVectors[0].m_x,
+                      m_treeLeafRightBuffers[_treeNum]);
   m_leafVAOs[_treeNum]->setVertexAttributePointer(2,3,GL_FLOAT,12,0);
   m_leafVAOs[_treeNum]->unbind();
 }
@@ -172,16 +177,20 @@ void NGLScene::buildTerrainVAO()
                   GL_TRIANGLE_STRIP, GL_UNSIGNED_INT);
   m_terrainVAO->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*m_terrain.m_normalsToBeRendered.size(),
-                      &m_terrain.m_normalsToBeRendered[0].m_x);
+                      &m_terrain.m_normalsToBeRendered[0].m_x,
+                      m_terrainNormalBuffer);
   m_terrainVAO->setVertexAttributePointer(1,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec3)*m_terrain.m_tangentsToBeRendered.size(),
-                      &m_terrain.m_tangentsToBeRendered[0].m_x);
+                      &m_terrain.m_tangentsToBeRendered[0].m_x,
+                      m_terrainTangentBuffer);
   m_terrainVAO->setVertexAttributePointer(2,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec3)*m_terrain.m_bitangentsToBeRendered.size(),
-                      &m_terrain.m_bitangentsToBeRendered[0].m_x);
+                      &m_terrain.m_bitangentsToBeRendered[0].m_x,
+                      m_terrainBitangentBuffer);
   m_terrainVAO->setVertexAttributePointer(3,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec2)*m_terrain.m_UVsToBeRendered.size(),
-                      &m_terrain.m_UVsToBeRendered[0].m_x);
+                      &m_terrain.m_UVsToBeRendered[0].m_x,
+                      m_terrainUVBuffer);
   m_terrainVAO->setVertexAttributePointer(4,2,GL_FLOAT,8,0);
   m_terrainVAO->unbind();
 
@@ -206,10 +215,12 @@ void NGLScene::buildForestVAO(Forest &_forest, size_t _treeNum, size_t _id, size
 
   vao->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroRightVectors.size(),
-                      &treeType.m_heroRightVectors[0].m_x);
+                      &treeType.m_heroRightVectors[0].m_x,
+                      m_forestRightBuffers[_treeNum][_id][_age][_index]);
   vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(float)*treeType.m_heroThicknessValues.size(),
-                      &treeType.m_heroThicknessValues[0]);
+                      &treeType.m_heroThicknessValues[0],
+                      m_forestThicknessBuffers[_treeNum][_id][_age][_index]);
   vao->setVertexAttributePointer(6,1,GL_FLOAT,4,0);
   vao->unbind();
 
@@ -233,10 +244,12 @@ void NGLScene::buildForestLeafVAO(Forest &_forest, size_t _treeNum, size_t _id, 
 
   vao->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafDirections.size(),
-                      &treeType.m_heroLeafDirections[0].m_x);
+                      &treeType.m_heroLeafDirections[0].m_x,
+                      m_forestLeafDirectionBuffers[_treeNum][_id][_age][_index]);
   vao->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafRightVectors.size(),
-                      &treeType.m_heroLeafRightVectors[0].m_x);
+                      &treeType.m_heroLeafRightVectors[0].m_x,
+                      m_forestLeafRightBuffers[_treeNum][_id][_age][_index]);
   vao->setVertexAttributePointer(6,3,GL_FLOAT,12,0);
   vao->unbind();
 
@@ -269,6 +282,11 @@ void NGLScene::buildForestVAOs(Forest &_forest)
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestVAOs[t], instanceCache)
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestLeafVAOs[t], instanceCache)
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestPolygonVAOs[t], instanceCache)
+
+    RESIZE_CACHE_BY_OTHER_CACHE(m_forestRightBuffers[t], instanceCache)
+    RESIZE_CACHE_BY_OTHER_CACHE(m_forestThicknessBuffers[t], instanceCache)
+    RESIZE_CACHE_BY_OTHER_CACHE(m_forestLeafDirectionBuffers[t], instanceCache)
+    RESIZE_CACHE_BY_OTHER_CACHE(m_forestLeafRightBuffers[t], instanceCache)
 
     FOR_EACH_ELEMENT(m_forestVAOs[t],
                      buildForestVAO(_forest,t,ID,AGE,INDEX);
