@@ -36,6 +36,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_ui->m_rule5_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule5(QString)));                  \
     connect(m_ui->m_rule6_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule6(QString)));                  \
     connect(m_ui->m_rule7_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule7(QString)));                  \
+    connect(m_ui->m_rule8_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule8(QString)));                  \
+    connect(m_ui->m_rule9_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule9(QString)));                  \
+    connect(m_ui->m_rule10_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule10(QString)));                \
+    connect(m_ui->m_rule11_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule11(QString)));                \
+    connect(m_ui->m_rule12_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule12(QString)));                \
+    connect(m_ui->m_rule13_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule13(QString)));                \
+    connect(m_ui->m_rule14_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule14(QString)));                \
+    connect(m_ui->m_rule15_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule15(QString)));                \
+    connect(m_ui->m_rule16_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule16(QString)));                \
+    connect(m_ui->m_rule17_##NUM, SIGNAL(textChanged(QString)), m_gl, SLOT(setRule17(QString)));                \
                                                                                                                 \
     connect(m_ui->m_generate_##NUM, SIGNAL(clicked()), m_gl, SLOT(generate()));                                 \
     connect(m_ui->m_resetCamera_##NUM, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));                           \
@@ -53,9 +63,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
   LSYSTEM_SIGNALS_AND_SLOTS(1);
   LSYSTEM_SIGNALS_AND_SLOTS(2);
+  LSYSTEM_SIGNALS_AND_SLOTS(3);
   #undef LSYSTEM_SIGNALS_AND_SLOTS
 
-  //TERRAIN
+  //FOREST
   //------------------------------------------------------------------------------------
   connect(m_ui->m_terrainSize, SIGNAL(valueChanged(double)), m_gl, SLOT(setTerrainSize(double)));
   connect(m_ui->m_LOD, SIGNAL(valueChanged(int)), m_gl, SLOT(setLOD(int)));
@@ -75,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connect(m_ui->m_paintMode, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTreePaintMode(bool)));
 
-  //FOREST
+  //RENDER
   //------------------------------------------------------------------------------------
   connect(m_ui->m_resetCamera_render, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 

@@ -158,45 +158,32 @@ void NGLScene::setAxiom(QString _axiom)
   m_currentLSystem->m_axiom = _axiom.toStdString();
 }
 
-#define SET_RULE(NUM)                                       \
-  void NGLScene::setRule##NUM(QString _rule)                \
-  {                                                         \
-    m_currentLSystem->m_ruleArray[NUM]=_rule.toStdString(); \
+#define SET_RULE(NUM)                                         \
+  void NGLScene::setRule##NUM(QString _rule)                  \
+  {                                                           \
+    m_currentLSystem->m_ruleArray[NUM-1]=_rule.toStdString(); \
   }
 
-void NGLScene::setRule1(QString _rule)
-{
-  m_currentLSystem->m_ruleArray[0]=_rule.toStdString();
-}
+SET_RULE(1)
+SET_RULE(2)
+SET_RULE(3)
+SET_RULE(4)
+SET_RULE(5)
+SET_RULE(6)
+SET_RULE(7)
+SET_RULE(8)
+SET_RULE(9)
+SET_RULE(10)
+SET_RULE(11)
+SET_RULE(12)
+SET_RULE(13)
+SET_RULE(14)
+SET_RULE(15)
+SET_RULE(16)
+SET_RULE(17)
 
-void NGLScene::setRule2(QString _rule)
-{
-  m_currentLSystem->m_ruleArray[1]=_rule.toStdString();
-}
+#undef SET_RULE
 
-void NGLScene::setRule3(QString _rule)
-{
-  m_currentLSystem->m_ruleArray[2]=_rule.toStdString();
-}
-void NGLScene::setRule4(QString _rule)
-{
-  m_currentLSystem->m_ruleArray[3]=_rule.toStdString();
-}
-
-void NGLScene::setRule5(QString _rule)
-{
-  m_currentLSystem->m_ruleArray[4]=_rule.toStdString();
-}
-
-void NGLScene::setRule6(QString _rule)
-{
-  m_currentLSystem->m_ruleArray[5]=_rule.toStdString();
-}
-
-void NGLScene::setRule7(QString _rule)
-{
-  m_currentLSystem->m_ruleArray[6]=_rule.toStdString();
-}
 
 //------------------------------------------------------------------------------------------------------------------------
 

@@ -23,7 +23,15 @@ void LSystem::createGeometry()
 {
   std::string treeString = generateTreeString();
 
-  //std::cout<<treeString<<"\n\n";
+//  std::cout<<treeString<<"\n\n";
+//  std::cout<<m_generation<<"\n";
+//  for(auto &rule : m_rules)
+//  {
+//    for(auto rhs : rule.m_RHS)
+//    {
+//      std::cout<<rule.m_LHS<<" "<<rhs<<"\n";
+//    }
+//  }
 
   ngl::Vec3 dir(0,1,0);
   ngl::Vec3 right(1,0,0);

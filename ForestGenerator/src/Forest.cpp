@@ -117,9 +117,12 @@ void Forest::scatterForest()
 void Forest::createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size_t _age)
 {
   LSystem &treeType = m_treeTypes[_treeType];
+  print("treetype\n");
   size_t size = treeType.m_instanceCache.at(_id).at(_age).size();
+  print("size\n\n");
   if(size>0)
   {
+    //print(_treeType, " ", _id, " ", _age, "\n\n");
     size_t innerIndex = 0;
     Instance * instance = getInstance(treeType, _id, _age, innerIndex);
     ngl::Mat4 T = _transform * instance->m_transform.inverse();

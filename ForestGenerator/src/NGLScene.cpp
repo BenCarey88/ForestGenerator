@@ -50,6 +50,7 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_terrainGen = TerrainGenerator(m_terrainDimension, m_width);
   m_forest = Forest(m_LSystems, m_width,
                     m_numTrees, m_numHeroTrees, m_terrainGen);
+  m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
   m_forestVAOs.resize(m_numTreeTabs);
   m_forestLeafVAOs.resize(m_numTreeTabs);
   m_forestPolygonVAOs.resize(m_numTreeTabs);
@@ -130,6 +131,8 @@ void NGLScene::initializeGL()
     buildPolygonVAO(i);
   }
   buildGridVAO();
+
+  buildForestVAOs(m_paintedForest);
 }
 
 
@@ -138,11 +141,11 @@ void NGLScene::initializeGL()
 void NGLScene::drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO)
 {
   _VAO->bind();
-  print("bind ",glGetError(), "\n");
+//  print("bind ",glGetError(), "\n");
   _VAO->draw();
-  print("draw ",glGetError(), "\n");
+//  print("draw ",glGetError(), "\n");
   _VAO->unbind();
-  print("unbind ",glGetError(), "\n");
+//  print("unbind ",glGetError(), "\n");
 }
 
 void NGLScene::refineTerrain()
@@ -231,13 +234,13 @@ void NGLScene::paintGL()
     {
       if (m_forestTabNum==0)
       {
-        print("GRID ERROR? ", glGetError(), "\n");
+//        print("GRID ERROR? ", glGetError(), "\n");
         loadUniformsToShader(shader, "GridShader");
-        print("GRID ERROR? ", glGetError(), "\n");
+//        print("GRID ERROR? ", glGetError(), "\n");
         //buildGridVAO();
-        print("GRID ERROR? ", glGetError(), "\n");
+//        print("GRID ERROR? ", glGetError(), "\n");
         drawVAO(m_gridVAO);
-        print("GRID ERROR? ", glGetError(), "\n");
+//        print("GRID ERROR? ", glGetError(), "\n");
 
         glPointSize(20);
         if(m_buildPaintLineVAO)
@@ -266,18 +269,18 @@ void NGLScene::paintGL()
 
         FOR_EACH_ELEMENT(m_forestVAOs[0],
                          (*shader)["ForestShader"]->use();
-                         print("tree shader ",glGetError(), "\n");
+//                         print("tree shader ",glGetError(), "\n");
                          drawVAO(m_forestVAOs[0][ID][AGE][INDEX]);
-                         print("draw trees ",glGetError(), "\n");
+//                         print("draw trees ",glGetError(), "\n");
                          (*shader)["ForestLeafShader"]->use();
-                         print("leaf shader ",glGetError(), "\n");
+//                         print("leaf shader ",glGetError(), "\n");
                          drawVAO(m_forestLeafVAOs[0][ID][AGE][INDEX]);
-                         print("draw leaves ",glGetError(), "\n");
+//                         print("draw leaves ",glGetError(), "\n");
                          (*shader)["ForestPolygonShader"]->use();
-                         print("Polygon shader ",glGetError(), "\n");
-                         drawVAO(m_forestPolygonVAOs[0][ID][AGE][INDEX]);
-                         print("draw polygons ",glGetError(), "\n");
-                         newLine())
+//                         print("Polygon shader ",glGetError(), "\n");
+                         drawVAO(m_forestPolygonVAOs[0][ID][AGE][INDEX]))//;
+//                         print("draw polygons ",glGetError(), "\n");
+//                         newLine())
       }
 
       else if(m_forestTabNum==1)

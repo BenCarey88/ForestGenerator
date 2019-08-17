@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1135</width>
-    <height>848</height>
+    <width>1141</width>
+    <height>849</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -479,7 +479,7 @@
              <x>10</x>
              <y>620</y>
              <width>251</width>
-             <height>91</height>
+             <height>95</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="buttonsLayout_1">
@@ -743,7 +743,7 @@
                    <double>0.100000000000000</double>
                   </property>
                   <property name="value">
-                   <double>2.000000000000000</double>
+                   <double>1.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -785,7 +785,7 @@
                    <number>1</number>
                   </property>
                   <property name="value">
-                   <double>30.000000000000000</double>
+                   <double>25.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -854,7 +854,7 @@
                    <double>0.010000000000000</double>
                   </property>
                   <property name="value">
-                   <double>0.700000000000000</double>
+                   <double>0.600000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -888,7 +888,7 @@
                 <item>
                  <widget class="QSpinBox" name="m_generation_2">
                   <property name="value">
-                   <number>4</number>
+                   <number>6</number>
                   </property>
                  </widget>
                 </item>
@@ -922,7 +922,7 @@
              <x>10</x>
              <y>620</y>
              <width>251</width>
-             <height>91</height>
+             <height>95</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="buttonsLayout_2">
@@ -1365,7 +1365,7 @@
              <x>10</x>
              <y>620</y>
              <width>251</width>
-             <height>91</height>
+             <height>95</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="buttonsLayout_3">
@@ -1952,7 +1952,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1135</width>
+     <width>1141</width>
      <height>25</height>
     </rect>
    </property>
