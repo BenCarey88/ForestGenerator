@@ -57,7 +57,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="LSystemsTab">
         <attribute name="title">
@@ -479,7 +479,7 @@
              <x>10</x>
              <y>620</y>
              <width>251</width>
-             <height>95</height>
+             <height>91</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="buttonsLayout_1">
@@ -922,7 +922,7 @@
              <x>10</x>
              <y>620</y>
              <width>251</width>
-             <height>95</height>
+             <height>91</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="buttonsLayout_2">
@@ -1365,7 +1365,7 @@
              <x>10</x>
              <y>620</y>
              <width>251</width>
-             <height>95</height>
+             <height>91</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="buttonsLayout_3">
@@ -1428,7 +1428,7 @@
            <x>10</x>
            <y>10</y>
            <width>271</width>
-           <height>701</height>
+           <height>751</height>
           </rect>
          </property>
          <property name="tabPosition">
@@ -1441,18 +1441,74 @@
           <attribute name="title">
            <string>Paint Tool</string>
           </attribute>
-          <widget class="QCheckBox" name="m_paintMode">
+          <widget class="QWidget" name="verticalLayoutWidget_4">
            <property name="geometry">
             <rect>
-             <x>50</x>
-             <y>40</y>
-             <width>111</width>
-             <height>26</height>
+             <x>10</x>
+             <y>10</y>
+             <width>251</width>
+             <height>141</height>
             </rect>
            </property>
-           <property name="text">
-            <string>Paint Mode</string>
-           </property>
+           <layout class="QVBoxLayout" name="paintToolLayout">
+            <item>
+             <layout class="QHBoxLayout" name="paintBrushBox">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetDefaultConstraint</enum>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="paintBrushLabel">
+                <property name="text">
+                 <string>Tree Number</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="m_paintBrush">
+                <item>
+                 <property name="text">
+                  <string>Tree 1</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Tree 2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Tree 3</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="m_paintMode">
+              <property name="text">
+               <string>Paint Mode</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="m_erasePaint">
+              <property name="text">
+               <string>Erase</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="m_resetCamera_paintTool">
+              <property name="text">
+               <string>Reset Camera</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </widget>
          <widget class="QWidget" name="renderTab">
@@ -1478,10 +1534,10 @@
             <widget class="QWidget" name="verticalLayoutWidget">
              <property name="geometry">
               <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>241</width>
-               <height>401</height>
+               <x>10</x>
+               <y>10</y>
+               <width>231</width>
+               <height>391</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="terrainGeneratioLayout">
@@ -1815,7 +1871,7 @@
                   </property>
                   <property name="minimumSize">
                    <size>
-                    <width>130</width>
+                    <width>120</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -1841,10 +1897,157 @@
              </layout>
             </widget>
            </widget>
-           <widget class="QWidget" name="tab_6">
+           <widget class="QWidget" name="treesTab">
             <attribute name="title">
              <string>Trees</string>
             </attribute>
+            <widget class="QWidget" name="verticalLayoutWidget_9">
+             <property name="geometry">
+              <rect>
+               <x>9</x>
+               <y>9</y>
+               <width>231</width>
+               <height>167</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="treesLayout">
+              <item>
+               <widget class="QComboBox" name="m_treeGenMethod">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+                <property name="insertPolicy">
+                 <enum>QComboBox::NoInsert</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+                </property>
+                <property name="frame">
+                 <bool>false</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Use Painted Trees</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Randomly Scatter</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="numTreesBox">
+                <item>
+                 <widget class="QLabel" name="numTreesLabel">
+                  <property name="text">
+                   <string>Number of Trees</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="m_numTrees">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>70</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <number>50000</number>
+                  </property>
+                  <property name="value">
+                   <number>5000</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="numHeroTreesBox">
+                <item>
+                 <widget class="QLabel" name="numHeroTreesLabel">
+                  <property name="text">
+                   <string>Number of Hero Trees</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="m_numHeroTrees">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>70</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="cacheLimitBox">
+                <item>
+                 <widget class="QLabel" name="cacheLimitLabel">
+                  <property name="text">
+                   <string>Instance Cache Limit</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSpinBox" name="m_cacheLimit">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>70</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>70</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
            </widget>
           </widget>
           <widget class="QWidget" name="verticalLayoutWidget_5">

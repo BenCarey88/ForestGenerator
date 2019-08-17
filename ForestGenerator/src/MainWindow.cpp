@@ -66,7 +66,17 @@ MainWindow::MainWindow(QWidget *parent) :
   LSYSTEM_SIGNALS_AND_SLOTS(3);
   #undef LSYSTEM_SIGNALS_AND_SLOTS
 
-  //FOREST
+  //FOREST TAB
+  //------------------------------------------------------------------------------------
+  //Tree Painting
+  //------------------------------------------------------------------------------------
+  connect(m_ui->m_paintBrush, SIGNAL(currentIndexChanged(int)), m_gl, SLOT(setPaintBrush(int)));
+  connect(m_ui->m_erasePaint, SIGNAL(clicked()), m_gl, SLOT(erasePaint()));
+  connect(m_ui->m_paintMode, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTreePaintMode(bool)));
+  connect(m_ui->m_resetCamera_paintTool, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
+
+  //------------------------------------------------------------------------------------
+  //Terrain
   //------------------------------------------------------------------------------------
   connect(m_ui->m_terrainSize, SIGNAL(valueChanged(double)), m_gl, SLOT(setTerrainSize(double)));
   connect(m_ui->m_LOD, SIGNAL(valueChanged(int)), m_gl, SLOT(setLOD(int)));
@@ -82,9 +92,9 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_updateTerrain, SIGNAL(clicked()), m_gl, SLOT(updateTerrain()));
   connect(m_ui->m_resetCamera_terrain, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 
-  //connect(m_ui->m_resetCamera_layout, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
-
-  connect(m_ui->m_paintMode, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTreePaintMode(bool)));
+  //------------------------------------------------------------------------------------
+  //Render
+  //------------------------------------------------------------------------------------
 
   //RENDER
   //------------------------------------------------------------------------------------
@@ -105,4 +115,9 @@ void MainWindow::on_m_seedToggle_1_stateChanged(int _clicked)
 void MainWindow::on_m_seedToggle_2_stateChanged(int _clicked)
 {
     m_ui->m_seed_2->setEnabled(_clicked);
+}
+
+void MainWindow::on_m_treeGenMethod_currentIndexChanged(int _index)
+{
+    m_ui->m_numTrees->setEnabled(_index);
 }

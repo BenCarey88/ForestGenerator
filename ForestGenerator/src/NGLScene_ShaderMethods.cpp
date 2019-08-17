@@ -23,8 +23,8 @@
 #define TreeNormalLoc 1
 #define LeafTexLoc 2
 #define LeafNormalLoc 3
-#define TerrainTexLoc 4
-#define TerrainNormalLoc 5
+#define TerrainTexLoc 3
+#define TerrainNormalLoc 4
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -70,6 +70,7 @@ void NGLScene::loadShaderTextures()
 
   loadTextureToShader("TerrainShader", "textureMap", "textures/Lawn_grass_pxr128.jpg", TerrainTexLoc);
   loadTextureToShader("TerrainShader", "normalMap", "textures/Lawn_grass_pxr128_normal.jpg", TerrainNormalLoc);
+
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -82,12 +83,21 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)[_shaderName]->use();
 
+  newLine();
+  print(_shaderName);
+  print(" ", (*shader)[_shaderName]->getID(), "\n");
+
   GLint textureMapLocation = glGetUniformLocation((*shader)[_shaderName]->getID(), _textureMapName);
   glUniform1i(textureMapLocation, _storageLocation);
+
+  print("texture map location ", textureMapLocation, "\n");
 
   // Then bind the uniform samplers to texture units:
   GLuint texture;
   glGenTextures(1, &texture);
+
+  print("texture id ", texture,", storage location ", _storageLocation, "\n");
+
   glActiveTexture(GL_TEXTURE0 + _storageLocation); // Texture unit 0
   glBindTexture(GL_TEXTURE_2D, texture);
   // set the texture wrapping/filtering options (on the currently bound texture object)
@@ -103,7 +113,7 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
     int width=image.width();
     int height=image.height();
 
-    std::unique_ptr<unsigned char []> data ( new unsigned char[ width*height*4]);
+    std::unique_ptr<unsigned char []> data ( new unsigned char[size_t(width*height*4)]);
     size_t index=0;
     QRgb colour;
     for( int y=0; y<height; ++y)
@@ -112,10 +122,10 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
       {
         colour=image.pixel(x,y);
 
-        data[index++]=qRed(colour);
-        data[index++]=qGreen(colour);
-        data[index++]=qBlue(colour);
-        data[index++]=qAlpha(colour);
+        data[index++]=uchar(qRed(colour));
+        data[index++]=uchar(qGreen(colour));
+        data[index++]=uchar(qBlue(colour));
+        data[index++]=uchar(qAlpha(colour));
       }
     }
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data.get());
@@ -134,7 +144,7 @@ void NGLScene::loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &
   ngl::Mat4 M = currentTransform;
   ngl::Mat3 normalMatrix= MV.inverse().transpose();
   ngl::Mat3 newNormalMatrix= m_view.inverse().transpose();
-  ngl::Vec3 lightPos = (currentTransform * ngl::Vec4(0,100,0,1)).toVec3();
+  ngl::Vec3 lightPos = (currentTransform * ngl::Vec4(0,100,100,1)).toVec3();
 
   (*_shader)[_shaderName]->use();
   _shader->setUniform("MVP",MVP);

@@ -189,18 +189,18 @@ void LSystem::createGeometry()
           // (n-2),3,(n-3)              (n-2),3,(n-3)
           // 3,(n-3),4                  (n-3),3,4
           // ...                        ...
-          polygonIndices->push_back(GLushort(offset+0));
-          polygonIndices->push_back(GLushort(offset+1));
-          polygonIndices->push_back(GLushort(offset+n-1));
+          polygonIndices->push_back(GLshort(offset+0));
+          polygonIndices->push_back(GLshort(offset+1));
+          polygonIndices->push_back(GLshort(offset+n-1));
           for(size_t i=1; i<1+temporaryPolygon.size()/2; i++)
           {
-            polygonIndices->push_back(GLushort(offset+n-i));
-            polygonIndices->push_back(GLushort(offset+i));
-            polygonIndices->push_back(GLushort(offset+i+1));
+            polygonIndices->push_back(GLshort(offset+n-i));
+            polygonIndices->push_back(GLshort(offset+i));
+            polygonIndices->push_back(GLshort(offset+i+1));
 
-            polygonIndices->push_back(GLushort(offset+n-i));
-            polygonIndices->push_back(GLushort(offset+i+1));
-            polygonIndices->push_back(GLushort(offset+n-i-1));
+            polygonIndices->push_back(GLshort(offset+n-i));
+            polygonIndices->push_back(GLshort(offset+i+1));
+            polygonIndices->push_back(GLshort(offset+n-i-1));
           }
           polygonVertices->insert(polygonVertices->end(),
                                   temporaryPolygon.begin(),

@@ -318,7 +318,6 @@ void NGLScene::paintGL()
                          (*shader)["ForestLeafShader"]->use();
                          drawVAO(m_forestLeafVAOs[t][ID][AGE][INDEX]);
                          (*shader)["ForestPolygonShader"]->use();
-                         print("FOREST ERROR? ", glGetError(), "\n");
                          drawVAO(m_forestPolygonVAOs[t][ID][AGE][INDEX]))
       }
       break;

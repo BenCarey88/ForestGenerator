@@ -35,6 +35,8 @@ private slots:
   void on_m_seedToggle_1_stateChanged(int _clicked);
   void on_m_seedToggle_2_stateChanged(int _clicked);
 
+  void on_m_treeGenMethod_currentIndexChanged(int index);
+
 private:
   /// @brief our user interface
   Ui::MainWindow *m_ui;

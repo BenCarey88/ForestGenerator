@@ -363,6 +363,14 @@ protected:
   std::vector<CACHE_STRUCTURE(GLuint)> m_forestLeafDirectionBuffers = {{},{},{}};
   std::vector<CACHE_STRUCTURE(GLuint)> m_forestLeafRightBuffers = {{},{},{}};
 
+  GLuint m_terrainTexId = 0;
+  GLuint m_terrainNormalId = 0;
+  GLuint m_treeTexId = 0;
+  GLuint m_treeNormalId = 0;
+  GLuint m_forestTreeTexId = 0;
+  GLuint m_forestTreeNormalId = 0;
+  GLuint m_leafTexId = 0;
+
   ngl::Vec3 getProjectedPointOnPlane(float _screenX, float _screenY);
   void addPointToPaintedForest(ngl::Vec3 &_point);
 

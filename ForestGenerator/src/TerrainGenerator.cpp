@@ -69,6 +69,18 @@ void TerrainGenerator::computeNormals()
       m_bitangents[i]=bitangent;
     }
   }
+
+  for(size_t i=0; i<m_normals.size(); i++)
+  {
+    print("(",getGridX(i),", ",getGridZ(i),"):\n");
+    print("Normal: ");
+    print(m_normals[i]);
+    print("Tangent: ");
+    print(m_tangents[i]);
+    print("Bitangent: ");
+    print(m_bitangents[i]);
+    newLine();
+  }
 }
 
 
