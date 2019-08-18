@@ -165,6 +165,6 @@ void Forest::createForest()
 void Forest::addTreeToForest(ngl::Vec3 &_point, size_t _treeType)
 {
   ngl::Mat4 position;
-  position.translate(_point.m_x, 0, _point.m_z);
+  position.translate(_point.m_x, _point.m_y, _point.m_z);
   createTree(_treeType,position,0,0);
 }

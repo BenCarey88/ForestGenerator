@@ -249,6 +249,14 @@ void NGLScene::paintGL()
         drawVAO(m_gridVAO);
 //        print("GRID ERROR? ", glGetError(), "\n");
 
+        if(m_terrainWireframe == true)
+        {
+          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        }
+        refineTerrain();
+        loadUniformsToShader(shader, "TerrainShader");
+        drawVAO(m_terrainVAO);
+
         if(m_buildPaintLineVAO)
         {
           buildSimpleIndexVAO(m_paintLineVAO, m_paintLineVertices, m_paintLineIndices, GL_LINES, GL_UNSIGNED_SHORT);

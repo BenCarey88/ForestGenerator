@@ -30,8 +30,31 @@ ngl::Vec3 NGLScene::getProjectedPointOnPlane(float _screenX, float _screenY)
   ngl::Vec4 rayStart4 = MVPinverse * ngl::Vec4(projDevX,projDevY,0.9f,1);
   ngl::Vec3 rayStart = ngl::Vec3(rayStart4.m_x, rayStart4.m_y, rayStart4.m_z);
 
-  float n = -rayStart.m_y/rayDir.m_y;
+  float maxTerrainHeight = m_terrainGen.m_amplitude;
+  float stepSize = m_rayPickTolerance;
+  float n = (maxTerrainHeight-rayStart.m_y)/rayDir.m_y;
   ngl::Vec3 rayEnd = rayStart + n*rayDir;
+
+  m_perlinModule.SetOctaveCount(m_terrainGen.m_octaves);
+  m_perlinModule.SetFrequency(m_terrainGen.m_frequency);
+  m_perlinModule.SetPersistence(m_terrainGen.m_persistence);
+  m_perlinModule.SetLacunarity(m_terrainGen.m_lacunarity);
+
+  while(rayEnd.m_y >= -maxTerrainHeight-1 && rayEnd.m_y <= maxTerrainHeight+1)
+  {
+    n += stepSize;
+    rayEnd = rayStart + n*rayDir;
+    float yPos = maxTerrainHeight * float(m_perlinModule.GetValue(double(rayEnd.m_x),
+                                                                  double(rayEnd.m_z),
+                                                                  m_terrainGen.m_seed));
+    if(abs(rayEnd.m_y - yPos) < stepSize)
+    {
+      break;
+    }
+  }
+
+//  float n = -rayStart.m_y/rayDir.m_y;
+//  ngl::Vec3 rayEnd = rayStart + n*rayDir;
 
   return rayEnd;
 }
@@ -41,13 +64,22 @@ ngl::Vec3 NGLScene::getProjectedPointOnPlane(float _screenX, float _screenY)
 
 void NGLScene::addPointToPaintedForest(ngl::Vec3 &_point)
 {
-  bool pointIsViable=true;
-  for(auto &p : m_points)
+  float yPos = m_terrainGen.m_amplitude * float(m_perlinModule.GetValue(double(_point.m_x),
+                                                                        double(_point.m_z),
+                                                                        m_terrainGen.m_seed));
+
+  bool pointIsViable = (abs(_point.m_x)<m_width/2 &&
+                        abs(_point.m_z)<m_width/2 &&
+                        abs(_point.m_y-yPos)<m_rayPickTolerance);
+  if(pointIsViable)
   {
-    if((_point-p).length()<m_minTreeDist)
+    for(auto &p : m_points)
     {
-      pointIsViable=false;
-      break;
+      if((_point-p).length()<m_minTreeDist)
+      {
+        pointIsViable=false;
+        break;
+      }
     }
   }
 

@@ -25,6 +25,7 @@
 #include "Forest.h"
 #include "Grid.h"
 #include "TerrainData.h"
+#include "noiseutils.h"
 
 #include <QEvent>
 #include <QResizeEvent>
@@ -243,6 +244,7 @@ protected:
   std::unique_ptr<ngl::AbstractVAO> m_pointVAO;
   std::unique_ptr<ngl::AbstractVAO> m_paintLineVAO;
   float m_minTreeDist = 20;
+  float m_rayPickTolerance = 0.1f;
 
   Forest m_paintedForest;
   size_t m_paintBrushNum = 0;
@@ -252,6 +254,8 @@ protected:
   bool m_buildPaintLineVAO = true;
   std::vector<ngl::Vec3> m_paintLineVertices = {};
   std::vector<GLshort> m_paintLineIndices = {};
+
+  noise::module::Perlin m_perlinModule;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
