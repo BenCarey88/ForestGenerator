@@ -137,7 +137,9 @@ void NGLScene::initializeGL()
   }
   buildGridVAO();
 
+  buildPaintedForestVAOs();
   buildForestVAOs();
+
 }
 
 

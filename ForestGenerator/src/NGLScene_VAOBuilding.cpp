@@ -228,11 +228,11 @@ void NGLScene::buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _
   (*vao)->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroRightVectors.size(),
                       &treeType.m_heroRightVectors[0].m_x,
-                      m_forestRightBuffers[_treeNum][_id][_age][_index]);
+                      m_paintedForestRightBuffers[_treeNum][_id][_age][_index]);
   (*vao)->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(float)*treeType.m_heroThicknessValues.size(),
                       &treeType.m_heroThicknessValues[0],
-                      m_forestThicknessBuffers[_treeNum][_id][_age][_index]);
+                      m_paintedForestThicknessBuffers[_treeNum][_id][_age][_index]);
   (*vao)->setVertexAttributePointer(6,1,GL_FLOAT,4,0);
   (*vao)->unbind();
 
@@ -270,11 +270,11 @@ void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size
   (*vao)->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafDirections.size(),
                       &treeType.m_heroLeafDirections[0].m_x,
-                      m_forestLeafDirectionBuffers[_treeNum][_id][_age][_index]);
+                      m_paintedForestLeafDirectionBuffers[_treeNum][_id][_age][_index]);
   (*vao)->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafRightVectors.size(),
                       &treeType.m_heroLeafRightVectors[0].m_x,
-                      m_forestLeafRightBuffers[_treeNum][_id][_age][_index]);
+                      m_paintedForestLeafRightBuffers[_treeNum][_id][_age][_index]);
   (*vao)->setVertexAttributePointer(6,3,GL_FLOAT,12,0);
   (*vao)->unbind();
 

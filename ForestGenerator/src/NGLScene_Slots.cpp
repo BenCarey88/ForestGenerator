@@ -23,7 +23,7 @@ void NGLScene::changeSuperTab(int _superTabNum)
   {
     if(m_forestTabNum==0)
     {
-       buildPaintedForestVAOs();
+       //buildPaintedForestVAOs();
     }
     else if(m_forestTabNum==1)
     {
@@ -61,7 +61,7 @@ void NGLScene::changeForestTab(int _forestTabNum)
   m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
   if(m_forestTabNum==0)
   {
-     buildPaintedForestVAOs();
+     //buildPaintedForestVAOs();
   }
   else if(m_forestTabNum==1)
   {
