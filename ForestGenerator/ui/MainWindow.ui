@@ -1871,7 +1871,7 @@
                </size>
               </property>
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="page">
                <widget class="QWidget" name="verticalLayoutWidget_4">
@@ -1895,7 +1895,7 @@
                    <item>
                     <widget class="QLabel" name="paintBrushLabel">
                      <property name="text">
-                      <string>Tree Number</string>
+                      <string>Paint Brush</string>
                      </property>
                     </widget>
                    </item>
@@ -1975,7 +1975,7 @@
                  <item>
                   <widget class="QPushButton" name="m_erasePaint">
                    <property name="text">
-                    <string>Erase</string>
+                    <string>Erase And Update Brushes</string>
                    </property>
                   </widget>
                  </item>
