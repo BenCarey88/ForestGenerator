@@ -239,6 +239,14 @@ void NGLScene::paintGL()
 
     case 1:
     {
+      if(m_terrainWireframe == true)
+      {
+        glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+      }
+      refineTerrain();
+      loadUniformsToShader(shader, "TerrainShader");
+      drawVAO(m_terrainVAO);
+
       if (m_forestTabNum==0)
       {
 //        print("GRID ERROR? ", glGetError(), "\n");
@@ -248,14 +256,6 @@ void NGLScene::paintGL()
 //        print("GRID ERROR? ", glGetError(), "\n");
         drawVAO(m_gridVAO);
 //        print("GRID ERROR? ", glGetError(), "\n");
-
-        if(m_terrainWireframe == true)
-        {
-          glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        }
-        refineTerrain();
-        loadUniformsToShader(shader, "TerrainShader");
-        drawVAO(m_terrainVAO);
 
         if(m_buildPaintLineVAO)
         {

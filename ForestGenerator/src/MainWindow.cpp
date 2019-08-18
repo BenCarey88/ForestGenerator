@@ -74,7 +74,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_treeSpacing, SIGNAL(valueChanged(double)), m_gl, SLOT(setTreeSpacing(double)));
   connect(m_ui->m_erasePaint, SIGNAL(clicked()), m_gl, SLOT(erasePaint()));
   connect(m_ui->m_paintMode, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTreePaintMode(bool)));
-  connect(m_ui->m_resetCamera_paintTool, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 
   //------------------------------------------------------------------------------------
   //Terrain
@@ -127,6 +126,5 @@ void MainWindow::on_m_seedToggle_2_stateChanged(int _clicked)
 
 void MainWindow::on_m_treeGenMethod_currentIndexChanged(int _index)
 {
-    m_ui->m_numTrees->setEnabled(_index);
-    m_ui->m_updateForest->setEnabled(_index);
+    m_ui->m_treeGenMethodStack->setCurrentIndex(_index);
 }

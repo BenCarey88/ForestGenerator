@@ -9,7 +9,7 @@
 #include "NGLScene.h"
 
 
-ngl::Vec3 NGLScene::getProjectedPointOnPlane(float _screenX, float _screenY)
+ngl::Vec3 NGLScene::getProjectedPointOnTerrain(float _screenX, float _screenY)
 {
   ///@ref http://antongerdelan.net/opengl/raycasting.html
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
@@ -68,8 +68,8 @@ void NGLScene::addPointToPaintedForest(ngl::Vec3 &_point)
                                                                         double(_point.m_z),
                                                                         m_terrainGen.m_seed));
 
-  bool pointIsViable = (abs(_point.m_x)<m_width/2 &&
-                        abs(_point.m_z)<m_width/2 &&
+  bool pointIsViable = (abs(_point.m_x)<m_width/2-1 &&
+                        abs(_point.m_z)<m_width/2-1 &&
                         abs(_point.m_y-yPos)<m_rayPickTolerance);
   if(pointIsViable)
   {
@@ -140,7 +140,7 @@ void NGLScene::mouseMoveEvent( QMouseEvent* _event )
 
   if(m_drawingLine)
   {
-    ngl::Vec3 point = getProjectedPointOnPlane(_event->x(), _event->y());
+    ngl::Vec3 point = getProjectedPointOnTerrain(_event->x(), _event->y());
     m_paintLineVertices.push_back(point);
     m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
     m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));
@@ -159,7 +159,7 @@ void NGLScene::mousePressEvent( QMouseEvent* _event )
 {
   if(m_treePaintMode)
   {
-    ngl::Vec3 point = getProjectedPointOnPlane(_event->x(), _event->y());
+    ngl::Vec3 point = getProjectedPointOnTerrain(_event->x(), _event->y());
 
     m_paintLineVertices.push_back(point);
     m_paintLineIndices.push_back(GLshort(m_paintLineVertices.size()-1));

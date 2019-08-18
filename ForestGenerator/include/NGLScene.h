@@ -397,7 +397,7 @@ protected:
   GLuint m_forestTreeNormalId = 0;
   GLuint m_leafTexId = 0;
 
-  ngl::Vec3 getProjectedPointOnPlane(float _screenX, float _screenY);
+  ngl::Vec3 getProjectedPointOnTerrain(float _screenX, float _screenY);
   void addPointToPaintedForest(ngl::Vec3 &_point);
 
   //PROTECTED MEMBER FUNCTIONS
