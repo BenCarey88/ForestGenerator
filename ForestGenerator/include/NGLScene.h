@@ -202,6 +202,15 @@ public slots:
   void setLOD(int _LOD);
 
   void toggleTreePaintMode( bool _mode );
+  void setTreeSpacing(double _treeSpacing);
+  void setPaintBrush(int _brushNum);
+  void erasePaint();
+
+  void toggleTreeGenMethod(int _methodNum);
+  void setNumTrees(int _numTrees);
+  void setNumHeroTrees(int _numHeroTrees);
+  void setCacheLimit(int _cacheLimit);
+  void toggleForestTreeDisplay(bool _checked);
 
 protected:
 
@@ -292,6 +301,10 @@ protected:
   std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestLeafVAOs;
   std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestPolygonVAOs;
 
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestLeafVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestPolygonVAOs;
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief bool to tell paintGL whether or not we need to rebuild the current LSystem VAO
   //----------------------------------------------------------------------------------------------------------------------
@@ -362,6 +375,11 @@ protected:
   std::vector<CACHE_STRUCTURE(GLuint)> m_forestThicknessBuffers = {{},{},{}};
   std::vector<CACHE_STRUCTURE(GLuint)> m_forestLeafDirectionBuffers = {{},{},{}};
   std::vector<CACHE_STRUCTURE(GLuint)> m_forestLeafRightBuffers = {{},{},{}};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_paintedForestRightBuffers = {{},{},{}};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_paintedForestThicknessBuffers = {{},{},{}};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_paintedForestLeafDirectionBuffers = {{},{},{}};
+  std::vector<CACHE_STRUCTURE(GLuint)> m_paintedForestLeafRightBuffers = {{},{},{}};
+
 
   GLuint m_terrainTexId = 0;
   GLuint m_terrainNormalId = 0;
@@ -409,10 +427,11 @@ protected:
   void buildLeafVAO(size_t _treeNum);
   void buildPolygonVAO(size_t _treeNum);
 
-  void buildForestVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index);
-  void buildForestLeafVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index);
-  void buildForestPolygonVAO(Forest &_forest, size_t _treeNum, size_t _id, size_t _age, size_t _index);
-  void buildForestVAOs(Forest &_forest);
+  void buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index, bool _usePaintedForest);
+  void buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index, bool _usePaintedForest);
+  void buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index, bool _usePaintedForest);
+  void buildForestVAOs();
+  void buildPaintedForestVAOs();
 
   void compileShaders();
   void loadShaderTextures();

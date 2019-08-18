@@ -57,7 +57,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="LSystemsTab">
         <attribute name="title">
@@ -582,7 +582,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>FFFA</string>
+                 <string>///A</string>
                 </property>
                 <property name="maxLength">
                  <number>32765</number>
@@ -611,7 +611,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>A=!&quot;[B]////[B]////B</string>
+                 <string>A=F&amp;[![A]^!A]^F^[!^FA]&amp;!A</string>
                 </property>
                </widget>
               </item>
@@ -624,7 +624,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>B=&amp;FFFA</string>
+                 <string>F=FF</string>
                 </property>
                </widget>
               </item>
@@ -635,6 +635,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="text">
+                 <string/>
                 </property>
                </widget>
               </item>
@@ -1447,7 +1450,7 @@
              <x>10</x>
              <y>10</y>
              <width>251</width>
-             <height>141</height>
+             <height>171</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="paintToolLayout">
@@ -1468,6 +1471,18 @@
               </item>
               <item>
                <widget class="QComboBox" name="m_paintBrush">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <item>
                  <property name="text">
                   <string>Tree 1</string>
@@ -1483,6 +1498,30 @@
                   <string>Tree 3</string>
                  </property>
                 </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="treeSpacingBox">
+              <item>
+               <widget class="QLabel" name="treeSpacingLabel">
+                <property name="text">
+                 <string>Tree Spacing</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="m_treeSpacing">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="value">
+                 <double>20.000000000000000</double>
+                </property>
                </widget>
               </item>
              </layout>
@@ -2056,10 +2095,13 @@
              <x>10</x>
              <y>460</y>
              <width>251</width>
-             <height>71</height>
+             <height>94</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="forestButtonsLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QPushButton" name="m_resetCamera_terrain">
               <property name="text">
@@ -2074,6 +2116,19 @@
               </property>
               <property name="text">
                <string> Wireframe Mode</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="m_showTrees">
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="text">
+               <string>Draw Trees</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

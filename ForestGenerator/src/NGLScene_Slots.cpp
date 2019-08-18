@@ -14,7 +14,6 @@ void NGLScene::changeSuperTab(int _superTabNum)
 {
   m_superTabNum = size_t(_superTabNum);
   size_t i=0;
-
   if(_superTabNum==0)
   {
     i=m_treeTabNum;
@@ -22,6 +21,14 @@ void NGLScene::changeSuperTab(int _superTabNum)
   }
   else if(_superTabNum==1)
   {
+    if(m_forestTabNum==0)
+    {
+       buildPaintedForestVAOs();
+    }
+    else if(m_forestTabNum==1)
+    {
+      updateForest();
+    }
     i=m_forestTabNum;
     m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
   }
@@ -30,7 +37,6 @@ void NGLScene::changeSuperTab(int _superTabNum)
     m_treePaintMode=false;
     updateForest();
   }
-
   m_currentCamera = &m_cameras[m_superTabNum][i];
   m_currentMouseTransform = &m_mouseTransforms[m_superTabNum][i];
 
@@ -40,7 +46,6 @@ void NGLScene::changeSuperTab(int _superTabNum)
 void NGLScene::changeTreeTab(int _treeTabNum)
 {
   m_treeTabNum = size_t(_treeTabNum);
-
   m_currentCamera = &m_cameras[0][m_treeTabNum];
   m_currentMouseTransform = &m_mouseTransforms[0][m_treeTabNum];
   m_currentLSystem = &m_LSystems[m_treeTabNum];
@@ -51,16 +56,16 @@ void NGLScene::changeTreeTab(int _treeTabNum)
 void NGLScene::changeForestTab(int _forestTabNum)
 {
   m_forestTabNum = size_t(_forestTabNum);
-
   m_currentCamera = &m_cameras[1][m_forestTabNum];
   m_currentMouseTransform = &m_mouseTransforms[1][m_forestTabNum];
-
   m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
-
   if(m_forestTabNum==0)
   {
-     m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
-     buildForestVAOs(m_paintedForest);
+     buildPaintedForestVAOs();
+  }
+  else if(m_forestTabNum==1)
+  {
+    updateForest();
   }
 
   update();
@@ -88,7 +93,7 @@ void NGLScene::generate()
 void NGLScene::resetCamera()
 {
   m_currentCamera->reset();
-  m_currentMouseTransform->identity();
+  (*m_currentMouseTransform) = m_initialRotation;
   update();
 }
 
@@ -249,8 +254,51 @@ void NGLScene::setLOD(int _LOD)
   m_terrainGen.m_scale = m_width/m_terrainDimension;
 }
 
+//------------------------------------------------------------------------------------------------------------------------
+
 void NGLScene::toggleTreePaintMode(bool _mode)
 {
   m_savedTreePaintMode = _mode;
   m_treePaintMode = _mode;
+}
+
+void NGLScene::setTreeSpacing(double _treeSpacing)
+{
+
+}
+
+void NGLScene::setPaintBrush(int _brushNum)
+{
+
+}
+
+void NGLScene::erasePaint()
+{
+
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+
+void NGLScene::toggleTreeGenMethod(int _methodNum)
+{
+
+}
+void NGLScene::setNumTrees(int _numTrees)
+{
+
+}
+
+void NGLScene::setNumHeroTrees(int _numHeroTrees)
+{
+
+}
+
+void NGLScene::setCacheLimit(int _cacheLimit)
+{
+
+}
+
+void NGLScene::toggleForestTreeDisplay(bool _checked)
+{
+
 }

@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
   //Tree Painting
   //------------------------------------------------------------------------------------
   connect(m_ui->m_paintBrush, SIGNAL(currentIndexChanged(int)), m_gl, SLOT(setPaintBrush(int)));
+  connect(m_ui->m_treeSpacing, SIGNAL(valueChanged(double)), m_gl, SLOT(setTreeSpacing(double)));
   connect(m_ui->m_erasePaint, SIGNAL(clicked()), m_gl, SLOT(erasePaint()));
   connect(m_ui->m_paintMode, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTreePaintMode(bool)));
   connect(m_ui->m_resetCamera_paintTool, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
@@ -88,13 +89,19 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_terrainSeed, SIGNAL(valueChanged(double)), m_gl, SLOT(setTerrainSeed(double)));
 
   connect(m_ui->m_tolerance, SIGNAL(valueChanged(double)), m_gl, SLOT(setTolerance(double)));
-  connect(m_ui->m_wireframe_terrain, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTerrainWireframe(bool)));
   connect(m_ui->m_updateTerrain, SIGNAL(clicked()), m_gl, SLOT(updateTerrain()));
-  connect(m_ui->m_resetCamera_terrain, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 
   //------------------------------------------------------------------------------------
   //Render
   //------------------------------------------------------------------------------------
+  connect(m_ui->m_treeGenMethod, SIGNAL(currentIndexChanged(int)), m_gl, SLOT(toggleTreeGenMethod(int)));
+  connect(m_ui->m_numTrees, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumTrees(int)));
+  connect(m_ui->m_numHeroTrees, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumHeroTrees(int)));
+  connect(m_ui->m_cacheLimit, SIGNAL(valueChanged(int)), m_gl, SLOT(setCacheLimit(int)));
+
+  connect(m_ui->m_resetCamera_terrain, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
+  connect(m_ui->m_wireframe_terrain, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTerrainWireframe(bool)));
+  connect(m_ui->m_showTrees, SIGNAL(toggled(bool)), m_gl, SLOT(toggleForestTreeDisplay(bool)));
 
   //RENDER
   //------------------------------------------------------------------------------------

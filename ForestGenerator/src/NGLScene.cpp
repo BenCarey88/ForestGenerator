@@ -51,9 +51,14 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_forest = Forest(m_LSystems, m_width,
                     m_numTrees, m_numHeroTrees, m_terrainGen);
   m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
+
   m_forestVAOs.resize(m_numTreeTabs);
   m_forestLeafVAOs.resize(m_numTreeTabs);
   m_forestPolygonVAOs.resize(m_numTreeTabs);
+  m_paintedForestVAOs.resize(m_numTreeTabs);
+  m_paintedForestLeafVAOs.resize(m_numTreeTabs);
+  m_paintedForestPolygonVAOs.resize(m_numTreeTabs);
+
   m_terrainGen.generate();
   m_terrain = TerrainData(m_terrainGen);
 
@@ -132,7 +137,7 @@ void NGLScene::initializeGL()
   }
   buildGridVAO();
 
-  buildForestVAOs(m_paintedForest);
+  buildForestVAOs();
 }
 
 
@@ -198,7 +203,7 @@ void NGLScene::paintGL()
   }
   if(m_buildForestVAOs==true)
   {
-    buildForestVAOs(m_forest);
+    buildForestVAOs();
     m_buildForestVAOs = false;
   }
 
@@ -242,7 +247,6 @@ void NGLScene::paintGL()
         drawVAO(m_gridVAO);
 //        print("GRID ERROR? ", glGetError(), "\n");
 
-        glPointSize(20);
         if(m_buildPaintLineVAO)
         {
           buildSimpleIndexVAO(m_paintLineVAO, m_paintLineVertices, m_paintLineIndices, GL_LINES, GL_UNSIGNED_SHORT);
@@ -260,25 +264,25 @@ void NGLScene::paintGL()
 
         for(auto &i : m_paintedForest.m_adjustedCacheIndexes)
         {
-          buildForestVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
-          buildForestLeafVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
-          buildForestPolygonVAO(m_paintedForest, i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex);
+          buildForestVAO(i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex, true);
+          buildForestLeafVAO(i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex, true);
+          buildForestPolygonVAO(i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex, true);
           m_paintedForest.m_adjustedCacheIndexes.clear();
         }
         //buildForestVAOs(m_paintedForest);
 
-        FOR_EACH_ELEMENT(m_forestVAOs[0],
+        FOR_EACH_ELEMENT(m_paintedForestVAOs[0],
                          (*shader)["ForestShader"]->use();
 //                         print("tree shader ",glGetError(), "\n");
-                         drawVAO(m_forestVAOs[0][ID][AGE][INDEX]);
+                         drawVAO(m_paintedForestVAOs[0][ID][AGE][INDEX]);
 //                         print("draw trees ",glGetError(), "\n");
                          (*shader)["ForestLeafShader"]->use();
 //                         print("leaf shader ",glGetError(), "\n");
-                         drawVAO(m_forestLeafVAOs[0][ID][AGE][INDEX]);
+                         drawVAO(m_paintedForestLeafVAOs[0][ID][AGE][INDEX]);
 //                         print("draw leaves ",glGetError(), "\n");
                          (*shader)["ForestPolygonShader"]->use();
 //                         print("Polygon shader ",glGetError(), "\n");
-                         drawVAO(m_forestPolygonVAOs[0][ID][AGE][INDEX]))//;
+                         drawVAO(m_paintedForestPolygonVAOs[0][ID][AGE][INDEX]))//;
 //                         print("draw polygons ",glGetError(), "\n");
 //                         newLine())
       }
@@ -292,6 +296,21 @@ void NGLScene::paintGL()
         refineTerrain();
         loadUniformsToShader(shader, "TerrainShader");
         drawVAO(m_terrainVAO);
+
+        loadUniformsToShader(shader, "ForestShader");
+        loadUniformsToShader(shader, "ForestLeafShader");
+        loadUniformsToShader(shader, "ForestPolygonShader");
+        for(size_t t=0; t<m_numTreeTabs; t++)
+        {
+          FOR_EACH_ELEMENT(m_paintedForestVAOs[t],
+                           (*shader)["ForestShader"]->use();
+                           drawVAO(m_paintedForestVAOs[t][ID][AGE][INDEX]);
+                           (*shader)["ForestLeafShader"]->use();
+                           drawVAO(m_paintedForestLeafVAOs[t][ID][AGE][INDEX]);
+                           (*shader)["ForestPolygonShader"]->use();
+                           drawVAO(m_paintedForestPolygonVAOs[t][ID][AGE][INDEX]))
+        }
+
       }
 
       break;
