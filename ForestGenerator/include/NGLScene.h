@@ -211,7 +211,7 @@ public slots:
   void setNumHeroTrees(int _numHeroTrees);
   void setCacheLimit(int _cacheLimit);
   void toggleForestTreeDisplay(bool _checked);
-  void updateForest();
+  void remakeForest();
 
 protected:
 
@@ -246,6 +246,8 @@ protected:
 
   Forest m_paintedForest;
   size_t m_paintBrushNum = 0;
+  bool m_usePaintedForest = true;
+  bool m_displayForestTrees = true;
 
   bool m_buildPaintLineVAO = true;
   std::vector<ngl::Vec3> m_paintLineVertices = {};

@@ -283,16 +283,21 @@ void NGLScene::erasePaint()
 
 void NGLScene::toggleTreeGenMethod(int _methodNum)
 {
-
+  m_usePaintedForest = bool(1-_methodNum);
+  if(_methodNum==1)
+  {
+    updateForest();
+  }
 }
+
 void NGLScene::setNumTrees(int _numTrees)
 {
-
+  m_numTrees = size_t(_numTrees);
 }
 
 void NGLScene::setNumHeroTrees(int _numHeroTrees)
 {
-
+  m_numHeroTrees = _numHeroTrees;
 }
 
 void NGLScene::setCacheLimit(int _cacheLimit)
@@ -302,10 +307,11 @@ void NGLScene::setCacheLimit(int _cacheLimit)
 
 void NGLScene::toggleForestTreeDisplay(bool _checked)
 {
-
+  m_displayForestTrees = _checked;
+  update();
 }
 
-void NGLScene::updateForest()
+void NGLScene::remakeForest()
 {
-
+  updateForest();
 }

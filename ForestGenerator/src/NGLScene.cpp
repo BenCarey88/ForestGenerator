@@ -305,15 +305,31 @@ void NGLScene::paintGL()
         loadUniformsToShader(shader, "ForestShader");
         loadUniformsToShader(shader, "ForestLeafShader");
         loadUniformsToShader(shader, "ForestPolygonShader");
-        for(size_t t=0; t<m_numTreeTabs; t++)
+        if(m_displayForestTrees && m_usePaintedForest)
         {
-          FOR_EACH_ELEMENT(m_paintedForestVAOs[t],
-                           (*shader)["ForestShader"]->use();
-                           drawVAO(m_paintedForestVAOs[t][ID][AGE][INDEX]);
-                           (*shader)["ForestLeafShader"]->use();
-                           drawVAO(m_paintedForestLeafVAOs[t][ID][AGE][INDEX]);
-                           (*shader)["ForestPolygonShader"]->use();
-                           drawVAO(m_paintedForestPolygonVAOs[t][ID][AGE][INDEX]))
+          for(size_t t=0; t<m_numTreeTabs; t++)
+          {
+            FOR_EACH_ELEMENT(m_paintedForestVAOs[t],
+                             (*shader)["ForestShader"]->use();
+                             drawVAO(m_paintedForestVAOs[t][ID][AGE][INDEX]);
+                             (*shader)["ForestLeafShader"]->use();
+                             drawVAO(m_paintedForestLeafVAOs[t][ID][AGE][INDEX]);
+                             (*shader)["ForestPolygonShader"]->use();
+                             drawVAO(m_paintedForestPolygonVAOs[t][ID][AGE][INDEX]))
+          }
+        }
+        else if(m_displayForestTrees)
+        {
+          for(size_t t=0; t<m_numTreeTabs; t++)
+          {
+            FOR_EACH_ELEMENT(m_forestVAOs[t],
+                             (*shader)["ForestShader"]->use();
+                             drawVAO(m_forestVAOs[t][ID][AGE][INDEX]);
+                             (*shader)["ForestLeafShader"]->use();
+                             drawVAO(m_forestLeafVAOs[t][ID][AGE][INDEX]);
+                             (*shader)["ForestPolygonShader"]->use();
+                             drawVAO(m_forestPolygonVAOs[t][ID][AGE][INDEX]))
+          }
         }
 
       }
