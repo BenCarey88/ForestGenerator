@@ -98,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_numTrees, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumTrees(int)));
   connect(m_ui->m_numHeroTrees, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumHeroTrees(int)));
   connect(m_ui->m_cacheLimit, SIGNAL(valueChanged(int)), m_gl, SLOT(setCacheLimit(int)));
+  connect(m_ui->m_updateForest, SIGNAL(clicked()), m_gl, SLOT(updateForest()));
 
   connect(m_ui->m_resetCamera_terrain, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
   connect(m_ui->m_wireframe_terrain, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTerrainWireframe(bool)));
@@ -127,4 +128,5 @@ void MainWindow::on_m_seedToggle_2_stateChanged(int _clicked)
 void MainWindow::on_m_treeGenMethod_currentIndexChanged(int _index)
 {
     m_ui->m_numTrees->setEnabled(_index);
+    m_ui->m_updateForest->setEnabled(_index);
 }

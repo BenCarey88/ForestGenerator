@@ -211,6 +211,7 @@ public slots:
   void setNumHeroTrees(int _numHeroTrees);
   void setCacheLimit(int _cacheLimit);
   void toggleForestTreeDisplay(bool _checked);
+  void updateForest();
 
 protected:
 
@@ -244,6 +245,7 @@ protected:
   float m_minTreeDist = 20;
 
   Forest m_paintedForest;
+  size_t m_paintBrushNum = 0;
 
   bool m_buildPaintLineVAO = true;
   std::vector<ngl::Vec3> m_paintLineVertices = {};
@@ -433,12 +435,15 @@ protected:
   void buildForestVAOs();
   void buildPaintedForestVAOs();
 
+  void resizeVAOCache(size_t _t);
+
   void compileShaders();
   void loadShaderTextures();
   void loadTextureToShader(const std::string &_shaderName,
                            const char * _textureMapName, const char *_textureMapFile,
                            GLuint _storageLocation);
   void loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &_shaderName);
+
 
   void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO);
   void refineTerrain();

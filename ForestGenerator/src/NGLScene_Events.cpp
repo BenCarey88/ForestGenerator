@@ -55,7 +55,7 @@ void NGLScene::addPointToPaintedForest(ngl::Vec3 &_point)
   {
     m_points.push_back(_point);
     m_pointIndices.push_back(GLshort(m_points.size()-1));
-    m_paintedForest.addTreeToForest(_point, 0);
+    m_paintedForest.addTreeToForest(_point, m_paintBrushNum);
   }
 }
 

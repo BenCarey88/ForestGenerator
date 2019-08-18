@@ -202,15 +202,21 @@ void NGLScene::buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _
 {
   Forest *forest;
   std::unique_ptr<ngl::AbstractVAO> *vao;
+  GLuint *rightBuffer;
+  GLuint *thicknessBuffer;
   if(_usePaintedForest)
   {
     forest = &m_paintedForest;
     vao = &m_paintedForestVAOs[_treeNum][_id][_age][_index];
+    rightBuffer = &m_paintedForestRightBuffers[_treeNum][_id][_age][_index];
+    thicknessBuffer = &m_paintedForestThicknessBuffers[_treeNum][_id][_age][_index];
   }
   else
   {
     forest = &m_forest;
     vao = &m_forestVAOs[_treeNum][_id][_age][_index];
+    rightBuffer = &m_forestRightBuffers[_treeNum][_id][_age][_index];
+    thicknessBuffer = &m_forestThicknessBuffers[_treeNum][_id][_age][_index];
   }
 
   LSystem &treeType = forest->m_treeTypes[_treeNum];
@@ -227,12 +233,10 @@ void NGLScene::buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _
 
   (*vao)->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroRightVectors.size(),
-                      &treeType.m_heroRightVectors[0].m_x,
-                      m_paintedForestRightBuffers[_treeNum][_id][_age][_index]);
+                      &treeType.m_heroRightVectors[0].m_x, *rightBuffer);
   (*vao)->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(float)*treeType.m_heroThicknessValues.size(),
-                      &treeType.m_heroThicknessValues[0],
-                      m_paintedForestThicknessBuffers[_treeNum][_id][_age][_index]);
+                      &treeType.m_heroThicknessValues[0], *thicknessBuffer);
   (*vao)->setVertexAttributePointer(6,1,GL_FLOAT,4,0);
   (*vao)->unbind();
 
@@ -244,15 +248,21 @@ void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size
 {
   Forest *forest;
   std::unique_ptr<ngl::AbstractVAO> *vao;
+  GLuint *dirBuffer;
+  GLuint *rightBuffer;
   if(_usePaintedForest)
   {
     forest = &m_paintedForest;
     vao = &m_paintedForestLeafVAOs[_treeNum][_id][_age][_index];
+    dirBuffer = &m_paintedForestLeafDirectionBuffers[_treeNum][_id][_age][_index];
+    rightBuffer = &m_paintedForestLeafRightBuffers[_treeNum][_id][_age][_index];
   }
   else
   {
     forest = &m_forest;
     vao = &m_forestLeafVAOs[_treeNum][_id][_age][_index];
+    dirBuffer = &m_forestLeafDirectionBuffers[_treeNum][_id][_age][_index];
+    rightBuffer = &m_forestLeafRightBuffers[_treeNum][_id][_age][_index];
   }
 
   LSystem &treeType = forest->m_treeTypes[_treeNum];
@@ -269,12 +279,10 @@ void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size
 
   (*vao)->bind();
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafDirections.size(),
-                      &treeType.m_heroLeafDirections[0].m_x,
-                      m_paintedForestLeafDirectionBuffers[_treeNum][_id][_age][_index]);
+                      &treeType.m_heroLeafDirections[0].m_x, *dirBuffer);
   (*vao)->setVertexAttributePointer(5,3,GL_FLOAT,12,0);
   addBufferToBoundVAO(sizeof(ngl::Vec3)*treeType.m_heroLeafRightVectors.size(),
-                      &treeType.m_heroLeafRightVectors[0].m_x,
-                      m_paintedForestLeafRightBuffers[_treeNum][_id][_age][_index]);
+                      &treeType.m_heroLeafRightVectors[0].m_x, *rightBuffer);
   (*vao)->setVertexAttributePointer(6,3,GL_FLOAT,12,0);
   (*vao)->unbind();
 
@@ -358,4 +366,19 @@ void NGLScene::buildPaintedForestVAOs()
                      buildForestLeafVAO(t,ID,AGE,INDEX,true);
                      buildForestPolygonVAO(t,ID,AGE,INDEX,true))
   }
+}
+
+void NGLScene::resizeVAOCache(size_t _t)
+{
+  LSystem &treeType = m_paintedForest.m_treeTypes[_t];
+  CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
+
+  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestVAOs[_t], instanceCache)
+  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestLeafVAOs[_t], instanceCache)
+  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestPolygonVAOs[_t], instanceCache)
+
+  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestRightBuffers[_t], instanceCache)
+  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestThicknessBuffers[_t], instanceCache)
+  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestLeafDirectionBuffers[_t], instanceCache)
+  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestLeafRightBuffers[_t], instanceCache)
 }

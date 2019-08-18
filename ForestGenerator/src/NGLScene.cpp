@@ -273,20 +273,23 @@ void NGLScene::paintGL()
         }
         //buildForestVAOs(m_paintedForest);
 
-        FOR_EACH_ELEMENT(m_paintedForestVAOs[0],
-                         (*shader)["ForestShader"]->use();
-//                         print("tree shader ",glGetError(), "\n");
-                         drawVAO(m_paintedForestVAOs[0][ID][AGE][INDEX]);
-//                         print("draw trees ",glGetError(), "\n");
-                         (*shader)["ForestLeafShader"]->use();
-//                         print("leaf shader ",glGetError(), "\n");
-                         drawVAO(m_paintedForestLeafVAOs[0][ID][AGE][INDEX]);
-//                         print("draw leaves ",glGetError(), "\n");
-                         (*shader)["ForestPolygonShader"]->use();
-//                         print("Polygon shader ",glGetError(), "\n");
-                         drawVAO(m_paintedForestPolygonVAOs[0][ID][AGE][INDEX]))//;
-//                         print("draw polygons ",glGetError(), "\n");
-//                         newLine())
+        for(size_t t=0; t<m_numTreeTabs; t++)
+        {
+          FOR_EACH_ELEMENT(m_paintedForestVAOs[t],
+                           (*shader)["ForestShader"]->use();
+    //                         print("tree shader ",glGetError(), "\n");
+                           drawVAO(m_paintedForestVAOs[t][ID][AGE][INDEX]);
+    //                         print("draw trees ",glGetError(), "\n");
+                           (*shader)["ForestLeafShader"]->use();
+    //                         print("leaf shader ",glGetError(), "\n");
+                           drawVAO(m_paintedForestLeafVAOs[t][ID][AGE][INDEX]);
+    //                         print("draw leaves ",glGetError(), "\n");
+                           (*shader)["ForestPolygonShader"]->use();
+    //                         print("Polygon shader ",glGetError(), "\n");
+                           drawVAO(m_paintedForestPolygonVAOs[t][ID][AGE][INDEX]))//;
+    //                         print("draw polygons ",glGetError(), "\n");
+    //                         newLine())
+        }
       }
 
       else if(m_forestTabNum==1)

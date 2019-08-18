@@ -1946,7 +1946,7 @@
                <x>9</x>
                <y>9</y>
                <width>231</width>
-               <height>167</height>
+               <height>201</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="treesLayout">
@@ -2030,6 +2030,22 @@
                  </widget>
                 </item>
                </layout>
+              </item>
+              <item>
+               <widget class="QPushButton" name="m_updateForest">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string>Update Forest</string>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
               <item>
                <layout class="QHBoxLayout" name="numHeroTreesBox">

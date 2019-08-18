@@ -23,7 +23,7 @@ void NGLScene::changeSuperTab(int _superTabNum)
   {
     if(m_forestTabNum==0)
     {
-       //buildPaintedForestVAOs();
+
     }
     else if(m_forestTabNum==1)
     {
@@ -61,7 +61,7 @@ void NGLScene::changeForestTab(int _forestTabNum)
   m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
   if(m_forestTabNum==0)
   {
-     //buildPaintedForestVAOs();
+
   }
   else if(m_forestTabNum==1)
   {
@@ -264,17 +264,19 @@ void NGLScene::toggleTreePaintMode(bool _mode)
 
 void NGLScene::setTreeSpacing(double _treeSpacing)
 {
-
+  m_minTreeDist = float(_treeSpacing);
 }
 
 void NGLScene::setPaintBrush(int _brushNum)
 {
-
+  m_paintBrushNum = size_t(_brushNum);
 }
 
 void NGLScene::erasePaint()
 {
-
+  m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
+  buildPaintedForestVAOs();
+  update();
 }
 
 //------------------------------------------------------------------------------------------------------------------------
@@ -299,6 +301,11 @@ void NGLScene::setCacheLimit(int _cacheLimit)
 }
 
 void NGLScene::toggleForestTreeDisplay(bool _checked)
+{
+
+}
+
+void NGLScene::updateForest()
 {
 
 }
