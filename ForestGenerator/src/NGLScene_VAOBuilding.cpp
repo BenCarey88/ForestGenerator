@@ -58,28 +58,6 @@ void NGLScene::buildSimpleIndexVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std:
 
 //------------------------------------------------------------------------------------------------------------------------
 
-/*void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, LSystem &_treeType,
-                                     Instance &_instance, std::vector<ngl::Mat4> &_transforms)
-{
-  // create a vao using GL_LINES
-  _vao=ngl::VAOFactory::createVAO("instanceCacheVAO",GL_LINES);
-  _vao->bind();
-  // set our data for the VAO:
-  //    (1) vertexBufferSize, (2) vertexBufferStart,
-  //    (3) indexBufferSize, (4) indexBufferStart,
-  //    (5) transformBufferSize, (6) transformBufferStart
-  _vao->setData(ngl::InstanceCacheVAO::VertexData(
-                       sizeof(ngl::Vec3)*_treeType.m_heroVertices.size(),
-                       _treeType.m_heroVertices[0].m_x,
-                       uint(_instance.m_instanceEnd-_instance.m_instanceStart),
-                       &_treeType.m_heroIndices[_instance.m_instanceStart],
-                       uint(_transforms.size()),
-                       &_transforms[0]));
-  // set number of indices to length of current instance
-  _vao->setNumIndices(_instance.m_instanceEnd-_instance.m_instanceStart);
-  _vao->unbind();
-}*/
-
 void NGLScene::buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
                                      std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
                                      size_t _instanceStart, size_t _instanceEnd, GLenum _mode)

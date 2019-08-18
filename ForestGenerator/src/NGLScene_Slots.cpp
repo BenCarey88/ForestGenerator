@@ -21,21 +21,12 @@ void NGLScene::changeSuperTab(int _superTabNum)
   }
   else if(_superTabNum==1)
   {
-    if(m_forestTabNum==0)
-    {
-
-    }
-    else if(m_forestTabNum==1)
+    i=m_forestTabNum;
+    m_treePaintMode = (m_forestTabNum==1) ? m_savedTreePaintMode : false;
+    if(m_forestTabNum==1 && m_usePaintedForest==false)
     {
       updateForest();
     }
-    i=m_forestTabNum;
-    m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
-  }
-  else if(_superTabNum==2)
-  {
-    m_treePaintMode=false;
-    updateForest();
   }
   m_currentCamera = &m_cameras[m_superTabNum][i];
   m_currentMouseTransform = &m_mouseTransforms[m_superTabNum][i];
@@ -58,7 +49,7 @@ void NGLScene::changeForestTab(int _forestTabNum)
   m_forestTabNum = size_t(_forestTabNum);
   m_currentCamera = &m_cameras[1][m_forestTabNum];
   m_currentMouseTransform = &m_mouseTransforms[1][m_forestTabNum];
-  m_treePaintMode = (m_forestTabNum==0) ? m_savedTreePaintMode : false;
+  m_treePaintMode = (m_forestTabNum==1) ? m_savedTreePaintMode : false;
   if(m_forestTabNum==0)
   {
 
@@ -274,7 +265,7 @@ void NGLScene::setPaintBrush(int _brushNum)
 
 void NGLScene::erasePaint()
 {
-  m_paintedForest = Forest(m_LSystems, m_numHeroTrees);
+  m_paintedForest = Forest(m_LSystems, m_numHeroTrees, m_forestSeed, m_forestUseSeed);
   buildPaintedForestVAOs();
   update();
 }
@@ -288,11 +279,20 @@ void NGLScene::toggleTreeGenMethod(int _methodNum)
   {
     updateForest();
   }
+  update();
 }
 
-void NGLScene::setNumTrees(int _numTrees)
+void NGLScene::setNumTrees1(int _numTrees)
 {
-  m_numTrees = size_t(_numTrees);
+  m_numTrees[0] = size_t(_numTrees);
+}
+void NGLScene::setNumTrees2(int _numTrees)
+{
+  m_numTrees[1] = size_t(_numTrees);
+}
+void NGLScene::setNumTrees3(int _numTrees)
+{
+  m_numTrees[2] = size_t(_numTrees);
 }
 
 void NGLScene::setNumHeroTrees(int _numHeroTrees)
@@ -300,18 +300,26 @@ void NGLScene::setNumHeroTrees(int _numHeroTrees)
   m_numHeroTrees = _numHeroTrees;
 }
 
-void NGLScene::setCacheLimit(int _cacheLimit)
+void NGLScene::setInstancingProb(double _instancingProb)
 {
-
+  for(auto &tree : m_LSystems)
+  {
+    tree.m_instancingProb = float(_instancingProb);
+  }
 }
 
-void NGLScene::toggleForestTreeDisplay(bool _checked)
+void NGLScene::setSeedForest(int _seed)
 {
-  m_displayForestTrees = _checked;
-  update();
+  m_forestSeed = size_t(_seed);
+}
+
+void NGLScene::seedToggleForest(int _mode)
+{
+  m_forestUseSeed = bool(_mode);
 }
 
 void NGLScene::remakeForest()
 {
   updateForest();
+  update();
 }

@@ -208,10 +208,13 @@ public slots:
   void erasePaint();
 
   void toggleTreeGenMethod(int _methodNum);
-  void setNumTrees(int _numTrees);
+  void setNumTrees1(int _numTrees);
+  void setNumTrees2(int _numTrees);
+  void setNumTrees3(int _numTrees);
   void setNumHeroTrees(int _numHeroTrees);
-  void setCacheLimit(int _cacheLimit);
-  void toggleForestTreeDisplay(bool _checked);
+  void setInstancingProb(double _instancingProb);
+  void setSeedForest(int _seed);
+  void seedToggleForest(int _mode);
   void remakeForest();
 
 protected:
@@ -224,7 +227,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the number of tabs of each type
   //----------------------------------------------------------------------------------------------------------------------
-  const size_t m_numSuperTabs = 3;
+  const size_t m_numSuperTabs = 2;
   const size_t m_numTreeTabs = 3;
   const size_t m_numForestTabs = 2;
   //----------------------------------------------------------------------------------------------------------------------
@@ -246,6 +249,7 @@ protected:
   float m_minTreeDist = 20;
   float m_rayPickTolerance = 0.1f;
 
+
   Forest m_paintedForest;
   size_t m_paintBrushNum = 0;
   bool m_usePaintedForest = true;
@@ -256,6 +260,8 @@ protected:
   std::vector<GLshort> m_paintLineIndices = {};
 
   noise::module::Perlin m_perlinModule;
+  size_t m_forestSeed = 0;
+  bool m_forestUseSeed = false;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief matrices to set up camera view
@@ -328,7 +334,7 @@ protected:
   /// @brief width and number of trees for m_forest
   //----------------------------------------------------------------------------------------------------------------------
   float m_width = 2000;
-  size_t m_numTrees = 1000;
+  std::vector<size_t> m_numTrees = {1000,1000,1000};
   int m_numHeroTrees = 10;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief list of all L-Systems stored by the scene

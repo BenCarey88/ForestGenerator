@@ -1807,19 +1807,6 @@
               </item>
              </layout>
             </item>
-            <item>
-             <widget class="QCheckBox" name="m_showTrees">
-              <property name="layoutDirection">
-               <enum>Qt::RightToLeft</enum>
-              </property>
-              <property name="text">
-               <string>Draw Trees</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
          </widget>
@@ -1833,7 +1820,7 @@
              <x>10</x>
              <y>10</y>
              <width>251</width>
-             <height>301</height>
+             <height>291</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="treesLayout">
@@ -1884,7 +1871,7 @@
                </size>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>1</number>
               </property>
               <widget class="QWidget" name="page">
                <widget class="QWidget" name="verticalLayoutWidget_4">
@@ -1893,7 +1880,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>251</width>
-                  <height>131</height>
+                  <height>141</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="paintToolLayout">
@@ -1970,9 +1957,18 @@
                   </layout>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="m_paintMode">
+                  <widget class="QPushButton" name="m_paint">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
                    <property name="text">
-                    <string>Paint Mode</string>
+                    <string>Paint</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                   <property name="checked">
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -1993,7 +1989,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>251</width>
-                  <height>131</height>
+                  <height>141</height>
                  </rect>
                 </property>
                 <layout class="QVBoxLayout" name="_2">
@@ -2010,7 +2006,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QSpinBox" name="m_numTrees">
+                    <widget class="QSpinBox" name="m_numTrees_1">
                      <property name="enabled">
                       <bool>true</bool>
                      </property>
@@ -2030,7 +2026,7 @@
                       <number>50000</number>
                      </property>
                      <property name="value">
-                      <number>5000</number>
+                      <number>1000</number>
                      </property>
                     </widget>
                    </item>
@@ -2066,7 +2062,7 @@
                       <number>50000</number>
                      </property>
                      <property name="value">
-                      <number>5000</number>
+                      <number>1000</number>
                      </property>
                     </widget>
                    </item>
@@ -2102,7 +2098,7 @@
                       <number>50000</number>
                      </property>
                      <property name="value">
-                      <number>5000</number>
+                      <number>1000</number>
                      </property>
                     </widget>
                    </item>
@@ -2148,34 +2144,73 @@
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>70</width>
+                  <width>73</width>
                   <height>0</height>
                  </size>
+                </property>
+                <property name="value">
+                 <number>10</number>
                 </property>
                </widget>
               </item>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="cacheLimitBox">
+             <layout class="QHBoxLayout" name="numHeroTreesBox_2">
               <item>
-               <widget class="QLabel" name="cacheLimitLabel">
+               <widget class="QLabel" name="numHeroTreesLabel_2">
                 <property name="text">
-                 <string>Instance Cache Limit</string>
+                 <string>Instancing Probability</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="m_cacheLimit">
+               <widget class="QDoubleSpinBox" name="m_instancingProb">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>70</horstretch>
+                  <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>70</width>
+                  <width>73</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>0.600000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="seedBox_forest">
+              <item>
+               <widget class="QCheckBox" name="m_seedToggle_forest">
+                <property name="text">
+                 <string>Seed</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="m_seed_forest">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>73</width>
                   <height>0</height>
                  </size>
                 </property>
@@ -2218,24 +2253,6 @@
            </widget>
           </item>
          </layout>
-        </widget>
-       </widget>
-       <widget class="QWidget" name="renderTab2">
-        <attribute name="title">
-         <string>Render</string>
-        </attribute>
-        <widget class="QPushButton" name="m_resetCamera_render">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>20</y>
-           <width>251</width>
-           <height>25</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Reset Camera</string>
-         </property>
         </widget>
        </widget>
       </widget>
@@ -2320,7 +2337,6 @@
   <tabstop>m_LOD</tabstop>
   <tabstop>m_tolerance</tabstop>
   <tabstop>m_updateTerrain</tabstop>
-  <tabstop>m_resetCamera_render</tabstop>
  </tabstops>
  <resources/>
  <connections/>

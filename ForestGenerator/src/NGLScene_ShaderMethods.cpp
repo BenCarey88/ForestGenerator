@@ -68,9 +68,8 @@ void NGLScene::loadShaderTextures()
   loadTextureToShader("LeafShader", "textureMap", "textures/leaf.png", LeafTexLoc);
   loadTextureToShader("ForestLeafShader", "textureMap", "textures/leaf.png", LeafTexLoc);
 
-  loadTextureToShader("TerrainShader", "textureMap", "textures/Lawn_grass_pxr128.jpg", TerrainTexLoc);
+  loadTextureToShader("TerrainShader", "textureMap", "textures/dirtTexture.jpg", TerrainTexLoc);
   loadTextureToShader("TerrainShader", "normalMap", "textures/Lawn_grass_pxr128_normal.jpg", TerrainNormalLoc);
-
 }
 
 //----------------------------------------------------------------------------------------------------------------------

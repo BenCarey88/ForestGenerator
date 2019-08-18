@@ -30,7 +30,7 @@ ngl::Vec3 NGLScene::getProjectedPointOnTerrain(float _screenX, float _screenY)
   ngl::Vec4 rayStart4 = MVPinverse * ngl::Vec4(projDevX,projDevY,0.9f,1);
   ngl::Vec3 rayStart = ngl::Vec3(rayStart4.m_x, rayStart4.m_y, rayStart4.m_z);
 
-  float maxTerrainHeight = m_terrainGen.m_amplitude;
+  float maxTerrainHeight = m_terrainGen.m_amplitude*2;
   float stepSize = m_rayPickTolerance;
   float n = (maxTerrainHeight-rayStart.m_y)/rayDir.m_y;
   ngl::Vec3 rayEnd = rayStart + n*rayDir;
@@ -40,16 +40,38 @@ ngl::Vec3 NGLScene::getProjectedPointOnTerrain(float _screenX, float _screenY)
   m_perlinModule.SetPersistence(m_terrainGen.m_persistence);
   m_perlinModule.SetLacunarity(m_terrainGen.m_lacunarity);
 
+  bool rayEndHasBeenFound = false;
   while(rayEnd.m_y >= -maxTerrainHeight-1 && rayEnd.m_y <= maxTerrainHeight+1)
   {
     n += stepSize;
     rayEnd = rayStart + n*rayDir;
-    float yPos = maxTerrainHeight * float(m_perlinModule.GetValue(double(rayEnd.m_x),
-                                                                  double(rayEnd.m_z),
-                                                                  m_terrainGen.m_seed));
+    float yPos = m_terrainGen.m_amplitude * float(m_perlinModule.GetValue(double(rayEnd.m_x),
+                                                                          double(rayEnd.m_z),
+                                                                          m_terrainGen.m_seed));
     if(abs(rayEnd.m_y - yPos) < stepSize)
     {
+      rayEndHasBeenFound = true;
       break;
+    }
+  }
+
+  if(!rayEndHasBeenFound)
+  {
+    float n = (maxTerrainHeight-rayStart.m_y)/rayDir.m_y;
+    ngl::Vec3 rayEnd = rayStart + n*rayDir;
+
+    while(rayEnd.m_y >= -maxTerrainHeight-1 && rayEnd.m_y <= maxTerrainHeight+1)
+    {
+      n -= stepSize;
+      rayEnd = rayStart + n*rayDir;
+      float yPos = m_terrainGen.m_amplitude * float(m_perlinModule.GetValue(double(rayEnd.m_x),
+                                                                            double(rayEnd.m_z),
+                                                                            m_terrainGen.m_seed));
+      if(abs(rayEnd.m_y - yPos) < stepSize)
+      {
+        rayEndHasBeenFound = true;
+        break;
+      }
     }
   }
 

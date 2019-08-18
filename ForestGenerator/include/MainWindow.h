@@ -34,7 +34,10 @@ private slots:
   /// @brief slots to enable the seed spin box when the seedToggle is selected
   void on_m_seedToggle_1_stateChanged(int _clicked);
   void on_m_seedToggle_2_stateChanged(int _clicked);
+  void on_m_seedToggle_3_stateChanged(int _clicked);
+  void on_m_seedToggle_forest_stateChanged(int _clicked);
 
+  /// @brief slot to switch between the controls for different tree generation methods
   void on_m_treeGenMethod_currentIndexChanged(int index);
 
 private:

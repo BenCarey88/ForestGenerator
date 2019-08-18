@@ -10,6 +10,8 @@ in vec3 Tout;
 in vec3 Bout;
 in vec3 Nout;
 
+in vec3 normal;
+
 /// @brief our output fragment colour
 layout (location =0)out vec4 fragColour;
 
@@ -32,9 +34,9 @@ void main ()
 
     mat3 TBN1 = mat3(Tout, Bout, Nout);
 
-    vec3 normal = vec3(texture(normalMap, UV));
-    normal = normalize(normal * 2.0 - 1);
-    normal = normalize(TBN1 * normal);
+//    vec3 normal = vec3(texture(normalMap, UV));
+//    normal = normalize(normal * 2.0 - 1);
+//    normal = normalize(TBN1 * normal);
 
     ///@ref: Jon Macey
     // Convert normal and position to eye coords

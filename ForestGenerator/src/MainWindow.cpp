@@ -68,14 +68,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
   //FOREST TAB
   //------------------------------------------------------------------------------------
-  //Tree Painting
-  //------------------------------------------------------------------------------------
-  connect(m_ui->m_paintBrush, SIGNAL(currentIndexChanged(int)), m_gl, SLOT(setPaintBrush(int)));
-  connect(m_ui->m_treeSpacing, SIGNAL(valueChanged(double)), m_gl, SLOT(setTreeSpacing(double)));
-  connect(m_ui->m_erasePaint, SIGNAL(clicked()), m_gl, SLOT(erasePaint()));
-  connect(m_ui->m_paintMode, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTreePaintMode(bool)));
-
-  //------------------------------------------------------------------------------------
   //Terrain
   //------------------------------------------------------------------------------------
   connect(m_ui->m_terrainSize, SIGNAL(valueChanged(double)), m_gl, SLOT(setTerrainSize(double)));
@@ -91,21 +83,24 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(m_ui->m_updateTerrain, SIGNAL(clicked()), m_gl, SLOT(updateTerrain()));
 
   //------------------------------------------------------------------------------------
-  //Render
+  //Trees
   //------------------------------------------------------------------------------------
   connect(m_ui->m_treeGenMethod, SIGNAL(currentIndexChanged(int)), m_gl, SLOT(toggleTreeGenMethod(int)));
-  connect(m_ui->m_numTrees, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumTrees(int)));
-  connect(m_ui->m_numHeroTrees, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumHeroTrees(int)));
-  connect(m_ui->m_cacheLimit, SIGNAL(valueChanged(int)), m_gl, SLOT(setCacheLimit(int)));
+  connect(m_ui->m_paintBrush, SIGNAL(currentIndexChanged(int)), m_gl, SLOT(setPaintBrush(int)));
+  connect(m_ui->m_treeSpacing, SIGNAL(valueChanged(double)), m_gl, SLOT(setTreeSpacing(double)));
+  connect(m_ui->m_erasePaint, SIGNAL(clicked()), m_gl, SLOT(erasePaint()));
+  connect(m_ui->m_paint, SIGNAL(clicked(bool)), m_gl, SLOT(toggleTreePaintMode(bool)));
+  connect(m_ui->m_numTrees_1, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumTrees1(int)));
+  connect(m_ui->m_numTrees_2, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumTrees2(int)));
+  connect(m_ui->m_numTrees_3, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumTrees3(int)));
   connect(m_ui->m_updateForest, SIGNAL(clicked()), m_gl, SLOT(remakeForest()));
 
+  connect(m_ui->m_numHeroTrees, SIGNAL(valueChanged(int)), m_gl, SLOT(setNumHeroTrees(int)));
+  connect(m_ui->m_seed_forest, SIGNAL(valueChanged(int)), m_gl, SLOT(setSeedForest(int)));
+  connect(m_ui->m_seedToggle_forest, SIGNAL(stateChanged(int)), m_gl, SLOT(seedToggleForest(int)));
+  connect(m_ui->m_instancingProb, SIGNAL(valueChanged(double)), m_gl, SLOT(setInstancingProb(double)));
   connect(m_ui->m_resetCamera_terrain, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
   connect(m_ui->m_wireframe_terrain, SIGNAL(toggled(bool)), m_gl, SLOT(toggleTerrainWireframe(bool)));
-  connect(m_ui->m_showTrees, SIGNAL(toggled(bool)), m_gl, SLOT(toggleForestTreeDisplay(bool)));
-
-  //RENDER
-  //------------------------------------------------------------------------------------
-  connect(m_ui->m_resetCamera_render, SIGNAL(clicked()), m_gl, SLOT(resetCamera()));
 
 }
 
@@ -123,8 +118,22 @@ void MainWindow::on_m_seedToggle_2_stateChanged(int _clicked)
 {
     m_ui->m_seed_2->setEnabled(_clicked);
 }
+void MainWindow::on_m_seedToggle_3_stateChanged(int _clicked)
+{
+    m_ui->m_seed_3->setEnabled(_clicked);
+}
+void MainWindow::on_m_seedToggle_forest_stateChanged(int _clicked)
+{
+    m_ui->m_seed_forest->setEnabled(_clicked);
+}
 
 void MainWindow::on_m_treeGenMethod_currentIndexChanged(int _index)
 {
     m_ui->m_treeGenMethodStack->setCurrentIndex(_index);
+    if(_index==1)
+    {
+      m_ui->m_paint->setChecked(0);
+      m_gl->toggleTreePaintMode(false);
+    }
 }
+

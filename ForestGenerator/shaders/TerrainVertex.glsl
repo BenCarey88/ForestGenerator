@@ -16,6 +16,8 @@ out vec3 Tout;
 out vec3 Bout;
 out vec3 Nout;
 
+out vec3 normal;
+
 out vec3 vertColour;
 out float lightIntensity;
 out vec2 UV;
@@ -48,6 +50,7 @@ void main()
 
   UV = inUV;
   origPos = inVert;
+  normal = normalize(vec3(M * vec4(inNormal,    0)));
 
   //vertColour = inNormal;
 }
