@@ -47,7 +47,13 @@ void main ()
     float lightIntensity = max( dot( s, tnorm ), 0.0 )* Ld * Kd;
 
 //    fragColour = vec4(normal,1);
+    //scale lightIntensity to range [0.3,1] to make things slightly brighter
+    lightIntensity = (lightIntensity+0.3)*0.769;
+
     fragColour = lightIntensity * texture(textureMap, UV);
+
+    //fragColour.rgb = lightIntensity * vec3(0.5,0.3,0.2);
+
     fragColour.a = 1;// step(0.0000001, fragColour.r+fragColour.g+fragColour.b);
 
     //fragColour = vec4(normal,1);

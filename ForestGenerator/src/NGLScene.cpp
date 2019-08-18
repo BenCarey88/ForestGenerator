@@ -89,6 +89,10 @@ NGLScene::~NGLScene()
                      m_forestVAOs[t][ID][AGE][INDEX]->removeVAO();
                      m_forestLeafVAOs[t][ID][AGE][INDEX]->removeVAO();
                      m_forestPolygonVAOs[t][ID][AGE][INDEX]->removeVAO())
+    FOR_EACH_ELEMENT(m_paintedForestVAOs[t],
+                     m_paintedForestVAOs[t][ID][AGE][INDEX]->removeVAO();
+                     m_paintedForestLeafVAOs[t][ID][AGE][INDEX]->removeVAO();
+                     m_paintedForestPolygonVAOs[t][ID][AGE][INDEX]->removeVAO())
   }
 }
 
@@ -148,11 +152,8 @@ void NGLScene::initializeGL()
 void NGLScene::drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO)
 {
   _VAO->bind();
-//  print("bind ",glGetError(), "\n");
   _VAO->draw();
-//  print("draw ",glGetError(), "\n");
   _VAO->unbind();
-//  print("unbind ",glGetError(), "\n");
 }
 
 void NGLScene::refineTerrain()

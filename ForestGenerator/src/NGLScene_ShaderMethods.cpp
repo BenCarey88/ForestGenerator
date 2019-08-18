@@ -39,7 +39,7 @@ void NGLScene::compileShaders()
   shader->loadShader("LeafShader", "shaders/LeafVertex.glsl",
                      "shaders/LeafFragment.glsl", "shaders/LeafGeometry.glsl");
   shader->loadShader("PolygonShader", "shaders/PolygonVertex.glsl",
-                     "shaders/PolygonFragment.glsl");
+                     "shaders/PolygonFragment.glsl", "shaders/PolygonGeometry.glsl");
 
   shader->loadShader("SkeletalForestShader", "shaders/SkeletalForestVertex.glsl",
                      "shaders/SkeletalForestFragment.glsl");
@@ -48,7 +48,7 @@ void NGLScene::compileShaders()
   shader->loadShader("ForestLeafShader", "shaders/ForestLeafVertex.glsl",
                      "shaders/ForestLeafFragment.glsl", "shaders/ForestLeafGeometry.glsl");
   shader->loadShader("ForestPolygonShader", "shaders/ForestPolygonVertex.glsl",
-                     "shaders/ForestPolygonFragment.glsl");
+                     "shaders/ForestPolygonFragment.glsl", "shaders/ForestPolygonGeometry.glsl");
 
   shader->loadShader("GridShader", "shaders/GridVertex.glsl",
                      "shaders/GridFragment.glsl");
