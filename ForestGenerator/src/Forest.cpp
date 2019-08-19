@@ -5,8 +5,12 @@
 
 #include <math.h>
 #include <chrono>
-#include "Forest.h"
 #include "noiseutils.h"
+#include "Forest.h"
+
+
+//FOREST CONSTRUCTORS
+//----------------------------------------------------------------------------------------------------------------------
 
 Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width,
                std::vector<size_t> &_numTrees, int _numHeroTrees,
@@ -23,7 +27,6 @@ Forest::Forest(const std::vector<LSystem> &_treeTypes, float _width,
   {
     treeType.fillInstanceCache(m_numHeroTrees);
   }
-
   createForest();
 }
 
@@ -40,15 +43,17 @@ Forest::Forest(const std::vector<LSystem> &_treeTypes, int _numHeroTrees,
 }
 
 
+//STRUCT CONSTRUCTORS
 //----------------------------------------------------------------------------------------------------------------------
 
 Forest::Tree::Tree(size_t _type, ngl::Mat4 _transform) :
   m_type(_type), m_transform(_transform) {}
 
-Forest::OutputData::OutputData(ngl::Mat4 _transform, size_t _treeType,
-                               size_t _id, size_t _age, size_t _innerIndex) :
-  m_transform(_transform), m_treeType(_treeType),
-  m_id(_id), m_age(_age), m_innerIndex(_innerIndex) {}
+Forest::CacheIndex::CacheIndex(size_t _treeNum, size_t _id, size_t _age, size_t _innerIndex) :
+  m_treeNum(_treeNum), m_id(_id), m_age(_age), m_innerIndex(_innerIndex) {}
+
+
+//----------------------------------------------------------------------------------------------------------------------
 
 void Forest::resizeTransformCache()
 {
@@ -89,6 +94,8 @@ void Forest::scatterForest()
   std::uniform_real_distribution<float> distRotate(0,360);
   std::uniform_real_distribution<float> distScale(2,3);
 
+  //set perlinModule identically to m_terrainGenerator to ensure forest positions
+  //correspond to the terrain
   noise::module::Perlin perlinModule;
   perlinModule.SetOctaveCount(m_terrainGen.m_octaves);
   perlinModule.SetFrequency(m_terrainGen.m_frequency);
@@ -123,29 +130,39 @@ void Forest::scatterForest()
 
 void Forest::createTree(size_t _treeType, ngl::Mat4 _transform, size_t _id, size_t _age)
 {
+  ///@ref Kenwood et al, Efficient Procedural Generation of Forests, 2014
+
   LSystem &treeType = m_treeTypes[_treeType];
-  size_t size = treeType.m_instanceCache.at(_id).at(_age).size();
+  size_t size = treeType.m_instanceCache[_id][_age].size();
+  //first check there is an instance at the given id and age of the cache
   if(size>0)
   {
-    //print(_treeType, " ", _id, " ", _age, "\n\n");
     size_t innerIndex = 0;
+    //pick a random instance of the given id and age
     Instance * instance = getInstance(treeType, _id, _age, innerIndex);
+    //find the worldspace transform of this new instance from the current transform and the relative instance transform
     ngl::Mat4 T = _transform * instance->m_transform.inverse();
-    m_transformCache.at(_treeType).at(_id).at(_age).at(innerIndex).push_back(T);
+    //and add it to the transform cache
+    m_transformCache[_treeType][_id][_age][innerIndex].push_back(T);
+    //add current indexes to m_cacheIndexes to tell NGLScene which VAOs need rebuilding
+    //(only necessary when used for painting on forests)
     m_adjustedCacheIndexes.push_back(CacheIndex(_treeType,_id,_age,innerIndex));
 
+    //now iterate through exit points to recursively call the function again
     for(size_t i=0; i<instance->m_exitPoints.size(); i++)
     {
       size_t newAge = instance->m_exitPoints[i].m_exitAge;
       size_t newId = instance->m_exitPoints[i].m_exitId;
       ngl::Mat4 exitTransform = instance->m_exitPoints[i].m_exitTransform;
+      //use the worldspace transform of the exit point, found from the current transform and the relative exit transform
       ngl::Mat4 newTransform = _transform * exitTransform;
       createTree(_treeType, newTransform, newId, newAge);
     }
   }
   else
   {
-    std::cout<<"Couldn't find instance of tree type "<<treeType.m_name<<" with id "<<_id<<" at age "<<_age<<'\n';
+    //note that this shouldn't actually ever occur because createGeometry() ensures that no empty instance is called
+    std::cout<<"Couldn't find instance of tree type "<<_treeType<<" with id "<<_id<<" at age "<<_age<<'\n';
   }
 }
 
@@ -154,7 +171,7 @@ Instance * Forest::getInstance(LSystem &_treeType, size_t _id, size_t _age, size
   size_t size = _treeType.m_instanceCache.at(_id).at(_age).size();
   std::uniform_int_distribution<size_t> dist(0,size-1);
   _innerIndex = dist(m_gen);
-  return &_treeType.m_instanceCache.at(_id).at(_age).at(_innerIndex);
+  return &_treeType.m_instanceCache[_id][_age][_innerIndex];
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -169,9 +186,14 @@ void Forest::createForest()
   }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+
 void Forest::addTreeToForest(ngl::Vec3 &_point, size_t _treeType)
 {
+  std::uniform_real_distribution<float> distRotate(0,360);
+  ngl::Mat4 orientation;
+  orientation.rotateY(distRotate(m_gen));
   ngl::Mat4 position;
   position.translate(_point.m_x, _point.m_y, _point.m_z);
-  createTree(_treeType,position,0,0);
+  createTree(_treeType,position*orientation,0,0);
 }

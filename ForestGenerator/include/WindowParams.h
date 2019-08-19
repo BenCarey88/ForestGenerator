@@ -5,7 +5,7 @@
 /// @date 05/07/19
 /// Revision History :
 /// 10/9/13: This is an initial version used for the new NGL6 / Qt 5 demos
-/// 05/07/19: updated by Ben Carey for use in ForestGenerator project
+/// 05/07/19: values updated by Ben Carey for use in ForestGenerator project
 //----------------------------------------------------------------------------------------------------------------------
 
 #ifndef WINDOWPARAMS_H_

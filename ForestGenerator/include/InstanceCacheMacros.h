@@ -23,8 +23,11 @@
 /// required calling the deleted copy constructor of the unique pointer)
 //----------------------------------------------------------------------------------------------------------------------
 
+
+/// @brief macro defining the nested std::vector cache structure
 #define CACHE_STRUCTURE(_class) std::vector<std::vector<std::vector<_class>>>
 
+/// @brief macro to resize the first two levels of a cache by given parameters
 #define RESIZE_CACHE_BY_VALUES(_cache, _idMax, _ageMax) \
   _cache.resize(_idMax);                                \
   for(auto &ROW : _cache)                               \
@@ -32,6 +35,7 @@
     ROW.resize(_ageMax);                                \
   }
 
+/// @brief macro to resize all three levels of a cache to the size of another cache
 #define RESIZE_CACHE_BY_OTHER_CACHE(_cache, _otherCache)    \
   _cache.resize(_otherCache.size());                        \
   for(size_t ID=0; ID<_cache.size(); ID++)                  \
@@ -43,7 +47,7 @@
     }                                                       \
   }
 
-
+/// @brief macro to allow us to apply commands to every element in a cache
 /// @note this macro gives _function access to the variables ID, AGE and INDEX
 /// @note _function can be replaced by any string of commands, separated by ;s
 #define FOR_EACH_ELEMENT(_cache, _function)                       \

@@ -37,7 +37,7 @@ private slots:
   void on_m_seedToggle_3_stateChanged(int _clicked);
   void on_m_seedToggle_forest_stateChanged(int _clicked);
 
-  /// @brief slot to switch between the controls for different tree generation methods
+  /// @brief slot to switch between the controls for the different tree generation methods
   void on_m_treeGenMethod_currentIndexChanged(int index);
 
 private:

@@ -23,8 +23,8 @@
 #define TreeNormalLoc 1
 #define LeafTexLoc 2
 #define LeafNormalLoc 3
-#define TerrainTexLoc 3
-#define TerrainNormalLoc 4
+#define TerrainTexLoc 4
+#define TerrainNormalLoc 5
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -75,9 +75,10 @@ void NGLScene::loadShaderTextures()
 //----------------------------------------------------------------------------------------------------------------------
 
 void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_textureMapName,
-                                   const char *_textureMapFile, GLuint _storageLocation)
+                                   const char *_textureMapFile, GLuint _textureUnit)
 {
   ///@ref https://stackoverflow.com/questions/25252512/how-can-i-pass-multiple-textures-to-a-single-shader
+  ///@note this section is currently not fully working, the normal map for the terrain isn't loading
 
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)[_shaderName]->use();
@@ -87,7 +88,7 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
   print(" ", (*shader)[_shaderName]->getID(), "\n");
 
   GLint textureMapLocation = glGetUniformLocation((*shader)[_shaderName]->getID(), _textureMapName);
-  glUniform1i(textureMapLocation, _storageLocation);
+  glUniform1i(textureMapLocation, _textureUnit);
 
   print("texture map location ", textureMapLocation, "\n");
 
@@ -95,9 +96,9 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
   GLuint texture;
   glGenTextures(1, &texture);
 
-  print("texture id ", texture,", storage location ", _storageLocation, "\n");
+  print("texture id ", texture,", storage location ", _textureUnit, "\n");
 
-  glActiveTexture(GL_TEXTURE0 + _storageLocation); // Texture unit 0
+  glActiveTexture(GL_TEXTURE0 + _textureUnit);
   glBindTexture(GL_TEXTURE_2D, texture);
   // set the texture wrapping/filtering options (on the currently bound texture object)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

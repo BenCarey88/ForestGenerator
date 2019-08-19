@@ -26,14 +26,14 @@ class LSystem
 {
 public:
 
-  //--------------------------------------------------------------------------------------------------------------------
-  //CONSTRUCTOR
+  //CONSTRUCTORS
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief default ctor for LSystem class
   //--------------------------------------------------------------------------------------------------------------------
   LSystem() = default;
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief user ctor for LSystem class
+  /// @brief user ctor for LSystem class: assigns variables, calls breakDownRules to fill the rule lists and
+  /// calls createGeometry to fill vertex and index buffers
   //--------------------------------------------------------------------------------------------------------------------
   LSystem(std::string _axiom, std::vector<std::string> _rules,
           float _stepSize, float _stepScale,
@@ -44,39 +44,26 @@ public:
   //RULE STRUCT
   //--------------------------------------------------------------------------------------------------------------------
   /// @struct Rule
-  /// @brief this structure stores rules for the LSystem in a format easily accessible by generateTreeString()
+  /// @brief struct to store the rules for the LSystem in a format easily accessible by generateTreeString()
   //--------------------------------------------------------------------------------------------------------------------
   struct Rule
   {
-    //------------------------------------------------------------------------------------------------------------------
-    /// @brief ctor for Rule Structure
-    //------------------------------------------------------------------------------------------------------------------
+    /// @brief ctor for Rule Structure, takes in LHS, RHS and probability lists
     Rule(std::string _LHS, std::vector<std::string> _RHS, std::vector<float> _prob);
 
-    //------------------------------------------------------------------------------------------------------------------
     /// @brief the LHS of the rule, ie. a non-terminal symbol, to be replaced
-    //------------------------------------------------------------------------------------------------------------------
     std::string m_LHS;
-    //------------------------------------------------------------------------------------------------------------------
     /// @brief list of possible RHSs of the rule, strings to replace the LHS
-    //------------------------------------------------------------------------------------------------------------------
     std::vector<std::string> m_RHS;
-    //------------------------------------------------------------------------------------------------------------------
     /// @brief corresponding list of probabilities for each RHS
-    //------------------------------------------------------------------------------------------------------------------
     std::vector<float> m_prob;
-    //------------------------------------------------------------------------------------------------------------------
-    /// @brief corresponding list of number of branch occurences in each RHS
-    //------------------------------------------------------------------------------------------------------------------
+    /// @brief corresponding list of number of valid branch occurences in each RHS,
+    /// used to help add in the instancing commands later on
     std::vector<int> m_numBranches;
 
-    //------------------------------------------------------------------------------------------------------------------
-    /// @brief method to normalize all probabilities in m_prob
-    //------------------------------------------------------------------------------------------------------------------
+    /// @brief method to 'normalize' all probabilities in m_prob so their sum is 1
     void normalizeProbabilities();
   };
-
-  std::string m_name;
 
   //PUBLIC MEMBER VARIABLES
   //--------------------------------------------------------------------------------------------------------------------
@@ -101,23 +88,28 @@ public:
   std::vector<std::string> m_branches;
 
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief the step-size
+  /// @brief initial step-size
   //--------------------------------------------------------------------------------------------------------------------
   float m_stepSize;
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief the step-size scale
+  /// @brief step-size scale
   //--------------------------------------------------------------------------------------------------------------------
   float m_stepScale;
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief the rotation angle
+  /// @brief initial rotation angle
   //--------------------------------------------------------------------------------------------------------------------
   float m_angle;
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief the angle scale
+  /// @brief angle scale
   //--------------------------------------------------------------------------------------------------------------------
   float m_angleScale;
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief initial thickness
+  //--------------------------------------------------------------------------------------------------------------------
   float m_thickness;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief thickness scale
+  //--------------------------------------------------------------------------------------------------------------------
   float m_thicknessScale;
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -132,112 +124,157 @@ public:
   /// @brief toggle to determine if we should use a seed - if not, we seed by time
   //--------------------------------------------------------------------------------------------------------------------
   bool m_useSeed = false;
-
-  bool m_skeletonMode = false;
-
-  //the random number generator
+  //--------------------------------------------------------------------------------------------------------------------
+  //the random number generator to generate randomness for stochastic behaviour of tree
+  //--------------------------------------------------------------------------------------------------------------------
   std::default_random_engine m_gen;
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief toggle to determine if we should draww the L-System as a stick or a tube
+  //--------------------------------------------------------------------------------------------------------------------
+  bool m_skeletonMode = false;
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief bool to tell if an error was thrown while parsing brackets when creating geometry
   //--------------------------------------------------------------------------------------------------------------------
   bool m_parameterError = false;
 
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief probability of instancing a given branch
+  /// @brief instance cache holding instance data for branches at each id and age to be accessed by the instancing
+  /// algorithm createTree() in the Forest class. Cache_Structure is a triple nesting of vectors:
+  ///   outer layer separates instances by id
+  ///   middle layer separates instances of the same id by age
+  ///   inner layer separates multiple possible instances of the same id and age
+  /// so accessing an istance is done by instanceCache[id][age][randomizer]
   //--------------------------------------------------------------------------------------------------------------------
-  float m_instancingProb = 0.6f;
+  CACHE_STRUCTURE(Instance) m_instanceCache;
 
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief vertex list to store the vertices of L-system geometry
+  /// @brief buffers to be sent to the renderer for drawing the main L-system geometry
+  /// there are buffers for: vertices, indices, vector to the right of the current vertex and thickness value
+  /// These will be drawn with GL_LINES and then optionally given geometry in a geometry shader if skeletonMode is false
+  /// using m_rightVectors and m_thicknessValues to determine the geometry
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_vertices;
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief index list to tell ngl how to draw the order to draw the L-system vertices in
-  //--------------------------------------------------------------------------------------------------------------------
   std::vector<GLshort> m_indices;
-
   std::vector<ngl::Vec3> m_rightVectors;
   std::vector<float> m_thicknessValues;
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief buffers to be sent to the renderer for drawing the L-System default leaves
+  /// there are buffers for: vertices, indices, current forwards direction and vector to the right of the current vertex
+  /// These will be drawn with GL_POINTS, then turned into textured planes with geometry and fragment shaders, using
+  /// m_leafDirections and m_leafRightVectors to determine the geometry of the plane
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_leafVertices = {};
   std::vector<GLshort> m_leafIndices = {};
   std::vector<ngl::Vec3> m_leafDirections = {};
   std::vector<ngl::Vec3> m_leafRightVectors = {};
-
-  //polygons will be drawn with gl triangles not triangle strips
-  //to allow for multiple ones in different places
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief buffers to be sent to the renderer for drawing the L-System polygons
+  /// there are buffers for: vertices and indices
+  /// These will be drawn using GL_TRIANGLES, allowing for multiple disconnected polygon primitives
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_polygonVertices = {};
   std::vector<GLshort> m_polygonIndices = {};
-  //std::vector<ngl::Vec3> m_polygonRightVectors = {};
 
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief buffers representing the geometry of the hero trees, used for drawing branch instances for Forests
+  /// there are buffers for: vertices, indices, vector to the right of the current vertex and thickness value
+  /// These will be drawn with GL_LINES and then optionally given geometry in a geometry shader using m_heroRightVectors
+  /// and m_heroThicknessValues to determine the geometry
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_heroVertices = {};
   std::vector<GLshort> m_heroIndices= {};
   std::vector<ngl::Vec3> m_heroRightVectors = {};
   std::vector<float> m_heroThicknessValues= {};
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief buffers representing the hero tree leaves, used for drawing branch instances for Forests
+  /// there are buffers for: vertices, indices, current forwards direction and vector to the right of the current vertex
+  /// These will be drawn with GL_POINTS, then turned into textured planes with geometry and fragment shaders, using
+  /// m_heroLeafDirections and m_heroLeafRightVectors to determine the geometry of the plane
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_heroLeafVertices = {};
   std::vector<GLshort> m_heroLeafIndices = {};
   std::vector<ngl::Vec3> m_heroLeafDirections = {};
   std::vector<ngl::Vec3> m_heroLeafRightVectors = {};
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief buffers representing the hero tree polygons, used for drawing branch instances for Forests
+  /// there are buffers for: vertices, indices, current forwards direction and vector to the right of the current vertex
+  /// These will be drawn using GL_TRIANGLES, allowing for multiple disconnected polygon primitives
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_heroPolygonVertices = {};
   std::vector<GLshort> m_heroPolygonIndices = {};
 
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief probability of instancing any given branch
+  //--------------------------------------------------------------------------------------------------------------------
+  float m_instancingProb = 0.6f;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief int used to limit size of instance cache to decrease program memory requirements
+  //--------------------------------------------------------------------------------------------------------------------
   size_t m_maxInstancePerLevel = 10;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief boolean toggle to determine whether we should be filling hero buffers or regular buffers
+  //--------------------------------------------------------------------------------------------------------------------
   bool m_forestMode = false;
 
-  //instance cache is vectors of instances nested 3 deep
-  //outer layer separates instances by id
-  //middle layer separates instances of the same id by age
-  //inner layer separates multiple possible instances of the same id and age
-  //so accessing an istance is done by instanceCache[id][age][randomizer]
-  CACHE_STRUCTURE(Instance) m_instanceCache;
 
-  ///@brief makes hero trees to fill instance cache
-  void fillInstanceCache(int _numHeroTrees);
 
-  //PUBLIC MEMBER FUNCTIONS
+
+  //GENERAL MEMBER FUNCTIONS
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief seeds the random engine using m_seed or the current time depending on the state of m_useSeed
+  //--------------------------------------------------------------------------------------------------------------------
+  void seedRandomEngine();
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief counts branches in each rule and uses to fill m_rules[i].m_numBranches for each rule
   //--------------------------------------------------------------------------------------------------------------------
   void countBranches();
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief fills m_rules and m_nonTerminals
+  /// @brief fills m_rules and m_nonTerminals from the user-set rule arrays
   //--------------------------------------------------------------------------------------------------------------------
   void breakDownRules(std::vector<std::string> _rules);
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief returns a string representation of the tree produced by the L-System
+  //--------------------------------------------------------------------------------------------------------------------
+  std::string generateTreeString();
 
+  //GEOMETRY CREATION METHODS
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief fills m_vertices and m_indices to represent the geometry of the L-System
+  //--------------------------------------------------------------------------------------------------------------------
+  void createGeometry();
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief used by createGeometry to deal with a parameter enclosed by brackets in the tree string
+  /// @param [in] _treeString the string
+  /// @param [in] _i the index of _treeString that createGeometry() has reached
+  /// @param [in] _paramVar the variable that will be replaced by the parameter in the brackets if needed
+  //--------------------------------------------------------------------------------------------------------------------
+  void parseBrackets(const std::string &_treeString, size_t &_i, float &_paramVar);
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief used by createGeometry to deal with the two parameters enclosed by brackets following an instance command
+  /// @param [in] _treeString the string
+  /// @param [in] _i the index of _treeString that createGeometry() has reached
+  /// @param [in] _id,_age, variables that will be assigned the values of the parameters in the brackets
+  //--------------------------------------------------------------------------------------------------------------------
+  void parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age);
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief
+  //--------------------------------------------------------------------------------------------------------------------
+  void skipToNextChevron(const std::string &_treeString, size_t &_i);
+
+  //INSTANCE METHODS
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief recreates m_rules to add more RHSs to each rule corresponding to different instancing commands
   //--------------------------------------------------------------------------------------------------------------------
   void addInstancingCommands();
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief replaces branches in the rhs with @ and {} commands, and alters the probability accordingly
-  /// used by add instancingCommands
+  /// used by addInstancingCommands
   //--------------------------------------------------------------------------------------------------------------------
   void addInstancingToRule(std::string &_rhs, float &_prob, int _index);
-
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief returns a string representation of the tree produced by the L-System
+  ///@brief calls createGeometry() in m_forestMode to makes hero trees to fill instance cache
   //--------------------------------------------------------------------------------------------------------------------
-  std::string generateTreeString();
-
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief fills m_vertices and m_indices to represent the geometry of the L-System
-  //--------------------------------------------------------------------------------------------------------------------
-  void createGeometry();
-  //--------------------------------------------------------------------------------------------------------------------
-  /// @brief used by createGeometry to deal with parameters enclosed by brackets in the tree string
-  /// @param [in] _treeString the string
-  /// @param [in] _i the index of _treeString that createGeometry() has reached
-  /// @param [in] _paramVar the variable that will be replaced by the parameter in the brackets if needed
-  //--------------------------------------------------------------------------------------------------------------------
-  void parseBrackets(const std::string &_treeString, size_t &_i, float &_paramVar);
-
-  void parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age);
-  void skipToNextChevron(const std::string &_treeString, size_t &_i);
-
-  void seedRandomEngine();
+  void fillInstanceCache(int _numHeroTrees);
 };
 
 

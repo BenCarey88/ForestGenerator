@@ -23,6 +23,12 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
 {
   public :
 
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @class VertexData
+    /// @brief inherits from AbstractVAO::VertexData (which holds a pointer to the vertex buffer, the vertex buffer size
+    /// and the the draw mode) but additionally contains the index buffer, index size and index type, transform buffer
+    /// and transform size (the instance count)
+    //----------------------------------------------------------------------------------------------------------------------
     class VertexData : public AbstractVAO::VertexData
     {
     public :
@@ -62,18 +68,11 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
     //----------------------------------------------------------------------------------------------------------------------
     virtual void removeVAO() override;
     //----------------------------------------------------------------------------------------------------------------------
-    /// @brief, this method sets the data for the VAO if data has already been set it will remove the existing data
-    /// and then re-set with the new data.
-    /// @param _size the size of the raw data passed
-    /// @param _data the actual data to set for the VOA
-    /// @param _indexSize the size of the index array passed
-    /// @param _indexData the actual data to set for the VOA indexes (only GLubyte data at present need to write more methods
-    /// but usually only use this
-    /// @param _indexType the type of the values in the indices buffer. Must be one of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, or GL_UNSIGNED_INT.
-    /// @param _mode the draw mode hint used by GL
-
+    /// @brief, this method sets data for the VAO, and if data has already been set it will remove the existing data
+    /// and then re-set with the new data - specifically it sets vertex, index and transform buffers for the vao,
+    /// and sets each transform to apply to a different instance
+    /// @param [in] _data, with all members as defined above in the VertexData class
     //----------------------------------------------------------------------------------------------------------------------
-    //void setData(size_t _size,const GLfloat &_data,unsigned int _indexSize,const GLvoid *_indexData,GLenum _indexType,GLenum _mode=GL_STATIC_DRAW);
     virtual void setData(const AbstractVAO::VertexData &_data) override;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief return the id of the buffer, if there is only 1 buffer just return this
@@ -110,7 +109,9 @@ class NGL_DLLEXPORT InstanceCacheVAO : public AbstractVAO
     /// @brief data type of the index data (e.g. GL_UNSIGNED_INT)
     //----------------------------------------------------------------------------------------------------------------------
     GLenum m_indexType;
-
+    //----------------------------------------------------------------------------------------------------------------------
+    /// @brief number of instances we will be drawing for the given branch
+    //----------------------------------------------------------------------------------------------------------------------
     GLuint m_instanceCount;
 
 

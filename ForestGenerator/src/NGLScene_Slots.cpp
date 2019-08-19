@@ -217,6 +217,8 @@ void NGLScene::updateTerrain()
 {
   m_terrainGen.generate();
   m_terrain = TerrainData(m_terrainGen);
+  erasePaint();
+  updateForest();
   update();
 }
 

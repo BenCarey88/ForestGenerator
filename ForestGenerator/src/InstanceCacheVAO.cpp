@@ -18,7 +18,7 @@ namespace ngl
       msg->addWarning("Warning trying to draw an unbound VOA");
     }
 
-
+    //use glDrawElementsInstanced to draw m_instanceCount number of instances
     glDrawElementsInstanced(m_mode,
                             static_cast<GLsizei>(m_indicesCount),
                             m_indexType,
@@ -104,9 +104,9 @@ namespace ngl
     glVertexAttribDivisor(3,1);
     glVertexAttribDivisor(4,1);
 
+    //and finally pass the remaining input variables to the VAO class
     m_allocated=true;
     m_indexType=data.m_indexType;
-
     m_instanceCount = data.m_instanceCount;
   }
 

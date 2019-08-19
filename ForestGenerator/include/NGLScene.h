@@ -451,9 +451,8 @@ protected:
 
   void compileShaders();
   void loadShaderTextures();
-  void loadTextureToShader(const std::string &_shaderName,
-                           const char * _textureMapName, const char *_textureMapFile,
-                           GLuint _storageLocation);
+  void loadTextureToShader(const std::string &_shaderName,const char * _textureMapName,
+                           const char *_textureMapFile, GLuint _textureUnit);
   void loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &_shaderName);
 
 

@@ -14,15 +14,19 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @class Grid
-/// @brief this struct stores the ground plane to be drawn in the NGLScene
+/// @brief this class stores the ground plane to be drawn in the NGLScene
 //----------------------------------------------------------------------------------------------------------------------
 
 
-struct Grid
+class Grid
 {
+public:
+
   //CONSTRUCTOR
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief ctor for Grid struct
+  /// @param [in] _numRows, the number of rows in the grid
+  /// @param [in] _the distance between each row
   //--------------------------------------------------------------------------------------------------------------------
   Grid(GLshort _numRows, float _spacing);
 
@@ -32,7 +36,7 @@ struct Grid
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_vertices;
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief index list to tell ngl the order to draw the vertices in
+  /// @brief index list to tell openGL the order to draw the vertices in (using GL_LINES)
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<GLshort> m_indices;
 };
