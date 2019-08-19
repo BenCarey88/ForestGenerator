@@ -524,8 +524,7 @@ protected:
   GLuint m_forestTreeNormalId = 0;
   GLuint m_leafTexId = 0;
 
-  ngl::Vec3 getProjectedPointOnTerrain(float _screenX, float _screenY);
-  void addPointToPaintedForest(ngl::Vec3 &_point);
+
 
   //GENERAL MEMBER FUNCTIONS
   //----------------------------------------------------------------------------------------------------------------------
@@ -542,50 +541,120 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   void resizeGL(int _w, int _h) override;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief build an openGL line VAO from lists of vertices and indices (used by paintGL)
+  /// @brief updates forest class when L-Systems change
+  //----------------------------------------------------------------------------------------------------------------------
+  void updateScatteredForest();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief apply LOD algorithm to terrain and rebuild m_terrainVAO accordingly
+  //----------------------------------------------------------------------------------------------------------------------
+  void refineTerrain();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief calls bind, then draw, thenunbind on the given VAO, just created to save repetition
+  //----------------------------------------------------------------------------------------------------------------------
+  void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO);
+
+
+  //VAO BUILDING METHODS
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build a VAO using the Jon's SimpleIndexVAO class by binding vertex and index data
+  /// @param [in] vao, the vao to bind
+  /// @param [in] vertices, list of vertices to be rendered
+  /// @param [in] indices, list of indexes corresponding to the vertices
+  /// @param [in] mode, the openGL drawing mode
+  /// @param [in[ indexType, the data type of the indexes
   //----------------------------------------------------------------------------------------------------------------------
   template <class dataType>
   void buildSimpleIndexVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
                            std::vector<dataType> &_indices, GLenum _mode, GLenum _indexType);
-
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build a VAO using my InstanceCacheVAO class by binding vertex and index data
+  /// @param [in] vao, the vao to bind
+  /// @param [in] vertices, list of vertices to use for rendering
+  /// @param [in] indices, list of indexes corresponding to the vertices
+  /// @param [in] transforms, list of transforms for each instance
+  /// @param [in] instanceStart and end, the start and end points of the supplied index list for this instance
+  /// @param [in] mode, the openGL drawing mode
+  //----------------------------------------------------------------------------------------------------------------------
   void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
                              std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
                              size_t _instanceStart, size_t _instanceEnd, GLenum _mode);
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief method used to bind more data to supplement the data sent to a VAO by the above two methods
+  /// (note this method requires the vao to be bound before calling)
+  /// @param [in] bufferSize, the size of the buffer to be used
+  /// @param [in] bufferData, a pointer the data for the buffer
+  /// @param [in] bufferId, the variable used to store the bufferId
+  //----------------------------------------------------------------------------------------------------------------------
   void addBufferToBoundVAO(size_t _bufferSize, const GLvoid * _bufferData, GLuint &_bufferID);
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build m_gridVAO to store data for rendering the grid
+  //----------------------------------------------------------------------------------------------------------------------
   void buildGridVAO();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build m_terrainVAO to store data for rendering the terrain
+  //----------------------------------------------------------------------------------------------------------------------
   void buildTerrainVAO();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build tree, leaf or polygon VAO to store data for rendering an LSystem
+  /// @param [in] _treeNum, the index of the LSystem VAO to build
+  //----------------------------------------------------------------------------------------------------------------------
   void buildTreeVAO(size_t _treeNum);
   void buildLeafVAO(size_t _treeNum);
   void buildPolygonVAO(size_t _treeNum);
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build tree, leaf or polygon forest VAO to store data for rendering LSystem instances in forests
+  /// @param [in] treeNum, id, age, index: the identifiers for the position of the VAO in the VAO cache structure
+  /// @param [in] _usePaintedForest, a bool to determine whether we use VAOs corresponding to m_paintedForest
+  /// or corresponding to m_scatteredForest
+  //----------------------------------------------------------------------------------------------------------------------
   void buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index, bool _usePaintedForest);
   void buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index, bool _usePaintedForest);
   void buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, size_t _index, bool _usePaintedForest);
-  void buildForestVAOs();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build all VAOs used for rendering m_scatteredForest
+  //----------------------------------------------------------------------------------------------------------------------
+  void buildScatteredForestVAOs();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief build all VAOs used for rendering m_paintedForest
+  //----------------------------------------------------------------------------------------------------------------------
   void buildPaintedForestVAOs();
 
-  void resizeVAOCache(size_t _t);
 
+  //SHADER METHODS
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief load and compile all shaders
+  //----------------------------------------------------------------------------------------------------------------------
   void compileShaders();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief load all textures
+  //----------------------------------------------------------------------------------------------------------------------
   void loadShaderTextures();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief bind texture to texture unit and load to a uniform in a shader
+  /// @note my understanding of this part of the openGL pipeline is a bit off, consequently this function doesn't do
+  /// quite what I expected it to and some textures have not been successfully loaded
+  /// @param [in] shaderName, the name of the shader program
+  /// @param [in] textureMapName, the name of the uniform sampler2D variable in the shader
+  /// @param [in] textureMapFile, the path to the texture to be loaded
+  /// @param [in] textureUnit, the number representing the texture unit to bind this texture to
+  //----------------------------------------------------------------------------------------------------------------------
   void loadTextureToShader(const std::string &_shaderName,const char * _textureMapName,
                            const char *_textureMapFile, GLuint _textureUnit);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief load all unifrom variables (apart from textures) to a shader
+  /// @param [in] shader, an instance of the ngl shader library
+  /// @param [in] shaderName, the name of the shader program
+  //----------------------------------------------------------------------------------------------------------------------
   void loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &_shaderName);
 
 
-  void drawVAO(std::unique_ptr<ngl::AbstractVAO> &_VAO);
-  void refineTerrain();
-
+  //L-SYSTEMS
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief set up the initial L-Systems for each treeTab screen, and sends them to the Forest class
+  /// @brief set up the initial L-Systems for each treeTab screen
   //----------------------------------------------------------------------------------------------------------------------
   void initializeLSystems();
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief updates forest class when L-Systems change
-  //----------------------------------------------------------------------------------------------------------------------
-  void updateScatteredForest();
+
 
   //EVENTS
   //----------------------------------------------------------------------------------------------------------------------
@@ -612,6 +681,19 @@ protected:
   /// @param _event the Qt Event structure
   //----------------------------------------------------------------------------------------------------------------------
   void wheelEvent( QWheelEvent *_event) override;
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief create a projected ray from the mouse cursor to determine where the point on the terrain that the mouse
+  /// is pointing to (if such a point exists)
+  /// @param [in] screenX, screenY, the screen x and y coordinates of the mouse cursor
+  //----------------------------------------------------------------------------------------------------------------------
+  ngl::Vec3 getProjectedPointOnTerrain(float _screenX, float _screenY);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief add a given point to m_paintedPoints and use to create a new tree in m_paintedForest if the point lies
+  /// on the terrain
+  /// @param [in] point, the world space coordinates of the point to be added
+  //----------------------------------------------------------------------------------------------------------------------
+  void addPointToPaintedForest(ngl::Vec3 &_point);
 
 };
 

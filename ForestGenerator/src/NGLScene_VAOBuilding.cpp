@@ -297,7 +297,7 @@ void NGLScene::buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, s
 
 //------------------------------------------------------------------------------------------------------------------------
 
-void NGLScene::buildForestVAOs()
+void NGLScene::buildScatteredForestVAOs()
 {  
   for(size_t t=0; t<m_scatteredForest.m_treeTypes.size(); t++)
   {
@@ -344,19 +344,4 @@ void NGLScene::buildPaintedForestVAOs()
                      buildForestLeafVAO(t,ID,AGE,INDEX,true);
                      buildForestPolygonVAO(t,ID,AGE,INDEX,true))
   }
-}
-
-void NGLScene::resizeVAOCache(size_t _t)
-{
-  LSystem &treeType = m_paintedForest.m_treeTypes[_t];
-  CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
-
-  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestVAOs[_t], instanceCache)
-  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestLeafVAOs[_t], instanceCache)
-  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestPolygonVAOs[_t], instanceCache)
-
-  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestRightBuffers[_t], instanceCache)
-  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestThicknessBuffers[_t], instanceCache)
-  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestLeafDirectionBuffers[_t], instanceCache)
-  RESIZE_CACHE_BY_OTHER_CACHE(m_paintedForestLeafRightBuffers[_t], instanceCache)
 }

@@ -83,20 +83,12 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   (*shader)[_shaderName]->use();
 
-  newLine();
-  print(_shaderName);
-  print(" ", (*shader)[_shaderName]->getID(), "\n");
-
   GLint textureMapLocation = glGetUniformLocation((*shader)[_shaderName]->getID(), _textureMapName);
   glUniform1i(textureMapLocation, _textureUnit);
-
-  print("texture map location ", textureMapLocation, "\n");
 
   // Then bind the uniform samplers to texture units:
   GLuint texture;
   glGenTextures(1, &texture);
-
-  print("texture id ", texture,", storage location ", _textureUnit, "\n");
 
   glActiveTexture(GL_TEXTURE0 + _textureUnit);
   glBindTexture(GL_TEXTURE_2D, texture);
@@ -128,6 +120,7 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
         data[index++]=uchar(qAlpha(colour));
       }
     }
+    //bind the texture data to the texture object
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data.get());
 
     glGenerateMipmap(GL_TEXTURE_2D); //  Allocate the mipmaps
@@ -138,7 +131,10 @@ void NGLScene::loadTextureToShader(const std::string &_shaderName, const char *_
 
 void NGLScene::loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &_shaderName)
 {
-  ngl::Mat4 currentTransform = (*m_currentMouseTransform);//*m_initialRotation;
+  //note that this function doesn't discriminate between whether a given uniform name appears in the shader or not
+  //since calling setUniform on a name that doesn't appear in the shader will just result in the call being ignored
+
+  ngl::Mat4 currentTransform = (*m_currentMouseTransform);
   ngl::Mat4 MVP= m_project*m_view*currentTransform;
   ngl::Mat4 MV = m_view*currentTransform;
   ngl::Mat4 M = currentTransform;

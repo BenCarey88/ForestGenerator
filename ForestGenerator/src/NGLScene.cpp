@@ -31,18 +31,7 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
   this->resize(_parent->size());
 
-  m_cameras.resize(m_numSuperTabs);
-  m_cameras[0].resize(m_numTreeTabs);
-  m_cameras[1].resize(m_numForestTabs);
-  m_cameras[2].resize(1);
-
-  m_cameras[1][0]=Camera({0,200,1000},{0,0,0});
-  m_cameras[1][1]=m_cameras[1][0];
-
-  m_mouseTransforms.resize(m_numSuperTabs);
-  m_mouseTransforms[0].resize(m_numTreeTabs, m_initialRotation);
-  m_mouseTransforms[1].resize(m_numForestTabs, m_initialRotation);
-
+  //initialise LSystems, terrain and forests
   initializeLSystems();
   m_terrainGen = TerrainGenerator(m_terrainDimension, m_width);
   m_scatteredForest = Forest(m_LSystems, m_width,
@@ -50,7 +39,10 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
                     m_forestSeed, m_forestUseSeed);
   m_paintedForest = Forest(m_LSystems, m_numHeroTrees,
                            m_forestSeed, m_forestUseSeed);
+  m_terrainGen.generate();
+  m_terrain = TerrainData(m_terrainGen);
 
+  //resize VAO caches
   m_forestVAOs.resize(m_numTreeTabs);
   m_forestLeafVAOs.resize(m_numTreeTabs);
   m_forestPolygonVAOs.resize(m_numTreeTabs);
@@ -58,14 +50,21 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
   m_paintedForestLeafVAOs.resize(m_numTreeTabs);
   m_paintedForestPolygonVAOs.resize(m_numTreeTabs);
 
-  m_terrainGen.generate();
-  m_terrain = TerrainData(m_terrainGen);
+  //initialise cameras and mouse transforms
+  m_cameras.resize(m_numSuperTabs);
+  m_cameras[0].resize(m_numTreeTabs);
+  m_cameras[1].resize(m_numForestTabs);
+  m_cameras[1][0]=Camera({0,200,1000},{0,0,0});
+  m_cameras[1][1]=m_cameras[1][0];
+  m_mouseTransforms.resize(m_numSuperTabs);
+  m_mouseTransforms[0].resize(m_numTreeTabs, m_initialRotation);
+  m_mouseTransforms[1].resize(m_numForestTabs, m_initialRotation);
 
   m_currentCamera = &m_cameras[0][0];
   m_currentMouseTransform = &m_mouseTransforms[0][0];
   m_currentLSystem = &m_LSystems[0];
-
   m_currentLSystem->createGeometry();
+
   m_showGrid.resize(m_numTreeTabs, true);
 }
 
@@ -140,7 +139,7 @@ void NGLScene::initializeGL()
   buildGridVAO();
 
   buildPaintedForestVAOs();
-  buildForestVAOs();
+  buildScatteredForestVAOs();
 
 }
 
@@ -185,9 +184,11 @@ void NGLScene::paintGL()
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+  //grab instance of shader library
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   m_view=ngl::lookAt(m_currentCamera->m_from, m_currentCamera->m_to, m_currentCamera->m_up);
 
+  //rebuild VAOs if necessary
   if(m_buildTreeVAO==true)
   {
     buildTreeVAO(m_treeTabNum);
@@ -197,7 +198,7 @@ void NGLScene::paintGL()
   }
   if(m_buildForestVAOs==true)
   {
-    buildForestVAOs();
+    buildScatteredForestVAOs();
     m_buildForestVAOs = false;
   }
   if(m_buildPaintLineVAO==true)
@@ -208,6 +209,7 @@ void NGLScene::paintGL()
 
   switch(m_superTabNum)
   {
+    //LSYSTEMS TAB
     case 0:
     {
       if(m_showGrid[m_treeTabNum]==true)
@@ -234,6 +236,7 @@ void NGLScene::paintGL()
       break;
     }
 
+    //FOREST TAB
     case 1:
     {
       if(m_terrainWireframe == true)
@@ -253,6 +256,7 @@ void NGLScene::paintGL()
         loadUniformsToShader(shader, "ForestLeafShader");
         loadUniformsToShader(shader, "ForestPolygonShader");
 
+        //rebuild adjusted cache indexes if necessary
         for(auto &i : m_paintedForest.m_adjustedCacheIndexes)
         {
           buildForestVAO(i.m_treeNum, i.m_id, i.m_age, i.m_innerIndex, true);
