@@ -51,12 +51,17 @@ public:
   /// @brief heightmap values to be passed into TerrainData class
   //--------------------------------------------------------------------------------------------------------------------
   std::vector<float> m_heightMap;
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief lists of normals, tangents, bitangents and UV coordinates for each vertex, calculated from their
+  /// positions in the generated heightMap, to be passed to terrain data for rendering
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_normals;
-  std::vector<ngl::Vec2> m_UVs;
   std::vector<ngl::Vec3> m_tangents;
   std::vector<ngl::Vec3> m_bitangents;
-
+  std::vector<ngl::Vec2> m_UVs;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief the scale of the grid, used to determine the world space coordinates of a vertex from its heightMap index
+  //--------------------------------------------------------------------------------------------------------------------
   float m_scale;
 
   //--------------------------------------------------------------------------------------------------------------------
@@ -95,20 +100,33 @@ private:
 
   //PRIVATE MEMBER FUNCTIONS
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief returns the x coordinate corresponding to a particular heightmap index
+  /// @brief returns the x coordinate in worldSpace corresponding to a particular heightmap index
   /// @param [in] index, the heightmap index
   //--------------------------------------------------------------------------------------------------------------------
   double getSceneX(const int _index) const;
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief returns the y coordinate corresponding to a particular heightmap index
+  /// @brief returns the z coordinate in worldSpace corresponding to a particular heightmap index
   /// @param [in] index, the heightmap index
   //--------------------------------------------------------------------------------------------------------------------
   double getSceneZ(const int _index) const;
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief returns the x coordinate in the integer-spaced grid corresponding to a particular heightmap index
+  /// @param [in] index, the heightmap index
+  //--------------------------------------------------------------------------------------------------------------------
   int getGridX(const int _index) const;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief returns the z coordinate in the integer-spaced grid corresponding to a particular heightmap index
+  /// @param [in] index, the heightmap index
+  //--------------------------------------------------------------------------------------------------------------------
   int getGridZ(const int _index) const;
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief returns the heightmap index corresponding to the grid coordinates (_gridX, _gridZ)
+  //--------------------------------------------------------------------------------------------------------------------
   size_t getIndex(const int _gridX, const int _gridZ) const;
 
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief computes normals, tangents and bitangents of each vertex in the heightmap
+  //--------------------------------------------------------------------------------------------------------------------
   void computeNormals();
 
 };

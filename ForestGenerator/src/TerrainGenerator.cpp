@@ -58,7 +58,7 @@ void TerrainGenerator::computeNormals()
 
       ngl::Vec3 normal(L-R, 2*m_scale, T-B);
       ngl::Vec3 tangent(2*m_scale,R-L,0);
-      ngl::Vec3 bitangent = normal.cross(tangent);  //(0,B-T,2*m_scale);
+      ngl::Vec3 bitangent = normal.cross(tangent);
 
       normal.normalize();
       tangent.normalize();
@@ -69,18 +69,6 @@ void TerrainGenerator::computeNormals()
       m_bitangents[i]=bitangent;
     }
   }
-
-//  for(size_t i=0; i<m_normals.size(); i++)
-//  {
-//    print("(",getGridX(i),", ",getGridZ(i),"):\n");
-//    print("Normal: ");
-//    print(m_normals[i]);
-//    print("Tangent: ");
-//    print(m_tangents[i]);
-//    print("Bitangent: ");
-//    print(m_bitangents[i]);
-//    newLine();
-//  }
 }
 
 

@@ -239,14 +239,15 @@ public:
 
   //GEOMETRY CREATION METHODS
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief fills m_vertices and m_indices to represent the geometry of the L-System
+  /// @brief fills m_vertices and m_indices to represent the geometry of the L-System by parsing the turtle commands
+  /// from a generated tree string
   //--------------------------------------------------------------------------------------------------------------------
   void createGeometry();
   //--------------------------------------------------------------------------------------------------------------------
   /// @brief used by createGeometry to deal with a parameter enclosed by brackets in the tree string
   /// @param [in] _treeString the string
   /// @param [in] _i the index of _treeString that createGeometry() has reached
-  /// @param [in] _paramVar the variable that will be replaced by the parameter in the brackets if needed
+  /// @param [in] _paramVar the variable that will be assigned to the parameter in the brackets if needed
   //--------------------------------------------------------------------------------------------------------------------
   void parseBrackets(const std::string &_treeString, size_t &_i, float &_paramVar);
   //--------------------------------------------------------------------------------------------------------------------
@@ -257,7 +258,8 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   void parseInstanceBrackets(const std::string &_treeString, size_t &_i, size_t &_id, size_t &_age);
   //--------------------------------------------------------------------------------------------------------------------
-  /// @brief
+  /// @brief used to jump from a getInstanceCommand, '<' to the corresponding endGetInstance command '>' when we don't
+  /// need to add the elements in between as a new instance
   //--------------------------------------------------------------------------------------------------------------------
   void skipToNextChevron(const std::string &_treeString, size_t &_i);
 

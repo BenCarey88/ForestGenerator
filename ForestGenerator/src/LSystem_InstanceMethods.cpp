@@ -80,7 +80,7 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
       if(std::regex_search(branch, std::regex(m_nonTerminals)))
       {
         //if the branch hasn't been added to m_branches already, then add it
-        //^BUT THIS BIT SHOULD BE UNNECESSARY - THE BRANCHES HAVE ALREADY ALL BEEN ADDED TO M_BRANCHES BY COUNT BRANCHES
+        //note that this bit should be unnecessary because the branches are already added by countBranches()
         auto it = std::find(m_branches.begin(), m_branches.end(), branch);
         if(it == m_branches.end())
         {
@@ -94,19 +94,18 @@ void LSystem::addInstancingToRule(std::string &_rhs, float &_prob, int _index)
         }
 
         std::string replacement;
-        size_t skipAmount = 0;
+        //we will later skip by skipAmount to make sure we don't get caught in an
+        //endless loop with the same [
+        size_t skipAmount = 5+std::to_string(id).size();
         if(_index % int(pow(2,count)) < int(pow(2,count-1)))
         {
           replacement = "<(" + std::to_string(id) + ",#)[" + branch + "]>";
           instanceCount++;
-          skipAmount = 5+std::to_string(id).size();
         }
         else
         {
           replacement = "@(" + std::to_string(id) + ",#)[" + branch + "]$";
           nonInstanceCount++;
-          //add to skipAmount to make sure we don't get caught in an endless loop with the same [
-          skipAmount = 5+std::to_string(id).size();
         }
 
         _rhs.replace(i, j-i+1, replacement);
@@ -126,8 +125,9 @@ void LSystem::fillInstanceCache(int _numHeroTrees)
   addInstancingCommands();
   RESIZE_CACHE_BY_VALUES(m_instanceCache, m_branches.size(), size_t(m_generation)+1)
 
+  //set forest mode true so createGeometry fills hero buffers
   m_forestMode = true;
-
+  //and clear all hero buffers
   m_heroIndices = {};
   m_heroVertices = {};
   m_heroRightVectors = {};

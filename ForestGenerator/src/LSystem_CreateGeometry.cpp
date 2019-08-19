@@ -21,37 +21,32 @@
 
 void LSystem::createGeometry()
 {
+  //generate a derived word from the L-System
   std::string treeString = generateTreeString();
 
-//  std::cout<<treeString<<"\n\n";
-//  std::cout<<m_generation<<"\n";
-//  for(auto &rule : m_rules)
-//  {
-//    for(auto rhs : rule.m_RHS)
-//    {
-//      std::cout<<rule.m_LHS<<" "<<rhs<<"\n";
-//    }
-//  }
-
+  //set up initial variables
   ngl::Vec3 dir(0,1,0);
   ngl::Vec3 right(1,0,0);
-  //I am using an ngl::Mat4 matrix for now because there is a problem with the euler
-  //method for ngl::Mat3, so I am setting the rotation for r4 with r4.euler, then
-  //using the copy constructor to transfer that rotation to r3
-  ngl::Mat4 r4;
-  ngl::Mat3 r3;
-
   ngl::Vec3 lastVertex(0,0,0);
   GLshort lastIndex = 0;
   float stepSize = m_stepSize;
   float angle = m_angle;
   float thickness = m_thickness;
 
+  //These matrices will be used for rotations
+  //I am using an ngl::Mat4 matrix for now because there is a problem with the euler
+  //method for ngl::Mat3, so I am setting the rotation for r4 with r4.euler, then
+  //using the copy constructor to transfer that rotation to r3
+  ngl::Mat4 r4;
+  ngl::Mat3 r3;
+
   //paramVar will store the default value of each command, to be replaced by one
-  //parsed from brackets by parseBrackets() if necessary
+  //parsed from brackets by parseBrackets() if necessary,
+  //and id and age will store the values parsed from instanced brackets
   float paramVar;
   size_t id, age;
 
+  //create stacks for saved data when starting branches and ending branches
   std::vector<GLshort> savedInd = {};
   std::vector<ngl::Vec3> savedVert = {};
   std::vector<ngl::Vec3> savedDir = {};
@@ -60,10 +55,13 @@ void LSystem::createGeometry()
   std::vector<float> savedAngle = {};
   std::vector<float> savedThickness = {};
 
+  //create instance variables
   Instance instance;
   Instance * currentInstance;
+  //create stack for saved instance when starting and ending recording instances
   std::vector<Instance *> savedInstance = {};
 
+  //store the polygon data for each polygon in temporary polygon data
   std::vector<ngl::Vec3> temporaryPolygon = {};
   bool makingPolygon = false;
 
@@ -81,6 +79,7 @@ void LSystem::createGeometry()
 
   //switch pointers to either hero buffers or regular buffers
   //depending on whether we're building a single tree or a forest
+  //and initialise the buffers
   if(m_forestMode == false)
   {
     m_vertices = {lastVertex};
@@ -214,7 +213,7 @@ void LSystem::createGeometry()
       case 'J':
       {
         leafVertices->push_back(lastVertex);
-        leafIndices->push_back(GLushort(leafVertices->size()-1));
+        leafIndices->push_back(GLshort(leafVertices->size()-1));
         leafDirections->push_back(dir);
         leafRightVectors->push_back(right);
         break;
@@ -370,7 +369,7 @@ void LSystem::createGeometry()
         instance.m_instanceStart = indices->size();
         instance.m_instanceLeafStart = leafIndices->size();
         instance.m_instancePolygonStart = polygonIndices->size();
-        //if instance cache isn't already too full at this id, add this instance to it
+        //if instance cache isn't already too full at this id and age, add this instance to it
         if(m_instanceCache[id][age].size()<=size_t(m_maxInstancePerLevel/(age+1)))
         {
           m_instanceCache[id][age].push_back(instance);
@@ -427,6 +426,7 @@ void LSystem::createGeometry()
           currentInstance = &m_instanceCache[id][age].back();
           savedInstance.push_back(currentInstance);
         }
+        //otherwise skip to the corresponding '>'
         else
         {
           skipToNextChevron(treeString,i);
@@ -438,8 +438,8 @@ void LSystem::createGeometry()
       //end instance started by <
       case '>':
       {
-        //note that assuming > doesn't appear in any rules, we will only reach this
-        //case if we are using the corresponding < to make an instance
+        //note that we will only reach this case if we are using the corresponding < to make an instance
+        //hence the code is identical to '$'
         currentInstance->m_instanceEnd = indices->size();
         currentInstance->m_instanceLeafEnd = leafIndices->size();
         currentInstance->m_instancePolygonEnd = polygonIndices->size();

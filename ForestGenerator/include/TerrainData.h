@@ -2,7 +2,7 @@
 /// @file TerrainData.h
 /// @author Ben Carey
 /// @version 1.0
-/// @date 23/01/19 updated to NCCA coding standards
+/// @date 01/09/19
 /// Revision History :
 /// Initial Version 14/12/18, used for ASE TerrainGeneration project
 /// 01/09/19 added to ForestGeneration masters project and slightly updated
@@ -108,13 +108,14 @@ public:
     //------------------------------------------------------------------------------------------------------------------
     float augmentedDelta = 0;
     //------------------------------------------------------------------------------------------------------------------
-    /// @brief method returning the distance between this vertex and another one
+    /// @brief the normal, tangent and bitangent of the vertex, as calculated by m_terrainGen
     //------------------------------------------------------------------------------------------------------------------
-
     ngl::Vec3 normal;
     ngl::Vec3 tangent;
     ngl::Vec3 bitangent;
-
+    //------------------------------------------------------------------------------------------------------------------
+    /// @brief method returning the distance between this vertex and another one
+    //------------------------------------------------------------------------------------------------------------------
     float distanceTo(Vertex v) const;
   };
 
@@ -150,10 +151,16 @@ public:
   //--------------------------------------------------------------------------------------------------------------------
   int m_maxRefinementLevel = int(2*std::log2(m_dimension-1));
 
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief list of normals, tangents and bitangents for each vertex in the heightMap passed in from m_terrainGen
+  /// these are needed for lighting models in the shader
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_normals = {};
   std::vector<ngl::Vec3> m_tangents = {};
   std::vector<ngl::Vec3> m_bitangents = {};
-
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief buffers to be sent to the terrain shader for rendering
+  //--------------------------------------------------------------------------------------------------------------------
   std::vector<ngl::Vec3> m_vertsToBeRendered = {};
   std::vector<ngl::Vec3> m_normalsToBeRendered = {};
   std::vector<ngl::Vec3> m_tangentsToBeRendered = {};
@@ -161,10 +168,11 @@ public:
   std::vector<GLuint> m_indicesToBeRendered = {};
   std::vector<ngl::Vec2> m_UVsToBeRendered = {};
 
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief the number of times along the width of the terrain that the UV coordinates will repeat
+  //--------------------------------------------------------------------------------------------------------------------
   int m_UVRepeat = 4;
 
-  //call this after meshRefine
-  void fillVerticesAndIndicesForRendering();
 
   //PUBLIC MEMBER FUNCTION: MESHREFINE
   //--------------------------------------------------------------------------------------------------------------------
@@ -177,6 +185,10 @@ public:
   /// field of view - or can be changed to increase or decrease effect of the tolerance
   //--------------------------------------------------------------------------------------------------------------------
   void meshRefine(ngl::Vec3 _cameraPos, float _tolerance, float _lambda);
+  //--------------------------------------------------------------------------------------------------------------------
+  /// @brief fills render buffers from m_vertexList
+  //--------------------------------------------------------------------------------------------------------------------
+  void fillVerticesAndIndicesForRendering();
 
 
   //OTHER PUBLIC MEMBER FUNCTIONS - all these functions could be private as they do not need to be accessed outside the
