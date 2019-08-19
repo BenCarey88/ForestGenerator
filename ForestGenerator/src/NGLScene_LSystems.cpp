@@ -23,14 +23,19 @@ void NGLScene::initializeLSystems()
   int generation;
 
   //LSystem 0:
-  axiom = "FFFA";
-  rules = {"A=!\"[B]////[B]////B","B=&FFFA"};
-  stepSize = 2;
+  axiom = "///FFFFFFFA";
+  rules = {"A=![&FL!A]//[&FL!A]/////[&FL!A]:0.5",
+           "A=![&FL!A]//////[&FL!A]/////////[&FL!A]:0.5",
+           "&F=&S/////F",
+           "S=FL:0.6",
+           "S=FFL:0.4",
+           "L=[^\"\"\"\"\"\"{.-f.+f.+f.--(180)-f.+f.+f.}]"};
+  stepSize = 1.2f;
   stepScale = 0.9f;
   angle = 30;
   angleScale = 0.9f;
-  generation = 4;
-  thickness = 1;
+  generation = 20;
+  thickness = 1.2f;
   thicknessScale = 0.7f;
   m_LSystems[0] = LSystem(axiom,rules,
                           stepSize,stepScale,
@@ -54,14 +59,22 @@ void NGLScene::initializeLSystems()
                           thickness,thicknessScale,
                           generation);
 
-  //LSystem 3:
+  //LSystem 2:
   axiom = "FFFA";
-  rules = {"A=!\"[B]////[B]////B","B=&FFFA"};
+  rules = {"A=!\"[BJ]////[BJ]////BJ",
+           "B=&FFFA:0.2",
+           "B=&[!!C]FFFA:0.2",
+           "B=&F[!!C]FFA:0.2",
+           "B=&FF[!!C]FA:0.2",
+           "B=&FFF[!!C]A:0.2",
+           "C=/&F!FJ:0.3",
+           "C=\\&FJ:0.3",
+           "C=&FJ:0.3"};
   stepSize = 2;
   stepScale = 0.9f;
   angle = 30;
   angleScale = 0.9f;
-  generation = 4;
+  generation = 18;
   thickness = 1;
   thicknessScale = 0.7f;
   m_LSystems[2] = LSystem(axiom,rules,

@@ -139,7 +139,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>FFFA</string>
+                 <string>///FFFFFFFA</string>
                 </property>
                 <property name="maxLength">
                  <number>32765</number>
@@ -168,7 +168,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>A=!&quot;[B]////[B]////B</string>
+                 <string>A=![&amp;FL!A]//[&amp;FL!A]////[&amp;FL!A]</string>
                 </property>
                </widget>
               </item>
@@ -181,7 +181,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>B=&amp;FFFA</string>
+                 <string>A=![&amp;FL!A]/////[&amp;FL!A]//////[&amp;FL!A]</string>
                 </property>
                </widget>
               </item>
@@ -193,6 +193,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="text">
+                 <string>&amp;F=&amp;S/////F</string>
+                </property>
                </widget>
               </item>
               <item>
@@ -202,6 +205,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>S=FL:0.6</string>
                 </property>
                </widget>
               </item>
@@ -213,6 +219,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="text">
+                 <string>S=FFL:0.4</string>
+                </property>
                </widget>
               </item>
               <item>
@@ -222,6 +231,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>L=[^&quot;&quot;&quot;&quot;{.-f.+f.+f.--(180)-f.+f.+f}]</string>
                 </property>
                </widget>
               </item>
@@ -300,7 +312,7 @@
                    <double>0.100000000000000</double>
                   </property>
                   <property name="value">
-                   <double>2.000000000000000</double>
+                   <double>1.200000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -387,7 +399,7 @@
                    <double>0.100000000000000</double>
                   </property>
                   <property name="value">
-                   <double>1.000000000000000</double>
+                   <double>1.200000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -445,7 +457,7 @@
                 <item>
                  <widget class="QSpinBox" name="m_generation_1">
                   <property name="value">
-                   <number>4</number>
+                   <number>20</number>
                   </property>
                  </widget>
                 </item>
@@ -1057,7 +1069,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>A=!&quot;[B]////[B]////B</string>
+                 <string>A=!&quot;[BJ]////[BJ]////BJ</string>
                 </property>
                </widget>
               </item>
@@ -1070,7 +1082,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>B=&amp;FFFA</string>
+                 <string>B=&amp;FFFA:0.2</string>
                 </property>
                </widget>
               </item>
@@ -1082,6 +1094,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="text">
+                 <string>B=&amp;[!!C]FFFA:0.2</string>
+                </property>
                </widget>
               </item>
               <item>
@@ -1091,6 +1106,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>B=&amp;F[!!C]FFA:0.2</string>
                 </property>
                </widget>
               </item>
@@ -1102,6 +1120,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="text">
+                 <string>B=&amp;FF[!!C]FA:0.2</string>
+                </property>
                </widget>
               </item>
               <item>
@@ -1111,6 +1132,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>B=&amp;FFF[!!C]A:0.2</string>
                 </property>
                </widget>
               </item>
@@ -1122,13 +1146,24 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="text">
+                 <string>C=/&amp;F!FJ</string>
+                </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule8_3"/>
+               <widget class="QLineEdit" name="m_rule8_3">
+                <property name="text">
+                 <string>C=\&amp;FJ</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="m_rule9_3"/>
+               <widget class="QLineEdit" name="m_rule9_3">
+                <property name="text">
+                 <string>C=&amp;FJ</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLineEdit" name="m_rule10_3"/>
@@ -1334,7 +1369,7 @@
                 <item>
                  <widget class="QSpinBox" name="m_generation_3">
                   <property name="value">
-                   <number>4</number>
+                   <number>18</number>
                   </property>
                  </widget>
                 </item>
