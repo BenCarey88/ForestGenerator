@@ -27,6 +27,7 @@ out vec3 origPos;
 void main()
 {
     ///@ref: https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+    //TBN matrix for normal map
     vec3 T = normalize(vec3(M * vec4(inTangent,   0)));
     vec3 B = normalize(vec3(M * vec4(inBitangent, 0)));
     vec3 N = normalize(vec3(M * vec4(inNormal,    0)));
@@ -40,17 +41,8 @@ void main()
 
     vertColour = inBitangent*0.5+0.5;
 
-  //gl_Position = MVP*vec4(inVert,1.0);
+    UV = inUV;
+    origPos = inVert;
+    normal = normalize(vec3(M * vec4(inNormal,    0)));
 
-  //float height = inVert[1];
-  /*vertColour = mix(mix(vec3(0.2, 0.2, 0.05), vec3(0.3, 0.4, 0.1),
-                       smoothstep(-1,0, height/maxHeight)),
-                   vec3(0.4f,0.8f,0.2f),
-                   smoothstep(0,1, height/maxHeight));*/
-
-  UV = inUV;
-  origPos = inVert;
-  normal = normalize(vec3(M * vec4(inNormal,    0)));
-
-  //vertColour = inNormal;
 }

@@ -19,7 +19,6 @@ uniform mat4 MVP;
 
 void main ()
 {
-    //vec3 lineDir = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
     vec3 lineDir = worldSpacePos[1] - worldSpacePos[0];
     lineDir = normalize(lineDir);
     vec3 N = rightVector[1];
@@ -27,10 +26,12 @@ void main ()
     vec3 NE = normalize(N+E);
     vec3 SE = normalize(E-N);
 
+    //make a cylinder by creating 8 points around the bottom and top vertex
     vec3[9] compass = vec3[9](N,NE,E,SE,-N,-NE,-E,-SE,N);
 
     for(int i=0; i<9; i++)
     {
+        //normal, tangent and bitangent data can be found from the compass directions
         gl_Position = MVP * vec4(worldSpacePos[0] + 0.5*thickness[0]*compass[i], 1);
         colour = vertCol[0];
         normal = compass[i];

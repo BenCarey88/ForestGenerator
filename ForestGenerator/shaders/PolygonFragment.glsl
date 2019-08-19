@@ -16,6 +16,7 @@ layout (location =0)out vec4 fragColour;
 
 void main ()
 {
+    //basic diffuse model @ref: Jon Macey
     vec3 tnorm = normalize( normalMatrix * normal);
     vec4 eyeCoords = MV * vec4(worldPos,1);
     vec3 s = normalize(vec3(lightPos - eyeCoords.xyz));

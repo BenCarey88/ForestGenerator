@@ -12,6 +12,8 @@ out vec2 UV;
 
 void main ()
 {
+    //Use right and direction to add plane to point
+
     gl_Position = gl_in[0].gl_Position + 0.5*right[0];
     UV = vec2(1,1);
     EmitVertex();

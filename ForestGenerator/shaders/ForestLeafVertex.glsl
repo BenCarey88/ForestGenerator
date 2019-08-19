@@ -13,6 +13,7 @@ out vec4 right;
 
 void main()
 {
+  //note this is same as treeLeafVertex except for multiplication by inTransform
   gl_Position = MVP * inTransform * vec4(inVert,1.0);
   dir = MVP * inTransform * vec4(inDir,0);
   right = MVP * inTransform * vec4(inRight,0);

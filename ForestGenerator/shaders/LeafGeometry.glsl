@@ -12,6 +12,8 @@ out vec2 UV;
 
 void main ()
 {
+    //use right and direction vectors to turn point to plane
+
     gl_Position = gl_in[0].gl_Position + 0.5*right[0];
     UV = vec2(1,1);
     EmitVertex();

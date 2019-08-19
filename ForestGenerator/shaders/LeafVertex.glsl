@@ -15,5 +15,4 @@ void main()
   gl_Position = MVP*vec4(inVert,1.0);
   dir = MVP*vec4(inDir,0);
   right = MVP*vec4(inRight,0);
-  //vertColour = vec3(1,0,0);
 }

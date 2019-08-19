@@ -11,6 +11,7 @@ out vec3 worldPos;
 
 void main ()
 {
+    //use geometry shader to get normals for basic diffuse shading model
     vec3 globalNormal = cross(origPos[1]-origPos[0],origPos[2]-origPos[0]);
 
     for(int i=0; i<3; i++)

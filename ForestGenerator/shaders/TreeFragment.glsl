@@ -22,18 +22,18 @@ uniform float Ld = 1;
 
 void main ()
 {
+    //use TBN matrix for normal map
     mat3 TBN = mat3(tangent, bitangent, normal);
 
     vec3 newNormal = vec3(texture(normalMap, UV));
     newNormal = normalize(newNormal * 2.0 - 1);
     newNormal = normalize(TBN * newNormal);
 
+    ///basic diffuse model, @ref: Jon Macey
     vec3 tnorm = normalize( normalMatrix * newNormal);
     vec4 eyeCoords = MV * vec4(worldPos,1);
     vec3 s = normalize(vec3(lightPos - eyeCoords.xyz));
     float lightIntensity = max(dot(s,tnorm),0.0) * Ld * Kd;
-
-    //fragColour.rgb = lightIntensity * colour;
 
     fragColour = lightIntensity * texture(textureMap, UV);
     fragColour.a = 1;
