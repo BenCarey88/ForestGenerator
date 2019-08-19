@@ -95,7 +95,7 @@ void NGLScene::addPointToPaintedForest(ngl::Vec3 &_point)
                         abs(_point.m_y-yPos)<m_rayPickTolerance);
   if(pointIsViable)
   {
-    for(auto &p : m_points)
+    for(auto &p : m_paintPoints)
     {
       if((_point-p).length()<m_minTreeDist)
       {
@@ -107,8 +107,8 @@ void NGLScene::addPointToPaintedForest(ngl::Vec3 &_point)
 
   if(pointIsViable)
   {
-    m_points.push_back(_point);
-    m_pointIndices.push_back(GLshort(m_points.size()-1));
+    m_paintPoints.push_back(_point);
+    m_paintPointIndices.push_back(GLshort(m_paintPoints.size()-1));
     m_paintedForest.addTreeToForest(_point, m_paintBrushNum);
   }
 }

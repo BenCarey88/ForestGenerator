@@ -68,7 +68,10 @@ public slots:
   /// @param[in] treeTabNum, the int passed from m_treeTab in ui
   //----------------------------------------------------------------------------------------------------------------------
   void changeTreeTab(int _treeTabNum);
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the current forest tab number for the qtGUI
+  /// @param[in] treeTabNum, the int passed from m_forestTab in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void changeForestTab(int _forestTabNum);
 
   //----------------------------------------------------------------------------------------------------------------------
@@ -118,12 +121,18 @@ public slots:
   /// @param[in] angleScale, the double passed from m_angleScale in ui
   //----------------------------------------------------------------------------------------------------------------------
   void setAngleScale(double _angleScale);
-
-  void setThickness(double _thickness);
-  void setThicknessScale(double _thicknessScale);
-
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to set the number of generations to generate for this L-System
+  /// @brief a slot to set the default thickness in the L-system
+  /// @param[in] angleScale, the double passed from m_thicknessScale in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setThickness(double _thickness);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the default scaling value of thickness in the L-system
+  /// @param[in] thicknessScale, the double passed from m_thicknessScale in ui
+  //----------------------------------------------------------------------------------------------------------------------
+  void setThicknessScale(double _thicknessScale);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the number of generations to generate for the current L-System
   /// @param[in] generation, the int passed from m_generation in ui
   //----------------------------------------------------------------------------------------------------------------------
   void setGeneration(int _generation);
@@ -147,18 +156,16 @@ public slots:
   //----------------------------------------------------------------------------------------------------------------------
   void resetCamera();
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to toggle wether or not we display the grid
+  /// @brief a slot to toggle whether or not we display the grid
   /// @param[in] _clicked, the int passed from m_grid in ui
   //----------------------------------------------------------------------------------------------------------------------
   void toggleGrid(bool _clicked);
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to toggle whether or not we display the trees with skeletal or cylindrical branches
+  /// @param[in] _clicked, the int passed from m_skeleton in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void toggleTreeSkeletonMode(bool _mode);
 
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief a slot to toggle wireframe mode
-  /// @param[in] mode, the mode passed from the togglebutton
-  //----------------------------------------------------------------------------------------------------------------------
-  void toggleTerrainWireframe( bool _mode );
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to set the number of octaves for the terrain generation
   /// @param[in] octaves, the int passed from m_octaves in ui
@@ -189,6 +196,7 @@ public slots:
   /// @param[in] seed, the double passed from m_terrainSeed in ui
   //----------------------------------------------------------------------------------------------------------------------
   void setTerrainSeed(double _seed);
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a slot to generate a new terrain based on current values
   //----------------------------------------------------------------------------------------------------------------------
@@ -198,28 +206,85 @@ public slots:
   /// @param[in] tolerance, the double passed from m_tolerance in ui
   //----------------------------------------------------------------------------------------------------------------------
   void setTolerance(double _tolerance);
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the tolerance for the LOD algorithm
+  /// @param[in] tolerance, the double passed from m_tolerance in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void setTerrainSize(double _terrainSize);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to toggle wireframe mode
+  /// @param[in] mode, the mode passed from the togglebutton
+  //----------------------------------------------------------------------------------------------------------------------
+  void toggleTerrainWireframe( bool _mode );
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set the base level of detail for the terrain, which
+  /// determines the initial dimensions of the heightmap grid
+  /// @param[in] LOD, the int passed from m_LOD
+  //----------------------------------------------------------------------------------------------------------------------
   void setLOD(int _LOD);
 
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to toggle whether or not we are currently painting trees onto the terrain
+  /// @param[in] mode, the mode passed from m_paint
+  //----------------------------------------------------------------------------------------------------------------------
   void toggleTreePaintMode( bool _mode );
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to determine the minimum acceptable distance between trees painted on the terrain
+  /// @param[in] _treeSpacing, the double passed from m_treeSpacing in the ui
+  //----------------------------------------------------------------------------------------------------------------------
   void setTreeSpacing(double _treeSpacing);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to set which tree we're currently painting with
+  /// @param[in] _brushNum, the int passed from m_paintBrush in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void setPaintBrush(int _brushNum);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to erase all painted trees and update brushes to use the latest versions of all L-systems
+  /// note that we have to erase all previous trees before we can update brushes because updating the brushes involves
+  /// refilling the hero buffers and instance caches of each tree which will disrupt any currently painted trees
+  //----------------------------------------------------------------------------------------------------------------------
   void erasePaint();
 
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief a slot to switch how we're currently generating forests: painting trees or randomly scattering
+  /// @param[in] _methodNum, the int passed from m_treeGenMethod in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void toggleTreeGenMethod(int _methodNum);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief slots to determine how many trees of each type will be generated in the forest random scattering method
+  /// @param[in] _numTrees, the int passed from m_numTrees_i in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void setNumTrees1(int _numTrees);
   void setNumTrees2(int _numTrees);
   void setNumTrees3(int _numTrees);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief slot to set the number of hero trees that each L-System will use to fill up its instance cache
+  /// @param[in] numHeroTrees, the int passed from m_numHeroTrees in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void setNumHeroTrees(int _numHeroTrees);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief slot to set the instancing probability for all L-Systems
+  /// @param[in] instancingProb, the double passed from m_instancingProb in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void setInstancingProb(double _instancingProb);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief slot to set the seed for both forest members
+  /// @param[in] _seed, the int passed from m_seed in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void setSeedForest(int _seed);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief slot to toggle whether or not we'll use a seed for the forests (or seed by time)
+  /// @param[in] _mode, the int passed from m_seedToggleForest in ui
+  //----------------------------------------------------------------------------------------------------------------------
   void seedToggleForest(int _mode);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief slot to perform random scattering and instancing again to reset m_forest
+  //----------------------------------------------------------------------------------------------------------------------
   void remakeForest();
 
 protected:
 
-  //PROTECTED MEMBER VARIABLES
+  //GENERAL MEMBER VARIABLES
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the windows params such as mouse and rotations etc
   //----------------------------------------------------------------------------------------------------------------------
@@ -236,35 +301,8 @@ protected:
   size_t m_superTabNum = 0;
   size_t m_treeTabNum = 0;
   size_t m_forestTabNum = 0;
-
-  std::vector<ngl::Vec3> m_points = {};
-  std::vector<GLshort> m_pointIndices = {};
-
-  bool m_treePaintMode = false;
-  bool m_savedTreePaintMode = false;
-  bool m_drawingLine = false;
-
-  std::unique_ptr<ngl::AbstractVAO> m_pointVAO;
-  std::unique_ptr<ngl::AbstractVAO> m_paintLineVAO;
-  float m_minTreeDist = 20;
-  float m_rayPickTolerance = 0.1f;
-
-
-  Forest m_paintedForest;
-  size_t m_paintBrushNum = 0;
-  bool m_usePaintedForest = true;
-  bool m_displayForestTrees = true;
-
-  bool m_buildPaintLineVAO = true;
-  std::vector<ngl::Vec3> m_paintLineVertices = {};
-  std::vector<GLshort> m_paintLineIndices = {};
-
-  noise::module::Perlin m_perlinModule;
-  size_t m_forestSeed = 0;
-  bool m_forestUseSeed = false;
-
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief matrices to set up camera view
+  /// @brief matrices to set up projection and camera view
   //----------------------------------------------------------------------------------------------------------------------
   ngl::Mat4 m_view;
   ngl::Mat4 m_project;
@@ -275,14 +313,8 @@ protected:
                                           0,                    1,  0,                    0,
                                           std::sqrt(2.0f)*0.5f, 0,  std::sqrt(2.0f)*0.5f, 0,
                                           0,                    0,  0,                    1);
-
-  ngl::Mat4 m_layoutRotation = m_initialRotation.inverse() * ngl::Mat4(1,0,0,0,
-                                                                       0,0,1,0,
-                                                                       0,1,0,0,
-                                                                       0,0,0,1);
-
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief the grid representing the ground plane
+  /// @brief the grid representing the ground plane for the L-Systems
   //----------------------------------------------------------------------------------------------------------------------
   Grid m_grid = Grid(7,5);
   //----------------------------------------------------------------------------------------------------------------------
@@ -290,52 +322,6 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   std::vector<bool> m_showGrid;
 
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief grid VAO
-  //----------------------------------------------------------------------------------------------------------------------
-  std::unique_ptr<ngl::AbstractVAO> m_gridVAO;
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief terrain VAO
-  //----------------------------------------------------------------------------------------------------------------------
-  std::unique_ptr<ngl::AbstractVAO> m_terrainVAO;
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief VAOs for the LSystems
-  //----------------------------------------------------------------------------------------------------------------------
-  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_treeVAOs;
-
-  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_leafVAOs;
-  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_polygonVAOs;
-
-  //nested std::vector of VAOs corresponding to instance caches for the forest rendering
-  //outer layer separates the instance caches of the differing tree types
-  //second layer separates within a cache by id
-  //third layer separates by age
-  //inner index corresponds to different instances of a given age and id
-  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestVAOs;
-  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestLeafVAOs;
-  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestPolygonVAOs;
-
-  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestVAOs;
-  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestLeafVAOs;
-  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestPolygonVAOs;
-
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief bool to tell paintGL whether or not we need to rebuild the current LSystem VAO
-  //----------------------------------------------------------------------------------------------------------------------
-  bool m_buildTreeVAO = false;
-
-  bool m_buildForestVAOs = false;
-
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief the forest object to be sent to the renderer
-  //----------------------------------------------------------------------------------------------------------------------
-  Forest m_forest;
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief width and number of trees for m_forest
-  //----------------------------------------------------------------------------------------------------------------------
-  float m_width = 2000;
-  std::vector<size_t> m_numTrees = {1000,1000,1000};
-  int m_numHeroTrees = 10;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief list of all L-Systems stored by the scene
   //----------------------------------------------------------------------------------------------------------------------
@@ -361,22 +347,155 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   ngl::Mat4 * m_currentMouseTransform;
 
+
+  //TERRAIN VARIABLES
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief TerrainData object which applies LOD algorithms to the heightmap values from m_terrainValues and creates
+  /// @brief TerrainGenerator object that uses perlin noise to generate a heightmap for the forest terrain
+  //----------------------------------------------------------------------------------------------------------------------
+  TerrainGenerator m_terrainGen;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief TerrainData object which applies LOD algorithms to the heightmap values from m_terrainGen and creates
   /// a vertex list to be passed into paintGL
   //----------------------------------------------------------------------------------------------------------------------
   TerrainData m_terrain;
   //----------------------------------------------------------------------------------------------------------------------
+  /// @brief worldspace width of the terrain
+  //----------------------------------------------------------------------------------------------------------------------
+  float m_width = 2000;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief initial dimensions of the heightmap grid for m_terrain - note that this has to be 2^n+1 for
+  /// some integer n, due to constraints from the LOD algorithm in m_terrain
+  //----------------------------------------------------------------------------------------------------------------------
+  int m_terrainDimension = 129;
+  //----------------------------------------------------------------------------------------------------------------------
   /// @brief float to store the user-specified error tolerance passed into the LOD algorithm in m_terrain
   //----------------------------------------------------------------------------------------------------------------------
   float m_tolerance = 0.02f;
-
-  TerrainGenerator m_terrainGen;
-
-  int m_terrainDimension = 129;
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief bool determining whether or not to draw the terrain in wireframe
+  //----------------------------------------------------------------------------------------------------------------------
   bool m_terrainWireframe = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief module storing the perlin noise used to generate the terrain
+  //----------------------------------------------------------------------------------------------------------------------
+  noise::module::Perlin m_perlinModule;
 
+
+  //GENERAL FOREST VARIABLES
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief the Forest object we use when generating forests with the tree scattering method
+  //----------------------------------------------------------------------------------------------------------------------
+  Forest m_scatteredForest;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief the Forest object we use when generating forests with the tree painting method
+  //----------------------------------------------------------------------------------------------------------------------
+  Forest m_paintedForest;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief toggle to determine which forest type we're rendering with
+  //----------------------------------------------------------------------------------------------------------------------
+  bool m_usePaintedForest = true;
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief number of hero trees to create for each LSystem when filling the instance cache
+  //----------------------------------------------------------------------------------------------------------------------
+  int m_numHeroTrees = 10;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief number of trees to use of each LSystem type in tree scattering
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector<size_t> m_numTrees = {1000,1000,1000};
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief seed to be used for stochastic behaviour in choosing instances and scattering trees for the forests
+  //----------------------------------------------------------------------------------------------------------------------
+  size_t m_forestSeed = 0;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief toggle to determine whether the forests use m_forestSeed or are seeded by time
+  //----------------------------------------------------------------------------------------------------------------------
+  bool m_forestUseSeed = false;
+
+  //FOREST PAINT VARIABLES
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief the index of the current L-System we're using to paint trees
+  //----------------------------------------------------------------------------------------------------------------------
+  size_t m_paintBrushNum = 0;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief toggle to determine whether or not left mouse button events should currently correspond to painting trees
+  //----------------------------------------------------------------------------------------------------------------------
+  bool m_treePaintMode = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief toggle to save whether or not paint mode was on when we were last on the painting trees tab
+  //----------------------------------------------------------------------------------------------------------------------
+  bool m_savedTreePaintMode = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief toggle to save whether or not the mouse is currently in the middle of painting trees
+  //----------------------------------------------------------------------------------------------------------------------
+  bool m_drawingLine = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief the spacing between painted trees
+  //----------------------------------------------------------------------------------------------------------------------
+  float m_minTreeDist = 20;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief the error tolerance when picking a point on the terrain with the mouse
+  //----------------------------------------------------------------------------------------------------------------------
+  float m_rayPickTolerance = 0.1f;
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief list of vertices corresponding to points where the user has painted trees onto the terrain
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector<ngl::Vec3> m_paintPoints = {};
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief corresponding index list to allow us to draw these points with GL_POINTS
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector<GLshort> m_paintPointIndices = {};
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief list of vertices to describe the temporary lines painted onto the terrain as we paint trees
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector<ngl::Vec3> m_paintLineVertices = {};
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief corresponding index list to allow us to draw these lines with GL_LINES
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector<GLshort> m_paintLineIndices = {};
+
+
+  //VAOS AND RELATED VARIABLES
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief grid VAO
+  //----------------------------------------------------------------------------------------------------------------------
+  std::unique_ptr<ngl::AbstractVAO> m_gridVAO;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief VAO for the painted line
+  //----------------------------------------------------------------------------------------------------------------------
+  std::unique_ptr<ngl::AbstractVAO> m_paintLineVAO;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief terrain VAO
+  //----------------------------------------------------------------------------------------------------------------------
+  std::unique_ptr<ngl::AbstractVAO> m_terrainVAO;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief VAOs for the LSystems
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_treeVAOs;
+  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_leafVAOs;
+  std::vector<std::unique_ptr<ngl::AbstractVAO>> m_polygonVAOs;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief VAOs for the Forests, stored as nested vectors corresponding to instance caches:
+  /// layers separate by: treetype / id / age / different instances of a given id and index
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestLeafVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_forestPolygonVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestLeafVAOs;
+  std::vector<CACHE_STRUCTURE(std::unique_ptr<ngl::AbstractVAO>)> m_paintedForestPolygonVAOs;
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief bools to tell paintGL whether or not we need to rebuild a given VAO
+  //----------------------------------------------------------------------------------------------------------------------
+  bool m_buildTreeVAO = false;
+  bool m_buildForestVAOs = false;
+  bool m_buildPaintLineVAO = true;
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief variables storing the buffer ids for the buffers used by each VAO
+  //----------------------------------------------------------------------------------------------------------------------
   GLuint m_terrainNormalBuffer = 0;
   GLuint m_terrainTangentBuffer = 0;
   GLuint m_terrainBitangentBuffer = 0;
@@ -394,7 +513,9 @@ protected:
   std::vector<CACHE_STRUCTURE(GLuint)> m_paintedForestLeafDirectionBuffers = {{},{},{}};
   std::vector<CACHE_STRUCTURE(GLuint)> m_paintedForestLeafRightBuffers = {{},{},{}};
 
-
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief variables storing the texture ids for each texture object
+  //----------------------------------------------------------------------------------------------------------------------
   GLuint m_terrainTexId = 0;
   GLuint m_terrainNormalId = 0;
   GLuint m_treeTexId = 0;
@@ -406,7 +527,7 @@ protected:
   ngl::Vec3 getProjectedPointOnTerrain(float _screenX, float _screenY);
   void addPointToPaintedForest(ngl::Vec3 &_point);
 
-  //PROTECTED MEMBER FUNCTIONS
+  //GENERAL MEMBER FUNCTIONS
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the initialize class is called once when the window is created and we have a valid GL context
   /// use this to setup any default GL stuff
@@ -427,9 +548,7 @@ protected:
   void buildSimpleIndexVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
                            std::vector<dataType> &_indices, GLenum _mode, GLenum _indexType);
 
-/*  void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao,
-                             LSystem &_treeType, Instance &_instance,
-                             std::vector<ngl::Mat4> &_transforms);*/
+
   void buildInstanceCacheVAO(std::unique_ptr<ngl::AbstractVAO> &_vao, std::vector<ngl::Vec3> &_vertices,
                              std::vector<GLshort> &_indices, std::vector<ngl::Mat4> &_transforms,
                              size_t _instanceStart, size_t _instanceEnd, GLenum _mode);
@@ -466,7 +585,7 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief updates forest class when L-Systems change
   //----------------------------------------------------------------------------------------------------------------------
-  void updateForest();
+  void updateScatteredForest();
 
   //EVENTS
   //----------------------------------------------------------------------------------------------------------------------

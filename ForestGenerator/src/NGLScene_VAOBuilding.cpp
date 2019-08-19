@@ -191,7 +191,7 @@ void NGLScene::buildForestVAO(size_t _treeNum, size_t _id, size_t _age, size_t _
   }
   else
   {
-    forest = &m_forest;
+    forest = &m_scatteredForest;
     vao = &m_forestVAOs[_treeNum][_id][_age][_index];
     rightBuffer = &m_forestRightBuffers[_treeNum][_id][_age][_index];
     thicknessBuffer = &m_forestThicknessBuffers[_treeNum][_id][_age][_index];
@@ -237,7 +237,7 @@ void NGLScene::buildForestLeafVAO(size_t _treeNum, size_t _id, size_t _age, size
   }
   else
   {
-    forest = &m_forest;
+    forest = &m_scatteredForest;
     vao = &m_forestLeafVAOs[_treeNum][_id][_age][_index];
     dirBuffer = &m_forestLeafDirectionBuffers[_treeNum][_id][_age][_index];
     rightBuffer = &m_forestLeafRightBuffers[_treeNum][_id][_age][_index];
@@ -279,7 +279,7 @@ void NGLScene::buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, s
   }
   else
   {
-    forest = &m_forest;
+    forest = &m_scatteredForest;
     vao = &m_forestPolygonVAOs[_treeNum][_id][_age][_index];
   }
 
@@ -299,9 +299,9 @@ void NGLScene::buildForestPolygonVAO(size_t _treeNum, size_t _id, size_t _age, s
 
 void NGLScene::buildForestVAOs()
 {  
-  for(size_t t=0; t<m_forest.m_treeTypes.size(); t++)
+  for(size_t t=0; t<m_scatteredForest.m_treeTypes.size(); t++)
   {
-    LSystem &treeType = m_forest.m_treeTypes[t];
+    LSystem &treeType = m_scatteredForest.m_treeTypes[t];
     CACHE_STRUCTURE(Instance) &instanceCache = treeType.m_instanceCache;
     std::cout<<instanceCache.size();
     RESIZE_CACHE_BY_OTHER_CACHE(m_forestVAOs[t], instanceCache)

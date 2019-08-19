@@ -38,7 +38,6 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
 
   m_cameras[1][0]=Camera({0,200,1000},{0,0,0});
   m_cameras[1][1]=m_cameras[1][0];
-//  m_cameras[1][1]=Camera({0,0,2500},{0,0,0});
 
   m_mouseTransforms.resize(m_numSuperTabs);
   m_mouseTransforms[0].resize(m_numTreeTabs, m_initialRotation);
@@ -46,7 +45,7 @@ NGLScene::NGLScene(QWidget *_parent) : QOpenGLWidget( _parent )
 
   initializeLSystems();
   m_terrainGen = TerrainGenerator(m_terrainDimension, m_width);
-  m_forest = Forest(m_LSystems, m_width,
+  m_scatteredForest = Forest(m_LSystems, m_width,
                     m_numTrees, m_numHeroTrees, m_terrainGen,
                     m_forestSeed, m_forestUseSeed);
   m_paintedForest = Forest(m_LSystems, m_numHeroTrees,
@@ -76,7 +75,6 @@ NGLScene::~NGLScene()
   m_gridVAO->removeVAO();
   m_terrainVAO->removeVAO();
   m_paintLineVAO->removeVAO();
-  m_pointVAO->removeVAO();
   for(size_t i=0; i<m_numTreeTabs; i++)
   {
     m_treeVAOs[i]->removeVAO();
@@ -165,11 +163,11 @@ void NGLScene::refineTerrain()
   buildTerrainVAO();
 }
 
-void NGLScene::updateForest()
+void NGLScene::updateScatteredForest()
 {
-  m_forest = Forest(m_LSystems, m_width,
-                    m_numTrees, m_numHeroTrees, m_terrainGen,
-                    m_forestSeed, m_forestUseSeed);
+  m_scatteredForest = Forest(m_LSystems, m_width,
+                             m_numTrees, m_numHeroTrees, m_terrainGen,
+                             m_forestSeed, m_forestUseSeed);
   m_buildForestVAOs = true;
 }
 
@@ -183,6 +181,7 @@ void NGLScene::paintGL()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glViewport(0,0,m_win.width,m_win.height);
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  //enable GL_BLEND and set up alpha channel transparency
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -262,7 +261,7 @@ void NGLScene::paintGL()
           m_paintedForest.m_adjustedCacheIndexes.clear();
         }
 
-        if(m_displayForestTrees && m_usePaintedForest)
+        if(m_usePaintedForest)
         {
           for(size_t t=0; t<m_numTreeTabs; t++)
           {
@@ -275,7 +274,7 @@ void NGLScene::paintGL()
                              drawVAO(m_paintedForestPolygonVAOs[t][ID][AGE][INDEX]))
           }
         }
-        else if(m_displayForestTrees)
+        else
         {
           for(size_t t=0; t<m_numTreeTabs; t++)
           {

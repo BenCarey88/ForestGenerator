@@ -153,6 +153,6 @@ void NGLScene::loadUniformsToShader(ngl::ShaderLib *_shader, const std::string &
   _shader->setUniform("MV",MV);
   _shader->setUniform("M",M);
   _shader->setUniform("lightPosition",lightPos);
-  _shader->setUniform("maxHeight",m_forest.m_terrainGen.m_amplitude);
+  _shader->setUniform("maxHeight",m_scatteredForest.m_terrainGen.m_amplitude);
 
 }

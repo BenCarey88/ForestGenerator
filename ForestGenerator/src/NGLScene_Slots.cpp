@@ -25,7 +25,7 @@ void NGLScene::changeSuperTab(int _superTabNum)
     m_treePaintMode = (m_forestTabNum==1) ? m_savedTreePaintMode : false;
     if(m_forestTabNum==1 && m_usePaintedForest==false)
     {
-      updateForest();
+      updateScatteredForest();
     }
   }
   m_currentCamera = &m_cameras[m_superTabNum][i];
@@ -56,7 +56,7 @@ void NGLScene::changeForestTab(int _forestTabNum)
   }
   else if(m_forestTabNum==1)
   {
-    updateForest();
+    updateScatteredForest();
   }
 
   update();
@@ -218,7 +218,7 @@ void NGLScene::updateTerrain()
   m_terrainGen.generate();
   m_terrain = TerrainData(m_terrainGen);
   erasePaint();
-  updateForest();
+  updateScatteredForest();
   update();
 }
 
@@ -279,7 +279,7 @@ void NGLScene::toggleTreeGenMethod(int _methodNum)
   m_usePaintedForest = bool(1-_methodNum);
   if(_methodNum==1)
   {
-    updateForest();
+    updateScatteredForest();
   }
   update();
 }
@@ -322,6 +322,6 @@ void NGLScene::seedToggleForest(int _mode)
 
 void NGLScene::remakeForest()
 {
-  updateForest();
+  updateScatteredForest();
   update();
 }
